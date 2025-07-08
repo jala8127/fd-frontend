@@ -1,0 +1,138 @@
+.login-wrapper {
+  position: fixed;               
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #b300ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;                  
+  overflow: hidden;
+}
+.background-balls {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none; 
+}
+
+.ball {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.25;
+  animation: float 5s infinite ease-in-out;
+  pointer-events: none; 
+}
+.ball1 {
+  width: 350px;
+  height: 350px;
+  background:#e7d107;
+  top: 2%;
+  left: 1%;
+}
+.ball2 {
+  width: 200px;
+  height: 200px;
+  background: #0c9aca;
+  bottom: 2%;
+  right: 65%;
+
+}
+.ball3 {
+  width: 450px;
+  height: 450px;
+  background: #e63108;
+  top: 60%;
+  left: 70%;
+  animation-delay: 3s;
+}
+@keyframes float {
+  0% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-30px) scale(1.05);
+  }
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+}
+.login-container {
+  width: 750px;
+  height:450px;
+  padding: 30px;
+  margin: auto;
+  background: rgb(231, 220, 237);
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(56, 54, 54, 0.15);
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  /* z-index: 10; */
+}
+.login-box .title {
+  text-align: center;
+  color: #9100ff;
+  margin-bottom: 25px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #353333;
+  padding: 10px 8px;
+  font-size: 14px;
+  outline: none;
+  background: transparent;
+}
+.toggle {
+  position: absolute;
+  right: 10px;
+  top: 35px;
+  font-size: 12px;
+  color: #9900ff;
+  cursor: pointer;
+  user-select: none;
+}
+
+.forgot {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.forgot a {
+  color: #bb00ff;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  background-color: #b700ff;
+  border: none;
+  border-radius: 50px;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #8704ec;
+}

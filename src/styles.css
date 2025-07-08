@@ -1,1 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
+.my-toast {
+  border-radius: 6px !important;
+
+}
+
+.toast-success.my-toast {
+  background-color: #4caf50 !important;
+  color: #fff !important;
+}
+
+.toast-error.my-toast {
+  background-color: #f44336 !important;
+  color: #fff !important;
+}
+
+.toast-info.my-toast {
+  background-color: #2196f3 !important;
+  color: #fff !important;
+}
