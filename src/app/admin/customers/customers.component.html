@@ -1,0 +1,104 @@
+<div class="container mt-4">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Customer Management</h3>
+    <button class="btn btn-primary" (click)="openAddModal()">Add Customer</button>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search by name, email or phone"
+      [(ngModel)]="searchTerm"
+      (input)="filterCustomers()" />
+  </div>
+
+  <!-- Customer Table -->
+  <div class="table-responsive table-container">
+    <table class="table table-striped bg-white text-dark colored-border-table">
+      <thead class="table-primary sticky-header">
+        <tr>
+          <th>Customer ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cust of filteredCustomers">
+          <td>{{ cust.user_id }}</td>
+          <td>{{ cust.name }}</td>
+          <td>{{ cust.email }}</td>
+          <td>{{ cust.phone }}</td>
+          <td>
+            <button class="btn btn-sm btn-info" (click)="openViewModal(cust)">View</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- View Modal -->
+  <div class="modal fade" id="viewCustomerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content bg-light text-dark">
+        <div class="modal-header">
+          <h5 class="modal-title">Customer Details</h5>
+          <button type="button" class="btn-close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Name:</strong> {{ selectedCustomer.name }}</p>
+          <p><strong>Email:</strong> {{ selectedCustomer.email }}</p>
+          <p><strong>Phone:</strong> {{ selectedCustomer.phone }}</p>
+          <p><strong>Address:</strong> {{ selectedCustomer.address || 'N/A' }}</p>
+          <!-- Add more fields if needed -->
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger" (click)="closeCustomerAccount()">Close Account</button>
+          <button class="btn btn-secondary" (click)="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Customer Modal -->
+  <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content bg-light text-dark">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Customer</h5>
+          <button type="button" class="btn-close" (click)="closeModal()"></button>
+        </div>
+        <form (ngSubmit)="saveCustomer()">
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label>Name</label>
+                <input type="text" class="form-control" [(ngModel)]="selectedCustomer.name" name="name" required />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Email</label>
+                <input type="email" class="form-control" [(ngModel)]="selectedCustomer.email" name="email" required />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Phone</label>
+                <input type="text" class="form-control" [(ngModel)]="selectedCustomer.phone" name="phone" required />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Address</label>
+                <input type="text" class="form-control" [(ngModel)]="selectedCustomer.address" name="address" />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Add Customer</button>
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

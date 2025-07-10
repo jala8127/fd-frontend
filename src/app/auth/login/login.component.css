@@ -4,7 +4,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #b300ff;
+  background: #f3dafa;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -31,23 +31,23 @@
   width: 350px;
   height: 350px;
   background:#e7d107;
-  top: 2%;
+  top: 50%;
   left: 1%;
 }
 .ball2 {
   width: 200px;
   height: 200px;
   background: #0c9aca;
-  bottom: 2%;
-  right: 65%;
+  bottom: 0%;
+  right: 5%;
 
 }
 .ball3 {
   width: 450px;
   height: 450px;
   background: #e63108;
-  top: 60%;
-  left: 70%;
+  top: -20%;
+  left: 65%;
   animation-delay: 3s;
 }
 @keyframes float {
@@ -66,11 +66,11 @@
   height:450px;
   padding: 30px;
   margin: auto;
-  background: rgb(231, 220, 237);
+  background: rgb(255, 254, 254);
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(56, 54, 54, 0.15);
   font-family: 'Segoe UI', sans-serif;
-  text-align: center;
+  text-align: left;
   /* z-index: 10; */
 }
 .login-box .title {

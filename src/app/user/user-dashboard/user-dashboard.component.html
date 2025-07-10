@@ -1,1 +1,54 @@
-<p>user-dashboard works!</p>
+<div style="display: flex;">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo-section">
+      <img src="assets/logo.avif" alt="Logo" class="logo" />
+      <span class="app-name">Fixed Deposit</span>
+    </div>
+    <ul class="nav-items">
+      <li [class.active]="selected === 'dashboard'" (click)="select('dashboard')">Dashboard</li>
+      <li [class.active]="selected === 'invoices'" (click)="select('invoices')">Invoices</li>
+      <li [class.active]="selected === 'messages'" (click)="select('messages')">Messages</li>
+      <li [class.active]="selected === 'wallets'" (click)="select('wallets')">My Wallets</li>
+      <li [class.active]="selected === 'activity'" (click)="select('activity')">Activity</li>
+      <li [class.active]="selected === 'analytics'" (click)="select('analytics')">Analytics</li>
+    </ul>
+    <ul class="bottom-links">
+      <li [class.active]="selected === 'help'" (click)="select('help')">Get Help</li>
+      <li [class.active]="selected === 'settings'" (click)="select('settings')">Settings</li>
+      <li class="logout" (click)="logout()">Logout</li>
+    </ul>
+  </div>
+
+ <!-- top nav bar -->
+<div style="flex: 1; padding: 24px;">
+  <div class="top-navbar" style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="welcome-text" style="font-size: 16px; font-weight: 600; color: #8e06cd;">
+      Welcome to user Page
+    </div>
+    <div style="display: flex; gap: 20px;">
+      <div class="icon-btn" (click)="onSearchClick()">
+        <i class="fas fa-search"></i>
+      </div>
+      <div class="icon-btn" (click)="onNotificationClick()">
+        <i class="fas fa-bell"></i>
+      </div>
+      <div class="icon-btn" (click)="onProfileClick()">
+        <i class="fas fa-user"></i>
+      </div>
+    </div>
+  </div>
+
+    <!-- Modal -->
+    <div class="modal" *ngIf="showModal" @slideFromTopRight>
+      <div class="modal-content">
+        <span class="close" (click)="closeModal()">&times;</span>
+        <h3>User Profile</h3>
+        <p><strong>Name:</strong> {{ user?.name }}</p>
+        <p><strong>Email:</strong> {{ user?.email }}</p>
+        <p><strong>Phone:</strong> {{ user?.phone }}</p>
+        <p><strong>Role:</strong> {{ user?.role }}</p>
+      </div>
+    </div>
+  </div>
+</div>
