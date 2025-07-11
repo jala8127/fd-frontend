@@ -1,0 +1,14 @@
+<h2>Pending KYC Applications</h2>
+<ul>
+  <li *ngFor="let kyc of pendingKycs">
+    {{ kyc.user.name }} ({{ kyc.user.email }}) 
+    <button (click)="view(kyc)">View</button>
+  </li>
+</ul>
+
+<div *ngIf="selectedKyc">
+  <p>Aadhaar: {{ selectedKyc.aadhaarDoc }}</p>
+  <p>PAN: {{ selectedKyc.panNumber }}</p>
+  <button (click)="verify('VERIFIED')">Approve</button>
+  <button (click)="verify('REJECTED', 'Invalid PAN number')">Reject</button>
+</div>

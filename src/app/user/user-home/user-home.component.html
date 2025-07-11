@@ -1,0 +1,127 @@
+<div class="main-wrapper">
+  <div class="user-home-container">
+    
+    <!-- Welcome Section -->
+    <div class="banner">
+      <h1>Invest Smart with Our Fixed Deposits</h1>
+      <p>Secure your future with high returns and flexible tenures.</p>
+      <button [routerLink]="['/user/schemes']">Start Investing</button>
+    </div>
+
+     <!-- Summary Grid -->
+    <div class="summary-grid">
+      <div class="card">
+        <h3>Total Deposits</h3>
+        <p>₹ 2,50,000</p>
+      </div>
+      <div class="card">
+        <h3>Active FDs</h3>
+        <p>5</p>
+      </div>
+      <div class="card">
+        <h3>Interest Earned</h3>
+        <p>₹ 12,600</p>
+      </div>
+      <div class="card">
+        <h3>Upcoming Maturity</h3>
+        <p>15 July 2025</p>
+      </div>
+    </div>
+
+        <!-- Welcome Box -->
+    <div class="welcome-box">
+      <h5>Manage your fixed deposits and view your earnings all in one place.</h5>
+    </div>
+
+    <!-- Features Section with Auto Scroll -->
+    <div class="features-scroll-outer">
+      <div class="features-scroll-inner">
+        <div class="feature-card">
+          <i class="fas fa-piggy-bank"></i>
+          <h3>Safe & Secure</h3>
+          <p>Your investments are protected and insured.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-percentage"></i>
+          <h3>Attractive Interest</h3>
+          <p>Up to 8.5% interest p.a. on your deposits.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-clock"></i>
+          <h3>Flexible Tenures</h3>
+          <p>Choose between short or long-term FDs.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-bolt"></i>
+          <h3>Instant Withdrawal</h3>
+          <p>Withdraw your funds anytime without hassle.</p>
+        </div>
+        <!-- Duplicate set for infinite scroll illusion -->
+        <div class="feature-card">
+          <i class="fas fa-piggy-bank"></i>
+          <h3>Safe & Secure</h3>
+          <p>Your investments are protected and insured.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-percentage"></i>
+          <h3>Attractive Interest</h3>
+          <p>Up to 8.5% interest p.a. on your deposits.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-clock"></i>
+          <h3>Flexible Tenures</h3>
+          <p>Choose between short or long-term FDs.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-bolt"></i>
+          <h3>Instant Withdrawal</h3>
+          <p>Withdraw your funds anytime without hassle.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interest Table and Video Side-by-Side -->
+    <div class="interest-video-wrapper">
+      <!-- Interest Table -->
+      <div class="interest-table">
+        <h2>Current Interest Rates</h2>
+        <table>
+          <tr>
+            <th>Tenure</th>
+            <th>Interest Rate (General)</th>
+            <th>Interest Rate (Senior Citizen)</th>
+          </tr>
+          <tr>
+            <td>6 Months</td>
+            <td>6.50%</td>
+            <td>6.75%</td>
+          </tr>
+          <tr>
+            <td>12 Months</td>
+            <td>7.25%</td>
+            <td>7.50%</td>
+          </tr>
+          <tr>
+            <td>3 Years</td>
+            <td>8.00%</td>
+            <td>8.25%</td>
+          </tr>
+        </table>
+      </div>
+
+     <div class="video-container">
+      <p class="video-caption">Know more Invest better</p>
+        <video autoplay muted loop playsinline class="dashboard-video">
+        <source src="assets/deposit.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+    <!-- Help Section -->
+    <div class="extra-section">
+      <h4>Need Help?</h4>
+      <p>Contact support or check our Help Center for assistance.</p>
+      <button routerLink="/user/help">Get Help</button>
+    </div>
+
+  </div>
+</div>

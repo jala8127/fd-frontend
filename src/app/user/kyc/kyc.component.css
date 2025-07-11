@@ -1,0 +1,150 @@
+.page-wrapper {
+  height: 85vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: #fefbff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-scroll-wrapper {
+  height: 90vh;
+  width: 100%;
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.kyc-container {
+  max-width: 700px;
+  margin: 0 auto;
+  background-color: #fff9ff;
+  padding: 28px 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(174, 0, 255, 0.08);
+  font-family: 'Segoe UI', sans-serif;
+  color: #4a007e;
+}
+
+.kyc-container h2 {
+  color: #a205ea;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.kyc-container label {
+  display: block;
+  margin-bottom: 6px;
+  color: #6d007f;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.kyc-container input[type="text"],
+.kyc-container input[type="email"],
+.kyc-container input[type="tel"],
+.kyc-container input[type="date"],
+.kyc-container input[type="file"],
+.kyc-container textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d6b3f0;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  outline: none;
+  background-color: #fefbff;
+  transition: border-color 0.3s ease;
+}
+
+.kyc-container input:focus,
+.kyc-container textarea:focus {
+  border-color: #a205ea;
+  box-shadow: 0 0 3px #d7aefb;
+}
+
+/* Two-column layout */
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Address fields taller */
+.kyc-container textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.kyc-container button {
+  background-color: #a205ea;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+}
+
+.kyc-container button:hover {
+  background-color: #8901c8;
+}
+
+.kyc-container p {
+  margin: 12px 0;
+  font-size: 15px;
+  color: #550070;
+  
+}
+
+.kyc-container strong {
+  color: #8e06cd;
+}
+
+.kyc-container .error {
+  color: red;
+  font-size: 13px;
+  margin-top: -16px;
+  margin-bottom: 16px;
+}
+
+.kyc-container .file-note {
+  font-size: 13px;
+  color: #777;
+  margin-top: -16px;
+  margin-bottom: 10px;
+}
+
+/* Responsive Tweaks */
+@media screen and (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .kyc-container {
+    padding: 20px 24px;
+  }
+
+  .kyc-container h2 {
+    font-size: 20px;
+  }
+
+  .kyc-container button {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+}

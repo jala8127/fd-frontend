@@ -8,13 +8,15 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  // User Login via MPIN
   loginUser(email: string, mpin: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/login`, { email, mpin });
   }
 
-  // Employee Login via Password
   loginEmployee(email: string, password: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/employees/login`, { email, password });
   }
+  getUserEmail(): string {
+    return localStorage.getItem('email') || '';
+  }
+
 }

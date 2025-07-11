@@ -1,0 +1,14 @@
+.video-container {
+  display: flex;
+  justify-content: center; 
+  align-items: center;     
+  height: 100%;            
+  width: 100%;
+}
+
+.dashboard-video {
+  width: 400px;
+  height: 350px;
+  border-radius: 8px;
+  object-fit: cover;
+}

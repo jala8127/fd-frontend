@@ -1,0 +1,75 @@
+h2 {
+  font-size: 24px;
+  color: #8e06cd;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px 0;
+}
+
+li {
+  background-color: #f9f1ff;
+  border: 1px solid #e5ccfb;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+}
+
+li button {
+  background-color: #a205ea;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+li button:hover {
+  background-color: #8901c8;
+}
+
+div[ngIf] {
+  background-color: #fff8ff;
+  border: 1.5px solid #d9a7f0;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-top: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+div[ngIf] p {
+  margin-bottom: 12px;
+  color: #4b006d;
+  font-size: 15px;
+}
+
+div[ngIf] button {
+  margin-right: 12px;
+  padding: 8px 18px;
+  font-size: 14px;
+  background-color: #7a00b3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+div[ngIf] button:last-child {
+  background-color: #e03131;
+}
+
+div[ngIf] button:hover {
+  opacity: 0.9;
+}

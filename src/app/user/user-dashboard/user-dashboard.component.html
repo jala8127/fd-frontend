@@ -6,16 +6,16 @@
       <span class="app-name">Fixed Deposit</span>
     </div>
     <ul class="nav-items">
-      <li [class.active]="selected === 'dashboard'" (click)="select('dashboard')">Dashboard</li>
-      <li [class.active]="selected === 'invoices'" (click)="select('invoices')">Invoices</li>
-      <li [class.active]="selected === 'messages'" (click)="select('messages')">Messages</li>
-      <li [class.active]="selected === 'wallets'" (click)="select('wallets')">My Wallets</li>
-      <li [class.active]="selected === 'activity'" (click)="select('activity')">Activity</li>
-      <li [class.active]="selected === 'analytics'" (click)="select('analytics')">Analytics</li>
+      <li routerLink="/user/user-home" routerLinkActive="active">Home</li>
+      <li routerLink="/user/schemes" routerLinkActive="active">Schemes</li>
+      <li routerLink="/user/deposits" routerLinkActive="active">Deposits</li>
+      <li routerLink="/user/payments" routerLinkActive="active">Payments</li>
+      <li routerLink="/user/kyc" routerLinkActive="active">KYC</li>
+      <li routerLink="/user/about" routerLinkActive="active">About</li>
     </ul>
     <ul class="bottom-links">
-      <li [class.active]="selected === 'help'" (click)="select('help')">Get Help</li>
-      <li [class.active]="selected === 'settings'" (click)="select('settings')">Settings</li>
+      <li routerLink="/user/help" routerLinkActive="active">Get Help</li>
+      <li routerLink="/user/user-settings" routerLinkActive="active">Settings</li>
       <li class="logout" (click)="logout()">Logout</li>
     </ul>
   </div>
@@ -50,5 +50,6 @@
         <p><strong>Role:</strong> {{ user?.role }}</p>
       </div>
     </div>
+    <router-outlet></router-outlet>
   </div>
 </div>
