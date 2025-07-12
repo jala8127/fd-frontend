@@ -1,4 +1,4 @@
-import { bootstrapApplication } from '@angular/platform-browser';
+import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { provideRouter } from '@angular/router';
@@ -14,6 +14,7 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(),
     provideAnimations(), 
     importProvidersFrom(
+      BrowserModule,
       FormsModule,
       ToastrModule.forRoot({
         positionClass: 'toast-top-right',

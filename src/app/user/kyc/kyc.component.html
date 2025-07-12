@@ -2,63 +2,93 @@
   <div class="form-scroll-wrapper">
     <div class="kyc-container">
       <h2>KYC Verification</h2>
-      <form (ngSubmit)="submitKyc()" #kycForm="ngForm">
-        
-        <!-- Full Name & Email -->
-        <div class="form-row">
+
+      <div *ngIf="!isSubmitted">
+        <form (ngSubmit)="submitKyc()" #kycForm="ngForm">
+
+          <!-- Full Name & Email -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fullName">Full Name (as per Aadhaar)</label>
+              <input type="text" id="fullName" name="fullName" [(ngModel)]="kycData.fullName" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" [(ngModel)]="kycData.email" required />
+            </div>
+          </div>
+
+          <!-- Phone & DOB -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" [(ngModel)]="kycData.phone" required />
+            </div>
+            <div class="form-group">
+              <label for="dob">Date of Birth</label>
+              <input type="date" id="dob" name="dob" [(ngModel)]="kycData.dob" required />
+            </div>
+          </div>
+
+          <!-- Address Fields -->
           <div class="form-group">
-            <label for="fullName">Full Name (as per Aadhaar)</label>
-            <input type="text" id="fullName" name="fullName" [(ngModel)]="kycData.fullName" required />
+            <label for="currentAddress">Current Address</label>
+            <textarea id="currentAddress" name="currentAddress" [(ngModel)]="kycData.currentAddress" rows="3" required></textarea>
           </div>
           <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" [(ngModel)]="kycData.email" required />
+            <label for="permanentAddress">Permanent Address</label>
+            <textarea id="permanentAddress" name="permanentAddress" [(ngModel)]="kycData.permanentAddress" rows="3" required></textarea>
+          </div>
+
+          <!-- Aadhaar & PAN -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="aadhaarNumber">Aadhaar Number</label>
+              <input type="text" id="aadhaarNumber" name="aadhaarNumber" [(ngModel)]="kycData.aadhaarNumber" pattern="\\d{12}" required />
+            </div>
+            <div class="form-group">
+              <label for="panNumber">PAN Number</label>
+              <input type="text" id="panNumber" name="panNumber" [(ngModel)]="kycData.panNumber" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" required />
+            </div>
+          </div>
+
+          <!-- Aadhaar Document Upload -->
+          <div class="form-group">
+            <label for="aadhaarDoc">Upload Aadhaar Document</label>
+            <input type="file" id="aadhaarDoc" name="aadhaarDoc" (change)="onFileChange($event)" required />
+          </div>
+
+          <!-- Submit -->
+          <div style="text-align: center;">
+            <button type="submit">Submit KYC</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Status Messages -->
+      <div *ngIf="isSubmitted && status === 'APPROVED'">
+      <!-- Success message -->
+      <p style="color: rgb(2, 143, 2); font-weight: bold; text-align: center;">KYC Passed</p>
+      <!-- Investment Banner -->
+        <div class="banner">
+          <h1>Invest Smart with Our Fixed Deposits</h1>
+          <p>Secure your future with high returns and flexible tenures.</p>
+          <button [routerLink]="['/user/schemes']">Start Investing</button>
+        </div>
+
+      </div>
+        <div *ngIf="status === 'REJECTED'">
+          <p style="color: red; font-weight: bold;">KYC Rejected</p>
+          <p>Reason:{{reason}} </p>
+          <div style="text-align: center;">
+            <button (click)="isSubmitted = false">Re-Apply</button>
           </div>
         </div>
 
-        <!-- Phone & DOB -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="phone">Phone Number</label>
-            <input type="tel" id="phone" name="phone" [(ngModel)]="kycData.phone" required />
-          </div>
-          <div class="form-group">
-            <label for="dob">Date of Birth</label>
-            <input type="date" id="dob" name="dob" [(ngModel)]="kycData.dob" required />
-          </div>
+        <div *ngIf="status === 'PENDING'">
+          <p style="color: orange; font-weight: bold;">KYC Pending , In Review</p>
         </div>
+      </div>
 
-        <!-- Address Fields -->
-        <div class="form-group">
-          <label for="currentAddress">Current Address</label>
-          <textarea id="currentAddress" name="currentAddress" [(ngModel)]="kycData.currentAddress" rows="3" required></textarea>
-        </div>
-        <div class="form-group">
-          <label for="permanentAddress">Permanent Address</label>
-          <textarea id="permanentAddress" name="permanentAddress" [(ngModel)]="kycData.permanentAddress" rows="3" required></textarea>
-        </div>
-
-        <!-- Aadhaar & PAN -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="aadhaarNumber">Aadhaar Number</label>
-            <input type="text" id="aadhaarNumber" name="aadhaarNumber" [(ngModel)]="kycData.aadhaarNumber" pattern="\\d{12}" required />
-          </div>
-          <div class="form-group">
-            <label for="panNumber">PAN Number</label>
-            <input type="text" id="panNumber" name="panNumber" [(ngModel)]="kycData.panNumber" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" required />
-          </div>
-        </div>
-
-        <!-- Aadhaar Document Upload -->
-        <div class="form-group">
-          <label for="aadhaarDoc">Upload Aadhaar Document</label>
-          <input type="file" id="aadhaarDoc" name="aadhaarDoc" (change)="onFileChange($event)" required />
-        </div>
-
-        <!-- Submit -->
-        <button type="submit">Submit KYC</button>
-      </form>
     </div>
-  </div>
 </div>

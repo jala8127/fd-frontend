@@ -1,1 +1,99 @@
-<p>admin-schemes works!</p>
+<div class="fd-schemes-container">
+  <!-- Header -->
+  <div class="scheme-header">
+    <h2>FD Schemes Management</h2>
+    <button (click)="openAddModal()">+ Add Scheme</button>
+  </div>
+
+  <!-- Cumulative Schemes -->
+  <div class="scheme-section">
+    <h3 class="section-title">Cumulative Schemes</h3>
+    <div class="scroll-wrapper">
+      <table class="scheme-table" *ngIf="cumulativeSchemes.length > 0; else noCumulative">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Interest Rate</th>
+            <th>Min Amount</th>
+            <th>Tenure</th>
+            <th>Payout</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let scheme of cumulativeSchemes">
+            <td>{{ scheme.schemeName }}</td>
+            <td>{{ scheme.interestRate }}%</td>
+            <td>₹{{ scheme.minAmount }}</td>
+            <td>{{ scheme.tenureMonths }} months</td>
+            <td>{{ scheme.payout }}</td>
+            <td>{{ scheme.schemeType }}</td>
+            <td [ngClass]="scheme.isActive ? 'active' : 'inactive'">
+              {{ scheme.isActive ? 'ACTIVE' : 'INACTIVE' }}
+            </td>
+            <td>
+              <button class="edit-btn" (click)="editScheme(scheme)">Edit</button>
+              <button 
+                [ngClass]="scheme.isActive ? 'deactivate-btn' : 'activate-btn'" 
+                (click)="toggleStatus(scheme)">
+                {{ scheme.isActive ? 'Deactivate' : 'Activate' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noCumulative><p>No cumulative schemes available.</p></ng-template>
+  </div>
+
+  <!-- Non-Cumulative Schemes -->
+  <div class="scheme-section">
+    <h3 class="section-title">Non-Cumulative Schemes</h3>
+    <div class="scroll-wrapper">
+      <table class="scheme-table" *ngIf="nonCumulativeSchemes.length > 0; else noNonCumulative">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Interest Rate</th>
+            <th>Min Amount</th>
+            <th>Tenure</th>
+            <th>Payout</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let scheme of nonCumulativeSchemes">
+            <td>{{ scheme.schemeName }}</td>
+            <td>{{ scheme.interestRate }}%</td>
+            <td>₹{{ scheme.minAmount }}</td>
+            <td>{{ scheme.tenureMonths }} months</td>
+            <td>{{ scheme.payout }}</td>
+            <td>{{ scheme.schemeType }}</td>
+            <td [ngClass]="scheme.isActive ? 'active' : 'inactive'">
+              {{ scheme.isActive ? 'ACTIVE' : 'INACTIVE' }}
+            </td>
+            <td>
+              <button class="edit-btn" (click)="editScheme(scheme)">Edit</button>
+              <button 
+                [ngClass]="scheme.isActive ? 'deactivate-btn' : 'activate-btn'" 
+                (click)="toggleStatus(scheme)">
+                {{ scheme.isActive ? 'Deactivate' : 'Activate' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noNonCumulative><p>No non-cumulative schemes available.</p></ng-template>
+  </div>
+</div>
+<app-scheme-modal
+  *ngIf="showModal"
+  [scheme]="selectedScheme"
+  (close)="closeModal()"
+  (save)="saveScheme($event)">
+</app-scheme-modal>

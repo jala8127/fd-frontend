@@ -1,1 +1,75 @@
-<p>payments works!</p>
+<div class="payment-page">
+
+  <!--  Payment History Section -->
+  <div class="payment-history">
+    <h2>Your Payment History</h2>
+
+    <table *ngIf="payments.length > 0; else noPayments">
+      <thead>
+        <tr>
+          <th>Transaction ID</th>
+          <th>Scheme</th>
+          <th>Amount</th>
+          <th>Mode</th>
+          <th>Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pay of payments">
+          <td>{{ pay.transactionId }}</td>
+          <td>{{ pay.schemeId }}</td>
+          <td>₹{{ pay.amount }}</td>
+          <td>{{ pay.paymentMode }}</td>
+          <td>{{ pay.createdAt | date: 'mediumDate' }}</td>
+          <td>
+            <span [ngClass]="pay.status === 'SUCCESS' ? 'status-success' : 'status-failed'">
+              {{ pay.status }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #noPayments>
+      <p class="no-data">You have not made any payments yet.</p>
+    </ng-template>
+  </div>
+
+    <!-- Hero Banner -->
+  <div class="banner">
+    <div class="banner-content">
+      <h1>Start your investment today!</h1>
+      <p>Secure your future and grow your savings with our FD options.</p>
+      <button (click)="goToSchemes()">Create New Deposit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Deposit Modal -->
+<div class="modal-backdrop" *ngIf="scheme">
+  <div class="modal-box"> 
+    <div class="payment-container">
+      <h2>Confirm Your Deposit</h2>
+
+      <p><strong>Scheme:</strong> {{ scheme.schemeName }}</p>
+      <p><strong>Amount:</strong> ₹{{ investmentAmount }}</p>
+      <p><strong>Interest Rate:</strong> {{ scheme.interestRate }}%</p>
+      <p><strong>Tenure:</strong> {{ scheme.tenureMonths }} months</p>
+
+      <label>Select Payment Mode:</label>
+      <select [(ngModel)]="paymentMode">
+        <option value="UPI">UPI</option>
+        <option value="CARD">Card</option>
+      </select>
+
+      <br><br>
+      <button 
+        (click)="confirmPayment()" 
+        [disabled]="isProcessing">
+        {{ isProcessing ? 'Processing...' : 'Pay & Create FD' }}
+      </button>
+      <button class="cancel-btn" (click)="scheme = null">Cancel</button>
+    </div>
+  </div>
+</div>

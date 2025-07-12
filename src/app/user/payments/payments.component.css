@@ -1,0 +1,167 @@
+.payment-page {
+  padding: 24px;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #ffffff;
+  min-height: 85vh;
+  position: relative;
+  overflow-y: auto;
+}
+
+.banner {
+  background: linear-gradient(to right, #f1d7ff, #e6cbff);
+  padding: 32px;
+  border-radius: 20px;
+  text-align: center;
+  margin-bottom: 32px;
+}
+.banner h1 {
+  font-size: 28px;
+  color: #7c00a1;
+  margin-bottom: 10px;
+}
+.banner p {
+  color: #7a03a2;
+  margin-bottom: 16px;
+  font-size: 16px;
+}
+.banner button {
+  background-color: #a205ea;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+.banner button:hover {
+  background-color: #8a02c6;
+}
+
+.payment-history h2 {
+  margin-bottom: 16px;
+  color: #77039e;
+  font-size: 22px;
+}
+.payment-history table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(137, 3, 184, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.payment-history th,
+.payment-history td {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 14px;
+}
+.payment-history th {
+  background-color: #e7d7f7;
+  color: #7c04a4;
+}
+.payment-history tr:nth-child(even) {
+  background-color: #f8f4fc;
+}
+.status-success {
+  color: green;
+  font-weight: bold;
+}
+.status-failed {
+  color: red;
+  font-weight: bold;
+}
+.no-data {
+  color: #b123e4ea;
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.payment-container {
+  background: #fff;
+  border: 1.5px solid #e4b9ff;
+  border-radius: 14px;
+  padding: 24px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 8px 20px rgba(133, 0, 199, 0.15);
+  z-index: 1000;
+  animation: fadeInUp 0.3s ease;
+}
+
+/* Optional animation */
+@keyframes fadeInUp {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.payment-container h2 {
+  margin-bottom: 16px;
+  color: #7c00a1;
+}
+.payment-container p {
+  margin: 6px 0;
+  font-size: 15px;
+  color: #333;
+}
+.payment-container label {
+  font-weight: 600;
+  margin-top: 12px;
+  display: block;
+  margin-bottom: 4px;
+  color: #5d007b;
+}
+.payment-container select {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.payment-container button {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background-color: #a205ea;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.payment-container button:hover {
+  background-color: #8c04cc;
+}
+
+.payment-container .cancel-btn {
+  background-color: #bbb;
+  color: black;
+  margin-left: 12px;
+}
+.payment-container .cancel-btn:hover {
+  background-color: #999;
+}
+
+.payment-page::-webkit-scrollbar {
+  width: 0px;
+}

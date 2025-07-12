@@ -1,14 +1,89 @@
-<h2>Pending KYC Applications</h2>
-<ul>
-  <li *ngFor="let kyc of pendingKycs">
-    {{ kyc.user.name }} ({{ kyc.user.email }}) 
-    <button (click)="view(kyc)">View</button>
-  </li>
-</ul>
+<div class="page-wrapper">
+  <div class="form-scroll-wrapper">
+    <div class="kyc-container">
+      <h2>Pending KYC Applications</h2>
 
-<div *ngIf="selectedKyc">
-  <p>Aadhaar: {{ selectedKyc.aadhaarDoc }}</p>
-  <p>PAN: {{ selectedKyc.panNumber }}</p>
-  <button (click)="verify('VERIFIED')">Approve</button>
-  <button (click)="verify('REJECTED', 'Invalid PAN number')">Reject</button>
+      <ul class="kyc-list" *ngIf="pendingKycs.length > 0">
+        <li class="kyc-item" *ngFor="let kyc of pendingKycs">
+          <div class="kyc-info-row">
+            <div><strong>ID:</strong> {{ kyc.user.userId }}</div>
+            <div><strong>Name:</strong> {{ kyc.user.name }}</div>
+          </div>
+          <button (click)="viewKycDetails(kyc)">View</button>
+        </li>
+      </ul>
+
+      <p *ngIf="pendingKycs.length === 0" class="kyc-status approved"> All KYCs Verified!</p>
+
+     <div *ngIf="selectedKyc" class="kyc-details">
+        <h2 class="heading">KYC Details</h2>
+
+        <!-- Full Name & Email -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" [value]="selectedKyc.fullName" readonly />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" [value]="selectedKyc.email" readonly />
+          </div>
+        </div>
+
+        <!-- Phone & DOB -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" [value]="selectedKyc.phone" readonly />
+          </div>
+          <div class="form-group">
+            <label>Date of Birth</label>
+            <input type="date" [value]="selectedKyc.dob" readonly />
+          </div>
+        </div>
+
+        <!-- Address Fields -->
+        <div class="form-group">
+          <label>Current Address</label>
+          <textarea rows="3" [value]="selectedKyc.currentAddress" readonly></textarea>
+        </div>
+        <div class="form-group">
+          <label>Permanent Address</label>
+          <textarea rows="3" [value]="selectedKyc.permanentAddress" readonly></textarea>
+        </div>
+
+        <!-- Aadhaar & PAN -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Aadhaar Number</label>
+            <input type="text" [value]="selectedKyc.aadhaarNumber" readonly />
+          </div>
+          <div class="form-group">
+            <label>PAN Number</label>
+            <input type="text" [value]="selectedKyc.panNumber" readonly />
+          </div>
+        </div>
+
+        <!-- Aadhaar Document -->
+        <div class="form-group" *ngIf="selectedKyc.aadhaarDocument">
+          <label>Aadhaar Document</label>
+          <input type="text" [value]="selectedKyc.aadhaarDocument" readonly />
+        </div>
+
+        <!-- Rejection Reason -->
+        <div *ngIf="action === 'REJECTED'">
+          <label>Rejection Reason</label>
+          <textarea [(ngModel)]="rejectionReason" rows="3" class="reason-input" placeholder="Enter rejection reason..."></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button *ngIf="!action" (click)="setAction('APPROVED')">Approve</button>
+          <button *ngIf="!action" (click)="setAction('REJECTED')">Reject</button>
+          <button *ngIf="action" (click)="verifyKyc()">Submit</button>
+          <button (click)="closeView()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './user-dashboard.component.html',
   styleUrls: ['./user-dashboard.component.css'],
   animations: [
@@ -24,13 +25,17 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class UserDashboardComponent implements OnInit {
 
-  constructor(private router: Router,private toastr: ToastrService) {}
+  constructor(
+    private router: Router,
+    private toastr: ToastrService,
+    private authService: AuthService
+  ) {}
 
   selected = 'dashboard';
   showModal = false;
   user: any = null;
 
-  ngOnInit(): void {
+ ngOnInit(): void {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       this.user = JSON.parse(storedUser);
@@ -56,9 +61,10 @@ export class UserDashboardComponent implements OnInit {
   onNotificationClick(): void {
     console.log('Notification clicked');
   }
-  logout(): void {
-  localStorage.removeItem('user');
-  localStorage.clear(); 
+
+ logout(): void {
+  localStorage.removeItem('user'); 
+  localStorage.removeItem('email'); 
   this.toastr.success("Logout successful");
   this.router.navigate(['/login']);
 }

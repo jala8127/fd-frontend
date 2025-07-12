@@ -46,7 +46,7 @@ export class LoginComponent {
     // Hardcoded Admin Login
     if (email === "jala@admin.com" && password === "123456") {
       this.toastr.success("Admin Login successful");
-      this.router.navigate(['/admin/admin-dashboard']);
+      this.router.navigate(['/admin/admin-home']);
       return;
     }
 
@@ -58,7 +58,7 @@ export class LoginComponent {
         next: (res: any) => {
           this.toastr.success("User Login successful");
           localStorage.setItem('user', JSON.stringify(res));
-          this.router.navigate(['/user/user-dashboard']);
+          this.router.navigate(['/user/user-home']);
         },
         error: (err: any) => {
           if (err.status === 404 || err.status === 401) {

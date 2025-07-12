@@ -1,1 +1,66 @@
-<p>schemes works!</p>
+<div class="scheme-page">
+  <div class="scheme-header">
+    <h2>Available Fixed Deposit Schemes</h2>
+  </div>
+
+  <!-- CUMULATIVE SCHEMES -->
+  <div class="section">
+    <h3 class="section-title">Cumulative Schemes</h3>
+    <div class="scroll-wrapper">
+      <div class="scheme-grid">
+        <div class="scheme-card" *ngFor="let scheme of cumulativeSchemes">
+          <h4>{{ scheme.schemeName }}</h4>
+          <p><strong>Interest Rate:</strong> {{ scheme.interestRate }}%</p>
+          <p><strong>Tenure:</strong> {{ scheme.tenureMonths }} months</p>
+          <p><strong>Min Amount:</strong> ₹{{ scheme.minAmount }}</p>
+          <p><strong>Payout:</strong> {{ scheme.payout }}</p>
+          <button class="view-button" (click)="viewScheme(scheme)">View</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NON-CUMULATIVE SCHEMES -->
+  <div class="section">
+    <h3 class="section-title">Non-Cumulative Schemes</h3>
+    <div class="scroll-wrapper">
+      <div class="scheme-grid">
+        <div class="scheme-card" *ngFor="let scheme of nonCumulativeSchemes">
+          <h4>{{ scheme.schemeName }}</h4>
+          <p><strong>Interest Rate:</strong> {{ scheme.interestRate }}%</p>
+          <p><strong>Tenure:</strong> {{ scheme.tenureMonths }} months</p>
+          <p><strong>Min Amount:</strong> ₹{{ scheme.minAmount }}</p>
+          <p><strong>Payout:</strong> {{ scheme.payout }}</p>
+          <button class="view-button" (click)="viewScheme(scheme)">View</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" *ngIf="selectedScheme">
+    <div class="modal-container">
+      <h3>{{ selectedScheme.schemeName }}</h3>
+      <p><strong>Interest Rate:</strong> {{ selectedScheme.interestRate }}%</p>
+      <p><strong>Tenure:</strong> {{ selectedScheme.tenureMonths }} months</p>
+      <p><strong>Payout:</strong> {{ selectedScheme.payout }}</p>
+
+      <label>Enter Investment Amount (₹):</label>
+      <input type="number" [(ngModel)]="investmentAmount" />
+
+      <div *ngIf="investmentAmount">
+        <div *ngIf="selectedScheme.schemeType === 'CUMULATIVE'; else nonCumulative">
+          <p class="result">Maturity Amount: ₹{{ calculateMaturityAmount(selectedScheme) }}</p>
+        </div>
+        <ng-template #nonCumulative>
+          <p class="result">Total Interest Earned: ₹{{ calculateNonCumulativeInterest(selectedScheme) }}</p>
+        </ng-template>
+      </div>
+
+      <div class="modal-actions">
+        <button (click)="createDeposit()">Create Deposit</button>
+        <button class="close" (click)="selectedScheme = null">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -4,7 +4,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #b300ff;
+  background: #e3b6f6;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -71,12 +71,12 @@
   min-height: 400px;
   padding: 30px;
   margin: auto;
-  background: rgb(229, 221, 233);
+  background: rgb(255, 255, 255);
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(56, 54, 54, 0.15);
   font-family: 'Segoe UI', sans-serif;
   text-align: center;
-  /* z-index: 5; */
+  z-index: 10;
 }
 
 .register-container h2.title {

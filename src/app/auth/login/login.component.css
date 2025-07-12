@@ -4,7 +4,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #f3dafa;
+  background: #e0b6f3;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -71,7 +71,7 @@
   box-shadow: 0 0 10px rgba(56, 54, 54, 0.15);
   font-family: 'Segoe UI', sans-serif;
   text-align: left;
-  /* z-index: 10; */
+  z-index: 10;
 }
 .login-box .title {
   text-align: center;

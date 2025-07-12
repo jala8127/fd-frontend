@@ -1,75 +1,184 @@
-h2 {
-  font-size: 24px;
-  color: #8e06cd;
-  margin-bottom: 20px;
+.page-wrapper {
+  height: 85vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: #fefefe;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-scroll-wrapper {
+  height: 90vh;
+  width: 100%;
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.kyc-container {
+  max-width: 100%;
+  margin: 0 auto;
+  background-color: #fff9ff;
+  padding: 28px 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(174, 0, 255, 0.08);
+  font-family: 'Segoe UI', sans-serif;
+  color: #4a007e;
+}
+
+.kyc-container h2,
+.heading {
+  color: #a205ea;
+  font-size: 22px;
   font-weight: 600;
+  margin-bottom: 24px;
+  text-align: center;
 }
 
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 24px 0;
+.kyc-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 20px;
 }
 
-li {
-  background-color: #f9f1ff;
-  border: 1px solid #e5ccfb;
+.kyc-item {
+  margin-bottom: 10px;
+  padding: 12px 16px;
+  background-color: #f3e9ff;
   border-radius: 10px;
-  padding: 14px 18px;
-  margin-bottom: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: 'Segoe UI', sans-serif;
-  color: #333;
+  font-size: 16px;
 }
 
-li button {
-  background-color: #a205ea;
-  color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
+.kyc-info-row {
+  display: flex;
+  gap: 20px;
+  font-size: 15px;
+  flex-wrap: wrap;
 }
 
-li button:hover {
-  background-color: #8901c8;
-}
-
-div[ngIf] {
-  background-color: #fff8ff;
-  border: 1.5px solid #d9a7f0;
-  border-radius: 12px;
-  padding: 20px 24px;
+.kyc-details {
+  border: 1px solid #e3c6f5;
+  background-color: #fff9ff;
+  padding: 28px 32px;
+  border-radius: 16px;
   margin-top: 20px;
-  font-family: 'Segoe UI', sans-serif;
 }
 
-div[ngIf] p {
-  margin-bottom: 12px;
-  color: #4b006d;
+.kyc-details p {
+  margin: 6px 0;
+}
+
+/* Form Layout (Admin Read-Only View) */
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.kyc-details input[type="text"],
+.kyc-details input[type="email"],
+.kyc-details input[type="tel"],
+.kyc-details input[type="date"],
+.kyc-details textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d6b3f0;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  outline: none;
+  background-color: #fefbff;
+}
+
+.kyc-details textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.kyc-details label {
+  font-weight: 500;
+  color: #6d007f;
+  margin-bottom: 6px;
   font-size: 15px;
 }
 
-div[ngIf] button {
-  margin-right: 12px;
-  padding: 8px 18px;
+.reason-input {
+  margin-top: 10px;
+  padding: 8px;
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: vertical;
   font-size: 14px;
-  background-color: #7a00b3;
+}
+
+button {
+  margin-right: 10px;
+  background-color: #a205ea;
   color: white;
+  padding: 8px 16px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  font-size: 14px;
+  font-weight: 500;
 }
 
-div[ngIf] button:last-child {
-  background-color: #e03131;
+button:hover {
+  background-color: #8901c8;
 }
 
-div[ngIf] button:hover {
-  opacity: 0.9;
+.action-buttons {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.kyc-status {
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 16px;
+  margin-top: 20px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.kyc-status.approved {
+  background-color: #e6ffed;
+  color: #22863a;
+  border: 1px solid #8ae89f;
+}
+
+.kyc-status.rejected {
+  background-color: #ffeaea;
+  color: #c20f0f;
+  border: 1px solid #f5b3b3;
+}
+
+.kyc-status.pending {
+  background-color: #fff6e0;
+  color: #b97700;
+  border: 1px solid #ffd789;
+}
+
+@media screen and (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+
+  .kyc-container,
+  .kyc-details {
+    padding: 20px;
+  }
 }

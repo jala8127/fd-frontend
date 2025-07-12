@@ -147,4 +147,83 @@
     font-size: 14px;
     padding: 10px 16px;
   }
+  /* KYC Status Messages */
+.kyc-status {
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 16px;
+  margin-top: 20px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.kyc-status.approved {
+  background-color: #e6ffed;
+  color: #22863a;
+  border: 1px solid #8ae89f;
+}
+
+.kyc-status.rejected {
+  background-color: #ffeaea;
+  color: #c20f0f;
+  border: 1px solid #f5b3b3;
+}
+
+.kyc-status.pending {
+  background-color: #fff6e0;
+  color: #b97700;
+  border: 1px solid #ffd789;
+}
+
+/* Status Action Buttons */
+.kyc-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.kyc-actions button {
+  background-color: #a205ea;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.kyc-actions button:hover {
+  background-color: #8901c8;
+}
+}
+.banner {
+  background: linear-gradient(to right, #f1d7ff, #e6cbff);
+  padding: 32px;
+  border-radius: 20px;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.banner h1 {
+  font-size: 28px;
+  color: #7c00a1;
+  margin-bottom: 10px;
+}
+
+.banner p {
+  color: #5d007b;
+  margin-bottom: 16px;
+}
+
+.banner button {
+  background-color: #a205ea;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 16px;
 }
