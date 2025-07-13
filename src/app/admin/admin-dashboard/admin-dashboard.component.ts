@@ -28,14 +28,14 @@ export class AdminDashboardComponent implements OnInit {
 
   selected = 'dashboard';
   showModal = false;
-  user: any = null;
+  employee: any = null;
 
-  ngOnInit(): void {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      this.user = JSON.parse(storedUser);
-    }
+ ngOnInit(): void {
+  const storedEmployee = localStorage.getItem('employee');
+  if (storedEmployee) {
+    this.employee = JSON.parse(storedEmployee);
   }
+}
 
   onProfileClick(): void {
     this.showModal = true;
@@ -57,7 +57,7 @@ export class AdminDashboardComponent implements OnInit {
     console.log('Notification clicked');
   }
   logout(): void {
-  localStorage.removeItem('user');
+  localStorage.removeItem('emplyee');
   localStorage.clear(); 
   this.toastr.success("Logout successful");
   this.router.navigate(['/login']);

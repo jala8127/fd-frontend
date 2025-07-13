@@ -1,0 +1,194 @@
+.deposits-scroll-wrapper {
+  height: 85vh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.deposits-page {
+  font-family: 'Segoe UI', sans-serif;
+}
+.heading-purple {
+  color: #a205ea;
+  font-weight: 500;
+}
+
+.no-fds-message {
+  color: #a205ea;
+  font-weight: 500;
+  margin-top: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+th, td {
+  padding: 10px 14px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+th {
+  background-color: #f2e5ff;
+  color: #7c00a1;
+}
+
+button {
+  background-color: #a205ea;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+button:hover {
+  background-color: #8c02c6;
+}
+
+/* Modal Common */
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  animation: fadeInUp 0.3s ease;
+}
+
+.confirm-box {
+  background-color: #f8f3ff;
+  border: 2px solid #d1a9f4;
+}
+.modal-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.cancel-btn {
+  background-color: #999;
+}
+.cancel-btn:hover {
+  background-color: #777;
+}
+.btn-withdraw {
+  background-color: #d9534f;
+}
+.btn-withdraw:hover {
+  background-color: #c9302c;
+}
+.btn-confirm {
+  background-color: #5cb85c;
+}
+.btn-confirm:hover {
+  background-color: #449d44;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fd-benefits-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+  padding: 20px;
+}
+.fd-benefits-section {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.fd-benefits-heading {
+  font-size: 28px;
+  font-weight: 700;
+  color: #a014cf;
+  margin-bottom: 24px;
+}
+.benefit-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+  min-width: 280px;
+}
+
+.benefit-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1.8px solid #a205ea;
+  background-color: #fdf0ff;
+  color: #333;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease-in-out;
+}
+.benefit-box:hover {
+  background-color: #f7e9ff;
+  transform: translateY(-3px);
+}
+.benefit-box i {
+  font-size: 24px;
+  color: #a205ea;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.benefit-box h4 {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 600;
+  color: #4b006e;
+}
+.benefit-box p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #555;
+}
+
+.benefit-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}
+.central-icon {
+  background-color: #a205ea;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 34px;
+  color: white;
+  box-shadow: 0 0 15px rgba(162, 5, 234, 0.2);
+}

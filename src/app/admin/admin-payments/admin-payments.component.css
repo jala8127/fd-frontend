@@ -1,0 +1,122 @@
+.admin-payments-wrapper {
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.settings-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f1e3fc;
+  padding-bottom: 8px;
+}
+
+.tab-text {
+  font-weight: 600;
+  font-size: 22px;
+  color: #d764fa;
+  padding: 6px 12px;
+  cursor: pointer;
+  position: relative;
+}
+
+.tab-text.active {
+  color: #a205ea;
+}
+
+.tab-text.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 3px;
+  background-color: #a205ea;
+  border-radius: 2px;
+}
+
+.payments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.payments-header h2 {
+  color: #7c00a1;
+  font-size: 24px;
+}
+
+.table-search-wrapper {
+  margin-bottom: 12px;
+  width: 100%;
+  background-color: white;
+  border: 1px solid #ffffff;
+  border-bottom: none;
+  border-radius: 5px 5px 0 0;
+  padding: 12px;
+}
+
+.table-search-wrapper input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.table-container {
+  max-height: 465px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 0 0 5px 5px;
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.colored-border-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background-color: #fff;
+}
+
+.sticky-header th {
+  position: sticky;
+  top: 0;
+  background-color: #f1d7ff;
+  z-index: 1;
+  color: #7c00a1;
+  font-weight: 600;
+  text-align: center;
+}
+
+.colored-border-table th,
+.colored-border-table td {
+  border: 1px solid rgb(205, 203, 203);
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.colored-border-table tr:hover {
+  background-color: #faf5ff;
+}
+
+.btn-primary {
+  background-color: #9000ea;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-primary:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

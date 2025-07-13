@@ -40,6 +40,6 @@ export class EmployeeService {
     return this.http.get<Employee>(`${this.apiUrl}/${id}`);
   }
   loginEmployee(email: string, password: string): Observable<any> {
-  return this.http.post('http://localhost:8080/api/employees/login', { email, password });
+  return this.http.post('http://localhost:8080/api/auth/employees/login', { email, password });
 }
 }

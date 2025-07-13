@@ -1,100 +1,99 @@
-.container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 1rem;
-  font-family: 'Segoe UI', sans-serif;
-}
-.btn-primary {
-  background-color: #6200ea;
-  border-color: #6200ea;
-}
-
-.btn-primary:hover {
-  background-color: #4b00b5;
-  border-color: #4b00b5;
-}
-
-.btn-warning {
-  background-color: #fbbc05;
-  border-color: #fbbc05;
-  color: #000;
-}
-
-.btn-warning:hover {
-  background-color: #e2a806;
-  border-color: #e2a806;
-}
-
-.btn-danger {
-  background-color: #d32f2f;
-  border-color: #d32f2f;
-}
-
-.btn-danger:hover {
-  background-color: #b71c1c;
-  border-color: #b71c1c;
-}
-
-input.form-control {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
 .table-container {
   max-height: 470px;
   overflow-y: auto;
-  border: 1px solid #dee2e6;
-  border-radius: 5px;
+  border: 1px solid #e0d7f1;
+  border-radius: 8px;
   margin-top: 20px;
   background-color: white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', sans-serif;
 }
 
-.sticky-header th {
-  position: sticky;
-  top: 0;
-  background-color: #f1dbfe !important;
-  z-index: 1;
-  color: #333;
-  font-weight: 600;
+.table-container::-webkit-scrollbar {
+  width: 0px;
+}
+.table-container::-webkit-scrollbar-thumb {
+  background-color: #a7a7a7;
+  border-radius: 0px;
 }
 
 .colored-border-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .colored-border-table th,
+.sticky-header th {
+  position: sticky;
+  top: 0;
+  background-color: #f1d7ff;
+  color: #7c00a1;
+  font-weight: 600;
+  z-index: 1;
+  text-align: center;
+  padding: 12px 14px;
+  border: 1px solid #e0d7f1;
+}
+
 .colored-border-table td {
-  border: 1px solid rgb(205, 203, 203);
-  padding: 10px 12px;
-  text-align: left;
+  padding: 12px 14px;
+  text-align: center;
+  border: 1px solid #ddd;
+  color: #7c00a1;
+  font-weight: 500;
+}
+
+.colored-border-table tr:nth-child(odd) {
+  background-color: #fdf6ff;
+}
+.colored-border-table tr:nth-child(even) {
+  background-color: #fdf6ff;
 }
 
 .colored-border-table tr:hover {
-  background-color: #f9f9f9;
+  background-color: #f3e1ff;
+  transition: background-color 0.2s ease-in-out;
 }
 
-.table-container::-webkit-scrollbar {
-  width: 6px;
+.colored-border-table td button {
+  padding: 6px 12px;
+  font-size: 13px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  margin: 0 4px;
 }
 
-.table-container::-webkit-scrollbar-thumb {
-  background-color: #a7a7a7;
-  border-radius: 4px;
+.edit-btn {
+  background-color: #ffc107;
+  color: black;
 }
+
+.activate-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.deactivate-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
 
 .modal-dialog {
-  max-width: 500px;
+  max-width: 500px; 
   margin: 1.75rem auto;
 }
 
 .modal-content {
   padding: 20px;
-  font-size: 14px;
+  font-size: 14px; 
   border-radius: 8px;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .modal-content input.form-control {
@@ -112,10 +111,4 @@ input.form-control {
 .modal-content .btn {
   font-size: 13px;
   padding: 6px 12px;
-}
-
-.img-thumbnail {
-  border-radius: 10px;
-  max-height: 180px;
-  margin-top: 1rem;
 }

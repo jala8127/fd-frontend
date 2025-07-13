@@ -3,10 +3,8 @@
   font-family: 'Segoe UI', sans-serif;
   background-color: #ffffff;
   min-height: 85vh;
-  position: relative;
   overflow-y: auto;
 }
-
 .banner {
   background: linear-gradient(to right, #f1d7ff, #e6cbff);
   padding: 32px;
@@ -17,15 +15,14 @@
 .banner h1 {
   font-size: 28px;
   color: #7c00a1;
-  margin-bottom: 10px;
 }
 .banner p {
   color: #7a03a2;
-  margin-bottom: 16px;
   font-size: 16px;
+  margin-bottom: 16px;
 }
 .banner button {
-  background-color: #a205ea;
+  background-color:  #a204e6;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -35,7 +32,7 @@
   transition: background-color 0.2s;
 }
 .banner button:hover {
-  background-color: #8a02c6;
+  background-color: #7802ab;
 }
 
 .payment-history h2 {
@@ -47,15 +44,17 @@
   width: 100%;
   border-collapse: collapse;
   background-color: #fff;
-  box-shadow: 0 4px 10px rgba(137, 3, 184, 0.05);
   border-radius: 10px;
   overflow: hidden;
+  box-shadow: 0 4px 10px rgba(137, 3, 184, 0.05);
+  margin-bottom:40px;
 }
 .payment-history th,
 .payment-history td {
   padding: 12px 14px;
   text-align: left;
   font-size: 14px;
+  border: 1px solid #ddd;
 }
 .payment-history th {
   background-color: #e7d7f7;
@@ -80,88 +79,141 @@
 
 .modal-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 0; left: 0;
   z-index: 999;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.45);
+  background-color: rgba(0,0,0,0.4);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+.modal-box {
+  background-color: white;
+  padding: 0;
+  border-radius: 16px;
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 25px rgba(162, 5, 234, 0.1);
+  width: 100%;
+  max-width: 460px;
+  animation: fadeIn 0.3s ease-out;
+}
+
 .payment-container {
-  background: #fff;
-  border: 1.5px solid #e4b9ff;
-  border-radius: 14px;
   padding: 24px;
-  width: 100%;
-  max-width: 500px;
-  box-shadow: 0 8px 20px rgba(133, 0, 199, 0.15);
-  z-index: 1000;
-  animation: fadeInUp 0.3s ease;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-/* Optional animation */
-@keyframes fadeInUp {
-  0% {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.spinner {
+  border: 5px solid #eee;
+  border-top: 5px solid var(--primary);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin: 20px auto;
+  animation: spin 1s linear infinite;
 }
 
-.payment-container h2 {
-  margin-bottom: 16px;
-  color: #7c00a1;
-}
-.payment-container p {
-  margin: 6px 0;
-  font-size: 15px;
-  color: #333;
-}
-.payment-container label {
-  font-weight: 600;
-  margin-top: 12px;
-  display: block;
-  margin-bottom: 4px;
-  color: #5d007b;
-}
-.payment-container select {
-  width: 100%;
-  padding: 8px;
-  font-size: 14px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-.payment-container button {
-  margin-top: 16px;
-  padding: 10px 20px;
-  background-color: #a205ea;
+.result-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 24px auto 12px;
   color: white;
+  font-size: 36px;
   font-weight: bold;
+  animation: pulseRing 0.6s ease;
+}
+
+.result-circle.success {
+  background-color: #28a745;
+  box-shadow:
+    0 0 0 10px rgba(40, 167, 69, 0.25),
+    0 0 20px var(--primary);
+}
+
+.result-circle.fail {
+  background-color: #e74c3c;
+  box-shadow:
+    0 0 0 10px rgba(231, 76, 60, 0.25),
+    0 0 20px var(--primary);
+}
+
+@keyframes pulseRing {
+  0% { transform: scale(0.7); opacity: 0.5; }
+  70% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+.result-title {
+  font-size: 22px;
+  margin-top: 8px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.text-success {
+  color: #28a745;
+}
+.text-fail {
+  color: #e74c3c;
+}
+
+.feedback-msg {
+  font-size: 15px;
+  margin: 12px 0 20px;
+  color: #555;
+}
+
+button {
+  padding: 10px 24px;
+  border-radius: 24px;
   border: none;
-  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
-}
-.payment-container button:hover {
-  background-color: #8c04cc;
-}
-
-.payment-container .cancel-btn {
-  background-color: #bbb;
-  color: black;
-  margin-left: 12px;
-}
-.payment-container .cancel-btn:hover {
-  background-color: #999;
+  transition: all 0.2s ease;
+  background-color: #a204e6;
+  color: white;
 }
 
-.payment-page::-webkit-scrollbar {
-  width: 0px;
+.btn-done {
+  background-color: #8a02c6;
+  color: white;
+}
+.btn-done:hover {
+  background-color: #7300a4;
+}
+
+.btn-retry {
+  background-color: #e74c3c;
+  color: white;
+}
+.btn-retry:hover {
+  background-color: #c0392b;
+}
+
+.cancel-btn {
+  background-color: #f64848;
+  color: white;
+  margin-left: 10px;
+}
+.cancel-btn:hover {
+  background-color: #ee1919;
+}
+
+/* Animations */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
 }

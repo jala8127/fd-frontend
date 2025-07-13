@@ -18,6 +18,8 @@ import { HelpComponent } from './user/help/help.component';
 import { AdminSchemesComponent } from './admin/admin-schemes/admin-schemes.component';
 import { SupportComponent } from './admin/support/support.component';
 import { AdminSettingsComponent } from './admin/admin-settings/admin-settings.component';
+import { AdminDepositsComponent } from './admin/admin-deposits/admin-deposits.component';
+import { AdminPaymentsComponent } from './admin/admin-payments/admin-payments.component';
 
 export const routes: Routes = [
      { path: '', component: LoginComponent },
@@ -33,6 +35,8 @@ export const routes: Routes = [
           { path: '', redirectTo: 'admin-home', pathMatch: 'full' },
           { path: 'admin-home', component: AdminHomeComponent },
           { path: 'admin-schemes', component: AdminSchemesComponent },
+          { path: 'admin-deposits', component: AdminDepositsComponent },
+          { path: 'admin-payments', component: AdminPaymentsComponent },
           { path: 'employees', component: EmployeesComponent },
           { path: 'customers', component: CustomersComponent },
           { path: 'verification', component: VerificationComponent },

@@ -2,7 +2,7 @@
   height: 85vh;
   width: 100%;
   overflow: hidden;
-  background-color: #fefbff;
+  background-color: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -25,6 +25,7 @@
   box-shadow: 0 4px 10px rgba(174, 0, 255, 0.08);
   font-family: 'Segoe UI', sans-serif;
   color: #4a007e;
+  margin-top:40px;
 }
 
 .kyc-container h2 {
@@ -66,7 +67,6 @@
   box-shadow: 0 0 3px #d7aefb;
 }
 
-/* Two-column layout */
 .form-row {
   display: flex;
   gap: 20px;
@@ -79,7 +79,6 @@
   flex-direction: column;
 }
 
-/* Address fields taller */
 .kyc-container textarea {
   resize: vertical;
   min-height: 80px;
@@ -127,7 +126,6 @@
   margin-bottom: 10px;
 }
 
-/* Responsive Tweaks */
 @media screen and (max-width: 768px) {
   .form-row {
     flex-direction: column;
@@ -147,7 +145,7 @@
     font-size: 14px;
     padding: 10px 16px;
   }
-  /* KYC Status Messages */
+
 .kyc-status {
   padding: 15px;
   border-radius: 10px;
@@ -175,7 +173,6 @@
   border: 1px solid #ffd789;
 }
 
-/* Status Action Buttons */
 .kyc-actions {
   margin-top: 16px;
   display: flex;

@@ -36,7 +36,7 @@
     </ng-template>
   </div>
 
-    <!-- Hero Banner -->
+  <!-- Hero Banner -->
   <div class="banner">
     <div class="banner-content">
       <h1>Start your investment today!</h1>
@@ -50,26 +50,56 @@
 <div class="modal-backdrop" *ngIf="scheme">
   <div class="modal-box"> 
     <div class="payment-container">
-      <h2>Confirm Your Deposit</h2>
 
-      <p><strong>Scheme:</strong> {{ scheme.schemeName }}</p>
-      <p><strong>Amount:</strong> ₹{{ investmentAmount }}</p>
-      <p><strong>Interest Rate:</strong> {{ scheme.interestRate }}%</p>
-      <p><strong>Tenure:</strong> {{ scheme.tenureMonths }} months</p>
+      <h2 *ngIf="!paymentResult">Confirm Your Deposit</h2>
 
-      <label>Select Payment Mode:</label>
-      <select [(ngModel)]="paymentMode">
-        <option value="UPI">UPI</option>
-        <option value="CARD">Card</option>
-      </select>
+      <!-- Deposit Form -->
+      <ng-container *ngIf="!paymentResult">
+        <p><strong>Scheme:</strong> {{ scheme.schemeName }}</p>
+        <p><strong>Amount:</strong> ₹{{ investmentAmount }}</p>
+        <p><strong>Interest Rate:</strong> {{ scheme.interestRate }}%</p>
+        <p><strong>Tenure:</strong> {{ scheme.tenureMonths }} months</p>
 
-      <br><br>
-      <button 
-        (click)="confirmPayment()" 
-        [disabled]="isProcessing">
-        {{ isProcessing ? 'Processing...' : 'Pay & Create FD' }}
-      </button>
-      <button class="cancel-btn" (click)="scheme = null">Cancel</button>
+        <label>Select Payment Mode:</label>
+        <select [(ngModel)]="paymentMode">
+          <option value="UPI">UPI</option>
+          <option value="CARD">Card</option>
+        </select>
+
+        <br><br>
+        <button 
+          (click)="confirmPayment()" 
+          [disabled]="isProcessing">
+          {{ isProcessing ? 'Processing...' : 'Pay & Create FD' }}
+        </button>
+        <button class="cancel-btn" (click)="scheme = null">Cancel</button>
+      </ng-container>
+
+      <div class="payment-feedback" *ngIf="showLoader || paymentResult">
+
+        <div *ngIf="showLoader" class="spinner"></div>
+
+        <div *ngIf="paymentResult" class="result-circle" [ngClass]="paymentResult === 'SUCCESS' ? 'success' : 'fail'">
+          <div class="icon-wrapper">
+            {{ paymentResult === 'SUCCESS' ? '✔' : '✖' }}
+          </div>
+        </div>
+
+        <h2 class="result-title" [ngClass]="paymentResult === 'SUCCESS' ? 'text-success' : 'text-fail'">
+          {{ paymentResult === 'SUCCESS' ? 'Payment Successful!' : 'Payment Failed!' }}
+        </h2>
+        <p class="feedback-msg">
+          {{ paymentResult === 'SUCCESS' ? 'Your deposit was successful.' : 'Something went wrong with the transaction.' }}
+        </p>
+
+        <button 
+          *ngIf="paymentResult" 
+          (click)="closeModal()" 
+          [ngClass]="paymentResult === 'SUCCESS' ? 'btn-done' : 'btn-retry'">
+          {{ paymentResult === 'SUCCESS' ? 'Done' : 'Try Again' }}
+        </button>
+      </div>
+
     </div>
   </div>
 </div>

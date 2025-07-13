@@ -1,0 +1,30 @@
+<div class="admin-deposit-wrapper">
+  <h2>All User Deposits</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>FD ID</th>
+        <th>User Name</th>
+        <th>Amount</th>
+        <th>Tenure</th>
+        <th>Interest Rate</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let fd of allDeposits">
+        <td>{{ fd.id }}</td>
+        <td>{{ fd.user?.name || 'N/A' }}</td>
+        <td>{{ fd.amount }}</td>
+        <td>{{ fd.tenure }} months</td>
+        <td>{{ fd.interestRate }}%</td>
+        <td>{{ fd.status }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="allDeposits.length === 0" class="no-data">
+    No deposits found.
+  </div>
+</div>

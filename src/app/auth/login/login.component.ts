@@ -43,21 +43,14 @@ export class LoginComponent {
       return;
     }
 
-    // Hardcoded Admin Login
-    if (email === "jala@admin.com" && password === "123456") {
-      this.toastr.success("Admin Login successful");
-      this.router.navigate(['/admin/admin-home']);
-      return;
-    }
-
     const isMpin = /^\d{6}$/.test(password);
 
     if (isMpin) {
-      // Step 1: Try user login
       this.authService.loginUser(email, password).subscribe({
         next: (res: any) => {
           this.toastr.success("User Login successful");
           localStorage.setItem('user', JSON.stringify(res));
+          localStorage.setItem('email', res.email);  
           this.router.navigate(['/user/user-home']);
         },
         error: (err: any) => {
@@ -69,7 +62,6 @@ export class LoginComponent {
         }
       });
     } else {
-      // If it's not MPIN, treat it as employee password
       this.tryEmployeeLogin(email, password);
     }
   }
@@ -79,7 +71,7 @@ export class LoginComponent {
       next: (res: any) => {
         this.toastr.success("Employee Login successful");
         localStorage.setItem('employee', JSON.stringify(res));
-        this.router.navigate(['/admin/admin-dashboard']);
+        this.router.navigate(['/admin/admin-home']);  
       },
       error: () => {
         this.toastr.error("Invalid login credentials.");

@@ -11,18 +11,17 @@ import { AuthService } from '../../service/auth.service';
   imports: [CommonModule, RouterModule],
   templateUrl: './user-dashboard.component.html',
   styleUrls: ['./user-dashboard.component.css'],
-  animations: [
-    trigger('slideFromTopRight', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translate(100%, -100%)' }),
-        animate('300ms ease-out', style({ opacity: 1, transform: 'translate(0, 0)' }))
-      ]),
-      transition(':leave', [
-        animate('200ms ease-in', style({ opacity: 0, transform: 'translate(100%, -100%)' }))
-      ])
+ animations: [
+  trigger('slideFromTopRight', [
+    transition(':enter', [
+      style({ opacity: 0, transform: 'translate(100%, -100%)' }),
+      animate('300ms ease-out', style({ opacity: 1, transform: 'translate(0, 0)' }))
+    ]),
+    transition(':leave', [
+      animate('200ms ease-in', style({ opacity: 0, transform: 'translate(100%, -100%)' }))
     ])
-  ]
-})
+  ])
+]})
 export class UserDashboardComponent implements OnInit {
 
   constructor(
@@ -36,11 +35,17 @@ export class UserDashboardComponent implements OnInit {
   user: any = null;
 
  ngOnInit(): void {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      this.user = JSON.parse(storedUser);
-    }
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    this.user = JSON.parse(storedUser);
+  } else {
+    console.warn('No user found in localStorage');
   }
+  if (!this.user) {
+  this.toastr.warning("Please log in again.");
+  this.router.navigate(['/login']);
+}
+}
 
   onProfileClick(): void {
     this.showModal = true;

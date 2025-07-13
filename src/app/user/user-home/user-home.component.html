@@ -1,6 +1,6 @@
 <div class="main-wrapper">
   <div class="user-home-container">
-    
+
     <!-- Welcome Section -->
     <div class="banner">
       <h1>Invest Smart with Our Fixed Deposits</h1>
@@ -8,27 +8,36 @@
       <button [routerLink]="['/user/schemes']">Start Investing</button>
     </div>
 
-     <!-- Summary Grid -->
-    <div class="summary-grid">
-      <div class="card">
-        <h3>Total Deposits</h3>
-        <p>₹ 2,50,000</p>
-      </div>
-      <div class="card">
-        <h3>Active FDs</h3>
-        <p>5</p>
-      </div>
-      <div class="card">
-        <h3>Interest Earned</h3>
-        <p>₹ 12,600</p>
-      </div>
-      <div class="card">
-        <h3>Upcoming Maturity</h3>
-        <p>15 July 2025</p>
-      </div>
-    </div>
+   <!-- Summary Grid (Dynamic) -->
+<div class="summary-grid" *ngIf="summary">
+  <div class="card">
+    <h3>Total Deposits</h3>
+    <p *ngIf="summary.totalAmount > 0">₹ {{ summary.totalAmount | number }}</p>
+    <p *ngIf="summary.totalAmount === 0">No investments made</p>
+  </div>
+  
+  <div class="card">
+    <h3>Active FDs</h3>
+    <p *ngIf="summary.activeFds > 0">{{ summary.activeFds }}</p>
+    <p *ngIf="summary.activeFds === 0">No Fixed Deposit's created</p>
+  </div>
+  
+  <div class="card">
+    <h3>Interest Earned</h3>
+    <p *ngIf="summary.interestEarned > 0">₹ {{ summary.interestEarned | number }}</p>
+    <p *ngIf="summary.interestEarned === 0">No interests earned</p>
+  </div>
+  
+  <div class="card">
+    <h3>Upcoming Maturity</h3>
+    <p *ngIf="summary.upcomingMaturity; else noMaturity">
+      {{ summary.upcomingMaturity | date: 'd MMM y' }}
+    </p>
+    <ng-template #noMaturity><p>No upcoming maturity</p></ng-template>
+  </div>
+</div>
 
-        <!-- Welcome Box -->
+    <!-- Welcome Box -->
     <div class="welcome-box">
       <h5>Manage your fixed deposits and view your earnings all in one place.</h5>
     </div>
@@ -36,46 +45,10 @@
     <!-- Features Section with Auto Scroll -->
     <div class="features-scroll-outer">
       <div class="features-scroll-inner">
-        <div class="feature-card">
-          <i class="fas fa-piggy-bank"></i>
-          <h3>Safe & Secure</h3>
-          <p>Your investments are protected and insured.</p>
-        </div>
-        <div class="feature-card">
-          <i class="fas fa-percentage"></i>
-          <h3>Attractive Interest</h3>
-          <p>Up to 8.5% interest p.a. on your deposits.</p>
-        </div>
-        <div class="feature-card">
-          <i class="fas fa-clock"></i>
-          <h3>Flexible Tenures</h3>
-          <p>Choose between short or long-term FDs.</p>
-        </div>
-        <div class="feature-card">
-          <i class="fas fa-bolt"></i>
-          <h3>Instant Withdrawal</h3>
-          <p>Withdraw your funds anytime without hassle.</p>
-        </div>
-        <!-- Duplicate set for infinite scroll illusion -->
-        <div class="feature-card">
-          <i class="fas fa-piggy-bank"></i>
-          <h3>Safe & Secure</h3>
-          <p>Your investments are protected and insured.</p>
-        </div>
-        <div class="feature-card">
-          <i class="fas fa-percentage"></i>
-          <h3>Attractive Interest</h3>
-          <p>Up to 8.5% interest p.a. on your deposits.</p>
-        </div>
-        <div class="feature-card">
-          <i class="fas fa-clock"></i>
-          <h3>Flexible Tenures</h3>
-          <p>Choose between short or long-term FDs.</p>
-        </div>
-        <div class="feature-card">
-          <i class="fas fa-bolt"></i>
-          <h3>Instant Withdrawal</h3>
-          <p>Withdraw your funds anytime without hassle.</p>
+        <div class="feature-card" *ngFor="let feature of features">
+          <i [class]="feature.icon"></i>
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.description }}</p>
         </div>
       </div>
     </div>
@@ -87,7 +60,7 @@
         <h2>Current Interest Rates</h2>
         <table>
           <tr>
-            <th>Tenure</th>
+            <th>Payouts</th>
             <th>Interest Rate (General)</th>
             <th>Interest Rate (Senior Citizen)</th>
           </tr>
@@ -109,12 +82,14 @@
         </table>
       </div>
 
-     <div class="video-container">
-      <p class="video-caption">Know more Invest better</p>
+      <!-- Video Section -->
+      <div class="video-container">
+        <p class="video-caption">Know more, Invest better</p>
         <video autoplay muted loop playsinline class="dashboard-video">
-        <source src="assets/deposit.mp4" type="video/mp4" />
+          <source src="assets/deposit.mp4" type="video/mp4" />
         </video>
       </div>
+    </div>
 
     <!-- Help Section -->
     <div class="extra-section">

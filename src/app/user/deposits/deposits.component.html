@@ -1,1 +1,135 @@
-<p>deposits works!</p>
+<div class="deposits-scroll-wrapper">
+  <div class="deposits-page">
+    <h2 class="heading-purple">Your Deposits</h2>
+
+    <table *ngIf="deposits.length > 0; else noFds">
+      <thead>
+        <tr>
+          <th>Scheme</th>
+          <th>Amount</th>
+          <th>Maturity Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let fd of deposits">
+          <td>{{ fd.schemeName }}</td>
+          <td>₹{{ fd.amount }}</td>
+          <td>{{ fd.maturityDate | date:'mediumDate' }}</td>
+          <td><button (click)="openFdModal(fd)">View</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #noFds>
+      <p class="no-fds-message">No active deposits found.</p>
+    </ng-template>
+  </div>
+
+  <!-- Modals stay outside table but inside scrollable area -->
+  <div class="modal-backdrop" *ngIf="selectedFd">
+    <div class="modal-box">
+      <h2>FD Details</h2>
+      <p><strong>User:</strong> {{ selectedFd.userName }}</p>
+      <p><strong>Start Date:</strong> {{ selectedFd.startDate | date:'mediumDate' }}</p>
+      <p><strong>Maturity Date:</strong> {{ selectedFd.maturityDate | date:'mediumDate' }}</p>
+      <p><strong>Invested Amount:</strong> ₹{{ selectedFd.amount }}</p>
+      <p><strong>Interest Earned:</strong> ₹{{ selectedFd.interest }}</p>
+      <p><strong>Maturity Amount:</strong> ₹{{ selectedFd.maturityAmount }}</p>
+      <p><strong>Payout Type:</strong> {{ selectedFd.payoutType }}</p>
+
+      <div class="modal-actions">
+        <button class="btn-withdraw" (click)="prepareCloseFd()">Close FD</button>
+        <button class="cancel-btn" (click)="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="showWithdrawModal">
+    <div class="modal-box confirm-box">
+      <h3>Confirm FD Closure</h3>
+      <p><strong>Current Payout:</strong> ₹{{ selectedFd.earlyPayout }}</p>
+      <p><strong>Penalty:</strong> ₹{{ selectedFd.penalty }}</p>
+      <p><strong>Final Amount:</strong> ₹{{ selectedFd.earlyPayout - selectedFd.penalty }}</p>
+
+      <div class="modal-actions">
+        <button class="btn-confirm" (click)="confirmWithdraw()">Confirm Withdraw</button>
+        <button class="cancel-btn" (click)="showWithdrawModal = false">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+    <section class="fd-benefits-section">
+  <h2 class="fd-benefits-heading">Benefits of Deposits</h2>
+
+  <div class="fd-benefits-wrapper">
+    <div class="benefit-column left">
+      <div class="benefit-box">
+        <i class="fas fa-piggy-bank"></i>
+        <div>
+          <h4>Encourages Habit of Saving</h4>
+          <p>Small savings lead to bigger investments.</p>
+        </div>
+      </div>
+      <div class="benefit-box">
+        <i class="fas fa-shield-alt"></i>
+        <div>
+          <h4>Safe Option</h4>
+          <p>No market-related risks.</p>
+        </div>
+      </div>
+      <div class="benefit-box">
+        <i class="fas fa-money-bill-wave"></i>
+        <div>
+          <h4>Interest Payment Options</h4>
+          <p>Cumulative & Non-Cumulative.</p>
+        </div>
+      </div>
+      <div class="benefit-box">
+        <i class="fas fa-user-plus"></i>
+        <div>
+          <h4>Higher Interest for Seniors</h4>
+          <p>Up to 0.65% extra.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefit-center">
+      <div class="central-icon">
+        <i class="fas fa-rupee-sign"></i>
+      </div>
+    </div>
+
+    <div class="benefit-column right">
+      <div class="benefit-box">
+        <i class="fas fa-hand-holding-usd"></i>
+        <div>
+          <h4>Loan Against FD</h4>
+          <p>Up to 95% of the deposit amount.</p>
+        </div>
+      </div>
+      <div class="benefit-box">
+        <i class="fas fa-percentage"></i>
+        <div>
+          <h4>Guaranteed Returns</h4>
+          <p>Fixed interest rates.</p>
+        </div>
+      </div>
+      <div class="benefit-box">
+        <i class="fas fa-university"></i>
+        <div>
+          <h4>Deposit Insurance</h4>
+          <p>In case the bank defaults.</p>
+        </div>
+      </div>
+      <div class="benefit-box">
+        <i class="fas fa-receipt"></i>
+        <div>
+          <h4>80C Tax Deductions</h4>
+          <p>Up to ₹1.5 lakh/year.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>

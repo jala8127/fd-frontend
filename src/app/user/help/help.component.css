@@ -1,0 +1,92 @@
+.help-wrapper {
+  padding: 40px 20px;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f4ff;
+  min-height: 85vh;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.help-title {
+  font-size: 32px;
+  color: #a205ea;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.help-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.help-search {
+  width: 100%;
+  max-width: 480px;
+  padding: 10px 14px;
+  font-size: 14px;
+  border: 1.5px solid #a205ea;
+  border-radius: 6px;
+  margin-bottom: 30px;
+}
+
+.help-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.help-card {
+  background-color: white;
+  border: 1px solid #e4d2f7;
+  border-left: 5px solid #a205ea;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.03);
+  transition: transform 0.2s;
+}
+
+.help-card:hover {
+  transform: translateY(-3px);
+}
+
+.help-card h3 {
+  font-size: 16.5px;
+  color: #4b006e;
+  margin-bottom: 8px;
+}
+
+.help-card p {
+  font-size: 13.5px;
+  color: #555;
+  margin: 0;
+}
+
+.contact-us-box {
+  background-color: #f2e5ff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.contact-us-box p {
+  margin: 0 0 12px;
+  font-weight: 500;
+  color: #333;
+}
+
+.contact-us-box button {
+  background-color: #a205ea;
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.contact-us-box button:hover {
+  background-color: #8c02c6;
+}

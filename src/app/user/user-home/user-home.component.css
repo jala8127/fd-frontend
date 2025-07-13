@@ -20,7 +20,7 @@
   flex-direction: column;
   gap: 32px;
   font-family: 'Segoe UI', sans-serif;
-  color: #4a007e;
+  color: #6803b0;
 }
 
 .banner {
@@ -52,7 +52,7 @@
   font-weight: 500;
 }
 
-/* Auto scrolling features */
+/* Auto scrolling  */
 .features-scroll-outer {
   overflow: hidden;
   width: 100%;
@@ -219,9 +219,9 @@
 }
 
 .card p {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
-  color: #6a008a;
+  color: #8b00b5;
 }
 
 .extra-section {

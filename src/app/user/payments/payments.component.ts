@@ -1,90 +1,107 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-payments',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './payments.component.html',
   styleUrls: ['./payments.component.css']
 })
-export class PaymentsComponent {
-  scheme: any;
+export class PaymentsComponent implements OnInit {
+
+  payments: any[] = [];
+  scheme: any = null;
+
+  userEmail: string = '';
   investmentAmount: number = 0;
   paymentMode: string = 'UPI';
-  payments: any[] = [];
-  isProcessing: boolean = false;
 
-  constructor(private router: Router, private http: HttpClient) {
-    const nav = this.router.getCurrentNavigation();
-    const state = nav?.extras?.state as {
-      scheme: any;
-      investmentAmount: number;
-    };
+  isProcessing = false;
+  showLoader = false; 
+  showSuccessTick = false;
 
-    if (state) {
-      this.scheme = state.scheme;
-      this.investmentAmount = state.investmentAmount;
-    }
-  }
+  paymentResult: 'SUCCESS' | 'FAILED' | null = null;
+
+  constructor(
+    private http: HttpClient,
+    private toastr: ToastrService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    console.log("💡 PaymentsComponent Initialized");  
-      this.loadPayments();
-  }
-  loadPayments(): void {
-    const userEmail = localStorage.getItem('email');
-    if (userEmail) {
-      this.http.get<any[]>(`http://localhost:8080/api/payments/user/${userEmail}`)
-        .subscribe(data => {
-          this.payments = data;
-        });
+    this.userEmail = localStorage.getItem('email') || '';
+    this.fetchPaymentHistory();
+    const navState = history.state;
+    if (navState.scheme && navState.investmentAmount) {
+      this.openDepositModal(navState.scheme, navState.investmentAmount);
     }
   }
 
-confirmPayment(): void {
-  console.log("🚀 confirmPayment called"); 
-
-  const email = localStorage.getItem('email');
-  if (!email || !this.scheme) {
-    console.error(" Missing email or scheme");
-    return;
+  fetchPaymentHistory() {
+    this.http.get<any[]>(`http://localhost:8080/api/payments/user/${this.userEmail}`)
+      .subscribe({
+        next: (data) => this.payments = data,
+      });
   }
 
-  this.isProcessing = true;
-
-  const isSuccess = true;
-
-  const payload = {
-    email: email,
-    schemeId: this.scheme.id,
-    amount: this.investmentAmount,
-    paymentMode: this.paymentMode,
-    status: isSuccess ? 'SUCCESS' : 'FAILED'
-  };
-
-  console.log("🔁 Sending payment request with payload:", payload); 
-
-  setTimeout(() => {
-    this.http.post('http://localhost:8080/api/payments/create', payload).subscribe({
-      next: () => {
-        this.isProcessing = false;
-        alert(isSuccess ? 'Payment successful! FD Created.' : 'Payment failed.');
-        this.loadPayments?.();
-        if (isSuccess) this.router.navigate(['/user/deposits']);
-      },
-      error: err => {
-        this.isProcessing = false;
-        alert('Payment error: ' + (err.error?.message || 'Server error.'));
-      }
-    });
-  }, 1500);
-}
-
-  goToSchemes(): void {
+  goToSchemes() {
     this.router.navigate(['/user/schemes']);
+  }
+
+  openDepositModal(scheme: any, amount: number) {
+    this.scheme = scheme;
+    this.investmentAmount = amount;
+  }
+
+  confirmPayment() {
+    this.isProcessing = true;
+    this.showLoader = true;
+    this.paymentResult = null;
+
+    setTimeout(() => {
+      const isSuccess = Math.random() < 0.7;
+      const status = isSuccess ? 'SUCCESS' : 'FAILED';
+
+      const body = {
+        email: this.userEmail,
+        schemeId: this.scheme.id,
+        amount: this.investmentAmount,
+        paymentMode: this.paymentMode,
+        status: status
+      };
+
+      this.http.post('http://localhost:8080/api/payments/create', body).subscribe({
+        next: () => {
+          this.paymentResult = status;
+          this.showLoader = false;
+          this.playSound(status === 'SUCCESS' ? 'success' : 'fail');
+          this.fetchPaymentHistory();
+        },
+        error: () => {
+          this.paymentResult = 'FAILED';
+          this.showLoader = false;
+          this.playSound('fail');
+        },
+        complete: () => this.isProcessing = false
+      });
+    }, 2500);
+  }
+
+  closeModal() {
+    this.scheme = null;
+    this.paymentResult = null;
+    this.showLoader = false;
+  }
+
+  playSound(type: 'success' | 'fail') {
+    const audio = new Audio();
+    audio.src = `assets/success.mp3`;
+    audio.load();
+    audio.play().catch(err => console.error("Sound play error", err));
   }
 }

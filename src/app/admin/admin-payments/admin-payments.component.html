@@ -1,0 +1,84 @@
+<!-- Minimal tab navigation (text-like style) -->
+<div class="settings-tabs">
+  <div
+    class="tab-text"
+    [class.active]="selectedTab === 'payments'"
+    (click)="selectedTab = 'payments'"
+  >
+    Payments
+  </div>
+  <div
+    class="tab-text"
+    [class.active]="selectedTab === 'payouts'"
+    (click)="selectedTab = 'payouts'"
+  >
+    Payouts
+  </div>
+</div>
+
+<div class="admin-payments-wrapper">
+  <div class="payments-header">
+    <h2>Admin Payments Management</h2>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="table-search-wrapper">
+    <input type="text" placeholder="Search by user/email" [(ngModel)]="searchText" />
+  </div>
+
+  <!-- Payments Table -->
+  <div *ngIf="selectedTab === 'payments'" class="table-container">
+    <table class="colored-border-table sticky-header">
+      <thead>
+        <tr>
+          <th>User Email</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Payment Mode</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payment of filteredPayments()">
+          <td>{{ payment.userEmail }}</td>
+          <td>{{ payment.amount | currency }}</td>
+          <td>{{ payment.date | date }}</td>
+          <td>{{ payment.mode }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Payouts Table -->
+  <div *ngIf="selectedTab === 'payouts'" class="table-container">
+    <table class="colored-border-table sticky-header">
+      <thead>
+        <tr>
+          <th>User Email</th>
+          <th>Payout Reason</th>
+          <th>Amount</th>
+          <th>Due Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payout of filteredPayouts()">
+          <td>{{ payout.userEmail }}</td>
+          <td>{{ payout.reason }}</td>
+          <td>{{ payout.amount | currency }}</td>
+          <td>{{ payout.dueDate | date }}</td>
+          <td>{{ payout.status }}</td>
+          <td>
+            <button
+              class="btn-primary"
+              (click)="processPayout(payout)"
+              [disabled]="payout.status === 'Paid'"
+            >
+              Mark as Paid
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

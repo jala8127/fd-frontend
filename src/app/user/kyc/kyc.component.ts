@@ -10,7 +10,7 @@ import { ToastrService } from 'ngx-toastr';
   standalone: true,
   templateUrl: './kyc.component.html',
   styleUrls: ['./kyc.component.css'],
-  imports: [CommonModule, FormsModule,RouterModule]
+  imports: [CommonModule, FormsModule, RouterModule]
 })
 export class KycComponent implements OnInit {
   kycData: any = {
@@ -27,7 +27,7 @@ export class KycComponent implements OnInit {
   selectedFile: File | null = null;
   userId: number = 0;
   isSubmitted = false;
-  status: string = '';
+  status: 'APPROVED' | 'PENDING' | 'REJECTED' | '' = '';
   reason: string = '';
 
   constructor(
@@ -93,7 +93,7 @@ export class KycComponent implements OnInit {
       'http://localhost:8080/api/kyc/submit',
       formData
     ).subscribe({
-      next: (res) => {
+      next: () => {
         this.toastr.success('KYC submitted successfully!', 'Success');
         this.isSubmitted = true;
         this.status = 'PENDING';
@@ -111,7 +111,13 @@ export class KycComponent implements OnInit {
       if (userKyc) {
         this.isSubmitted = true;
         this.status = userKyc.status;
-        this.reason = userKyc.rejectionReason || '';
+        const rawReason = userKyc.rejectionReason;
+        try {
+          const parsed = typeof rawReason === 'string' ? JSON.parse(rawReason) : rawReason;
+          this.reason = parsed?.reason || parsed?.message || rawReason;
+        } catch {
+          this.reason = rawReason;
+        }
       }
     });
   }

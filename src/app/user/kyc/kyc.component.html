@@ -3,10 +3,9 @@
     <div class="kyc-container">
       <h2>KYC Verification</h2>
 
+      <!-- KYC Form -->
       <div *ngIf="!isSubmitted">
         <form (ngSubmit)="submitKyc()" #kycForm="ngForm">
-
-          <!-- Full Name & Email -->
           <div class="form-row">
             <div class="form-group">
               <label for="fullName">Full Name (as per Aadhaar)</label>
@@ -18,7 +17,6 @@
             </div>
           </div>
 
-          <!-- Phone & DOB -->
           <div class="form-row">
             <div class="form-group">
               <label for="phone">Phone Number</label>
@@ -30,7 +28,6 @@
             </div>
           </div>
 
-          <!-- Address Fields -->
           <div class="form-group">
             <label for="currentAddress">Current Address</label>
             <textarea id="currentAddress" name="currentAddress" [(ngModel)]="kycData.currentAddress" rows="3" required></textarea>
@@ -40,7 +37,6 @@
             <textarea id="permanentAddress" name="permanentAddress" [(ngModel)]="kycData.permanentAddress" rows="3" required></textarea>
           </div>
 
-          <!-- Aadhaar & PAN -->
           <div class="form-row">
             <div class="form-group">
               <label for="aadhaarNumber">Aadhaar Number</label>
@@ -52,43 +48,40 @@
             </div>
           </div>
 
-          <!-- Aadhaar Document Upload -->
           <div class="form-group">
             <label for="aadhaarDoc">Upload Aadhaar Document</label>
             <input type="file" id="aadhaarDoc" name="aadhaarDoc" (change)="onFileChange($event)" required />
           </div>
 
-          <!-- Submit -->
           <div style="text-align: center;">
             <button type="submit">Submit KYC</button>
           </div>
         </form>
       </div>
 
-      <!-- Status Messages -->
+      <!-- APPROVED -->
       <div *ngIf="isSubmitted && status === 'APPROVED'">
-      <!-- Success message -->
-      <p style="color: rgb(2, 143, 2); font-weight: bold; text-align: center;">KYC Passed</p>
-      <!-- Investment Banner -->
+        <p style="color: rgb(2, 143, 2); font-weight: bold; text-align: center;">KYC Passed</p>
         <div class="banner">
           <h1>Invest Smart with Our Fixed Deposits</h1>
           <p>Secure your future with high returns and flexible tenures.</p>
-          <button [routerLink]="['/user/schemes']">Start Investing</button>
-        </div>
-
-      </div>
-        <div *ngIf="status === 'REJECTED'">
-          <p style="color: red; font-weight: bold;">KYC Rejected</p>
-          <p>Reason:{{reason}} </p>
-          <div style="text-align: center;">
-            <button (click)="isSubmitted = false">Re-Apply</button>
-          </div>
-        </div>
-
-        <div *ngIf="status === 'PENDING'">
-          <p style="color: orange; font-weight: bold;">KYC Pending , In Review</p>
+          <button (click)="goToSchemes()">Start Investing</button>
         </div>
       </div>
 
+      <!-- REJECTED -->
+      <div *ngIf="isSubmitted && status === 'REJECTED'">
+        <p style="color: red; font-weight: bold;">KYC Rejected</p>
+        <p>Reason: {{ reason }}</p>
+        <div style="text-align: center;">
+          <button (click)="reApply()">Re-Apply</button>
+        </div>
+      </div>
+
+      <!-- PENDING -->
+      <div *ngIf="isSubmitted && status === 'PENDING'">
+        <p style="color: orange; font-weight: bold;">KYC Pending, In Review</p>
+      </div>
     </div>
+  </div>
 </div>

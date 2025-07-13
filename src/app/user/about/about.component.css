@@ -1,0 +1,115 @@
+.about-wrapper {
+  height: calc(95vh - 60px); 
+  overflow-y: auto;
+  padding: 20px;
+  background: #fefcff;
+}
+
+.about-container {
+  max-width: 1200px;
+  margin: auto;
+  font-family: 'Segoe UI', sans-serif;
+  color: #4a148c;
+}
+.about-container {
+  padding: 40px 20px;
+  font-family: 'Segoe UI', sans-serif;
+  max-width: 1200px;
+  margin: auto;
+  color: #4a148c;
+}
+
+.about-banner {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.about-banner h1 {
+  font-size: 36px;
+  color: #a205ea;
+}
+
+.about-banner p {
+  font-size: 18px;
+  color: #555;
+}
+
+.about-section {
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-size: 28px;
+  color: #7c00a1;
+  margin-bottom: 12px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.feature-card {
+  background-color: #f8eaff;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.feature-card i {
+  font-size: 36px;
+  color: #a205ea;
+  margin-bottom: 10px;
+}
+
+.feature-card h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.feature-card p {
+  font-size: 14px;
+  color: #444;
+}
+
+.cta-section {
+  text-align: center;
+  background-color: #f3e1ff;
+  padding: 30px;
+  border-radius: 12px;
+}
+
+.cta-section h2 {
+  font-size: 26px;
+  margin-bottom: 12px;
+  color: #9800ea;
+}
+
+.cta-section p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.cta-section button {
+  background-color: #a205ea;
+  color: white;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.cta-section button:hover {
+  background-color: #8801c7;
+}

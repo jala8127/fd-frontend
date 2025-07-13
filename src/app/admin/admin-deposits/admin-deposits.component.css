@@ -1,0 +1,88 @@
+.admin-deposit-wrapper {
+  padding: 20px;
+  background-color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-x: auto;
+}
+
+.admin-deposit-wrapper h2 {
+  text-align: center;
+  color: #a704d8; 
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: 550;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  font-size: 14px;
+  table-layout: auto;
+}
+
+th {
+  background-color: #f1d7ff;  
+  color: #7c00a1;             
+  font-weight: 600;
+  text-align: center;
+  padding: 12px 14px;
+  border: 1px solid #e3c7fc;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+td {
+  padding: 12px 14px;
+  text-align: center;
+  border: 1px solid #eee;
+  color: #7c00a1;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+tr:nth-child(even) {
+  background-color: #fdf6ff;
+}
+tr:nth-child(odd) {
+  background-color: #fdf6ff;
+}
+
+tr:hover {
+  background-color: #f3e1ff;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.no-data {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.admin-deposit-wrapper table button {
+  padding: 6px 12px;
+  font-size: 13px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  margin: 0 4px;
+}
+.edit-btn {
+  background-color: #ffc107;
+  color: black;
+}
+.activate-btn {
+  background-color: #28a745;
+  color: white;
+}
+.deactivate-btn {
+  background-color: #dc3545;
+  color: white;
+}

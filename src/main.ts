@@ -6,7 +6,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { importProvidersFrom } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -16,6 +16,7 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(
       BrowserModule,
       FormsModule,
+      BrowserAnimationsModule,
       ToastrModule.forRoot({
         positionClass: 'toast-top-right',
         toastClass: 'ngx-toastr my-toast',

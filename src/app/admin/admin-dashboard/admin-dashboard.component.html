@@ -1,5 +1,4 @@
 <div style="display: flex;">
-  <!-- Sidebar -->
   <div class="sidebar">
     <div class="logo-section">
       <img src="assets/logo.avif" alt="Logo" class="logo" />
@@ -8,7 +7,8 @@
     <ul class="nav-items">
       <li routerLink="/admin/admin-home" routerLinkActive="active">Home</li>
       <li routerLink="/admin/admin-schemes" routerLinkActive="active">Schemes</li>
-      <li routerLink="/admin/activity" routerLinkActive="active">Activity</li>
+      <li routerLink="/admin/admin-deposits" routerLinkActive="active">Deposits</li>
+      <li routerLink="/admin/admin-payments" routerLinkActive="active">Payments</li>
       <li routerLink="/admin/customers" routerLinkActive="active">Customers</li>
       <li routerLink="/admin/employees" routerLinkActive="active">Employees</li>
       <li routerLink="/admin/verification" routerLinkActive="active">Verification</li>
@@ -24,7 +24,7 @@
 <div style="flex: 1; padding: 24px;">
   <div class="top-navbar" style="display: flex; justify-content: space-between; align-items: center;">
     <div class="welcome-text" style="font-size: 18px; font-weight: 600; color: #8e06cd;">
-      Welcome to Admin Page..!!
+      Welcome to Admin Page {{ employee?.name }}
     </div>
     <div style="display: flex; gap: 20px;">
       <div class="icon-btn" (click)="onSearchClick()">
@@ -44,10 +44,10 @@
       <div class="modal-content">
         <span class="close" (click)="closeModal()">&times;</span>
         <h3>Admin Profile</h3>
-        <p><strong>Name:</strong> {{ user?.name }}</p>
-        <p><strong>Email:</strong> {{ user?.email }}</p>
-        <p><strong>Phone:</strong> {{ user?.phone }}</p>
-        <p><strong>Role:</strong> {{ user?.role }}</p>
+        <p><strong>Name:</strong> {{ employee?.name }}</p>
+        <p><strong>Email:</strong> {{ employee?.email }}</p>
+        <p><strong>Phone:</strong> {{ employee?.phone }}</p>
+        <p><strong>Role:</strong> {{ employee?.role }}</p>
       </div>
     </div>
     

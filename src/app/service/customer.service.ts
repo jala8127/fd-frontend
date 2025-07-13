@@ -3,10 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Customer {
-  user_id?: number;
+  userId?: number;
   name: string;
   email: string;
   phone: string;
+  status: string;
   address?: string;
 }
 

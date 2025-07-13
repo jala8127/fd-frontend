@@ -24,7 +24,7 @@
 <div style="flex: 1; padding: 24px;">
   <div class="top-navbar" style="display: flex; justify-content: space-between; align-items: center;">
     <div class="welcome-text" style="font-size: 16px; font-weight: 600; color: #8e06cd;">
-      Welcome to user Page
+      <h4>   Welcome  {{ user?.name }}</h4>
     </div>
     <div style="display: flex; gap: 20px;">
       <div class="icon-btn" (click)="onSearchClick()">
@@ -47,7 +47,7 @@
         <p><strong>Name:</strong> {{ user?.name }}</p>
         <p><strong>Email:</strong> {{ user?.email }}</p>
         <p><strong>Phone:</strong> {{ user?.phone }}</p>
-        <p><strong>Role:</strong> {{ user?.role }}</p>
+        <p><strong>DOB:</strong> {{ user?.dob }}</p>
       </div>
     </div>
     <router-outlet></router-outlet>

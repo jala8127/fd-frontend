@@ -24,15 +24,17 @@
           <th>Name</th>
           <th>Email</th>
           <th>Phone</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let cust of filteredCustomers">
-          <td>{{ cust.user_id }}</td>
+          <td>{{ cust.userId }}</td>
           <td>{{ cust.name }}</td>
           <td>{{ cust.email }}</td>
           <td>{{ cust.phone }}</td>
+          <td>{{ cust.status }}</td>
           <td>
             <button class="btn btn-sm btn-info" (click)="openViewModal(cust)">View</button>
           </td>

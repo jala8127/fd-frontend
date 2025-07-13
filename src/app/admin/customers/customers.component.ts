@@ -20,6 +20,7 @@ export class CustomersComponent implements OnInit {
     name: '',
     email: '',
     phone: '',
+    status: '',
     address: ''
   };
   searchTerm: string = '';
@@ -57,6 +58,7 @@ export class CustomersComponent implements OnInit {
       name: '',
       email: '',
       phone: '',
+      status: '',
       address: ''
     };
     this.isViewMode = false;
@@ -90,7 +92,7 @@ export class CustomersComponent implements OnInit {
   }
 
   closeCustomerAccount() {
-    alert(`Close account for customer ID: ${this.selectedCustomer.user_id}`);
+    alert(`Close account for customer ID: ${this.selectedCustomer.userId}`);
     this.closeModal();
   }
 }
