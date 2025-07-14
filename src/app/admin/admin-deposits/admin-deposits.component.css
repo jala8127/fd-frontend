@@ -3,16 +3,38 @@
   background-color: #ffffff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   max-width: 1200px;
-  margin: 0 auto;
+  margin-top: -30px;
   overflow-x: auto;
 }
 
-.admin-deposit-wrapper h2 {
-  text-align: center;
-  color: #a704d8; 
+.deposits-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+}
+
+.deposits-header h2 {
+  margin: 0;
+  color: #a704d8;
   font-size: 24px;
   font-weight: 550;
+}
+
+.download-btn {
+  background-color: #a205ea;
+  color: white;
+  padding: 10px 18px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.download-btn:hover {
+  background-color: #8903cb;
 }
 
 table {
@@ -25,8 +47,8 @@ table {
 }
 
 th {
-  background-color: #f1d7ff;  
-  color: #7c00a1;             
+  background-color: #f1d7ff;
+  color: #7c00a1;
   font-weight: 600;
   text-align: center;
   padding: 12px 14px;
@@ -45,9 +67,7 @@ td {
   white-space: nowrap;
 }
 
-tr:nth-child(even) {
-  background-color: #fdf6ff;
-}
+tr:nth-child(even),
 tr:nth-child(odd) {
   background-color: #fdf6ff;
 }
@@ -74,15 +94,96 @@ tr:hover {
   cursor: pointer;
   margin: 0 4px;
 }
+
 .edit-btn {
   background-color: #ffc107;
   color: black;
 }
+
 .activate-btn {
   background-color: #28a745;
   color: white;
 }
+
 .deactivate-btn {
   background-color: #dc3545;
   color: white;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background-color: #eee;
+  padding: 30px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-box h3 {
+  font-size: 22px;
+  color: #7c00a1;
+  margin-bottom: 15px;
+}
+
+.modal-box p {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 10px 16px;
+  font-size: 15px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.modal-actions .confirm-btn {
+  background-color: #28a745;
+  color: rgb(255, 255, 255);
+}
+
+.modal-actions .confirm-btn:hover {
+  background-color: #218838;
+}
+
+.modal-actions .cancel-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.modal-actions .cancel-btn:hover {
+  background-color: #c82333;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

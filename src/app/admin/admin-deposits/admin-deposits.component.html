@@ -1,11 +1,14 @@
 <div class="admin-deposit-wrapper">
+ <div class="deposits-header">
   <h2>All User Deposits</h2>
-
+  <button class="download-btn" (click)="showDownloadModal = true">Download Records</button>
+</div>
   <table>
     <thead>
       <tr>
         <th>FD ID</th>
         <th>User Name</th>
+        <th>User ID</th>
         <th>Amount</th>
         <th>Tenure</th>
         <th>Interest Rate</th>
@@ -14,10 +17,11 @@
     </thead>
     <tbody>
       <tr *ngFor="let fd of allDeposits">
-        <td>{{ fd.id }}</td>
-        <td>{{ fd.user?.name || 'N/A' }}</td>
+        <td>{{ fd.depositId }}</td>
+        <td>{{ fd.userName }}</td>
+        <td>{{ fd.userId }}</td>
         <td>{{ fd.amount }}</td>
-        <td>{{ fd.tenure }} months</td>
+        <td>{{ fd.tenureMonths }} months</td>
         <td>{{ fd.interestRate }}%</td>
         <td>{{ fd.status }}</td>
       </tr>
@@ -26,5 +30,17 @@
 
   <div *ngIf="allDeposits.length === 0" class="no-data">
     No deposits found.
+  </div>
+</div>
+<!-- Confirm Download Modal -->
+<div class="modal-backdrop" *ngIf="showDownloadModal">
+  <div class="modal-box">
+    <h3>Confirm Download</h3>
+    <p>All details of active Fixed Deposits will be downloaded as a PDF.</p>
+
+    <div class="modal-actions">
+      <button (click)="downloadActiveDepositsPdf()">Confirm Download</button>
+      <button class="cancel-btn" (click)="showDownloadModal = false">Cancel</button>
+    </div>
   </div>
 </div>

@@ -19,4 +19,8 @@ export class AuthService {
     return localStorage.getItem('email') || '';
   }
 
+  checkEmailExists(email: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.baseUrl}/check-email/${email}`);
+  }
+
 }

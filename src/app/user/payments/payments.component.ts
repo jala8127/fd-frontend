@@ -19,12 +19,13 @@ export class PaymentsComponent implements OnInit {
 
   userEmail: string = '';
   investmentAmount: number = 0;
+
   paymentMode: string = 'UPI';
+  paymentDetails: string = '';  
+  selectedPayment: any = null;
 
   isProcessing = false;
-  showLoader = false; 
-  showSuccessTick = false;
-
+  showLoader = false;
   paymentResult: 'SUCCESS' | 'FAILED' | null = null;
 
   constructor(
@@ -36,6 +37,7 @@ export class PaymentsComponent implements OnInit {
   ngOnInit(): void {
     this.userEmail = localStorage.getItem('email') || '';
     this.fetchPaymentHistory();
+
     const navState = history.state;
     if (navState.scheme && navState.investmentAmount) {
       this.openDepositModal(navState.scheme, navState.investmentAmount);
@@ -49,6 +51,10 @@ export class PaymentsComponent implements OnInit {
       });
   }
 
+  openPaymentModal(payment: any) {
+    this.selectedPayment = payment;
+  }
+
   goToSchemes() {
     this.router.navigate(['/user/schemes']);
   }
@@ -56,9 +62,27 @@ export class PaymentsComponent implements OnInit {
   openDepositModal(scheme: any, amount: number) {
     this.scheme = scheme;
     this.investmentAmount = amount;
+    this.paymentDetails = '';
+    this.paymentMode = 'UPI';
   }
 
   confirmPayment() {
+    if (!this.paymentDetails || !this.paymentMode) {
+      this.toastr.warning('Please fill in payment details.');
+      return;
+    }
+
+    // Simple format validation (you can enhance this)
+    if (this.paymentMode === 'UPI' && !/^[\w.-]+@[\w]+$/.test(this.paymentDetails)) {
+      this.toastr.error('Invalid UPI ID format.');
+      return;
+    }
+
+    if (this.paymentMode === 'CARD' && !/^\d{16}$/.test(this.paymentDetails.replace(/-/g, ''))) {
+      this.toastr.error('Invalid Card Number. Must be 16 digits.');
+      return;
+    }
+
     this.isProcessing = true;
     this.showLoader = true;
     this.paymentResult = null;
@@ -72,7 +96,8 @@ export class PaymentsComponent implements OnInit {
         schemeId: this.scheme.id,
         amount: this.investmentAmount,
         paymentMode: this.paymentMode,
-        status: status
+        status: status,
+        paymentDetails: this.paymentDetails
       };
 
       this.http.post('http://localhost:8080/api/payments/create', body).subscribe({
@@ -100,7 +125,7 @@ export class PaymentsComponent implements OnInit {
 
   playSound(type: 'success' | 'fail') {
     const audio = new Audio();
-    audio.src = `assets/success.mp3`;
+    audio.src = type === 'success' ? 'assets/success.mp3' : 'assets/fail.mp3';
     audio.load();
     audio.play().catch(err => console.error("Sound play error", err));
   }

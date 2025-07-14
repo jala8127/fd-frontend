@@ -1,6 +1,8 @@
 <div class="deposits-scroll-wrapper">
   <div class="deposits-page">
-    <h2 class="heading-purple">Your Deposits</h2>
+    <div class="banner-container">
+      <h2 class="heading-purple">Your Deposits</h2>
+    </div>
 
     <table *ngIf="deposits.length > 0; else noFds">
       <thead>
@@ -13,16 +15,21 @@
       </thead>
       <tbody>
         <tr *ngFor="let fd of deposits">
-          <td>{{ fd.schemeName }}</td>
+          <td>{{ fd.schemename }}</td>
           <td>₹{{ fd.amount }}</td>
           <td>{{ fd.maturityDate | date:'mediumDate' }}</td>
-          <td><button (click)="openFdModal(fd)">View</button></td>
+          <td class="action-buttons">
+            <button class="btn-view" (click)="openFdModal(fd)">View</button>
+            <button class="btn-withdraw" (click)="prepareCloseFd()">Close FD</button>
+          </td>
         </tr>
       </tbody>
     </table>
 
-    <ng-template #noFds>
-      <p class="no-fds-message">No active deposits found.</p>
+   <ng-template #noFds>
+      <div class="banner-container">
+        <p class="no-fds-message">No active deposits found.</p>
+      </div>
     </ng-template>
   </div>
 
@@ -39,7 +46,6 @@
       <p><strong>Payout Type:</strong> {{ selectedFd.payoutType }}</p>
 
       <div class="modal-actions">
-        <button class="btn-withdraw" (click)="prepareCloseFd()">Close FD</button>
         <button class="cancel-btn" (click)="closeModal()">Close</button>
       </div>
     </div>

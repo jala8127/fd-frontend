@@ -21,13 +21,14 @@
 }
 
 table {
-  width: 100%;
+  width: 50vw;
   border-collapse: collapse;
-  margin-top: 16px;
+  margin: 16px auto;
+
 }
 th, td {
   padding: 10px 14px;
-  text-align: left;
+  text-align: center;
   border: 1px solid #ddd;
 }
 th {
@@ -49,7 +50,6 @@ button:hover {
   background-color: #8c02c6;
 }
 
-/* Modal Common */
 .modal-backdrop {
   position: fixed;
   top: 0; left: 0;
@@ -83,10 +83,10 @@ button:hover {
 }
 
 .cancel-btn {
-  background-color: #999;
+  background-color: #f25252;
 }
 .cancel-btn:hover {
-  background-color: #777;
+  background-color: #cd0f0f;
 }
 .btn-withdraw {
   background-color: #d9534f;
@@ -132,6 +132,28 @@ button:hover {
   color: #a014cf;
   margin-bottom: 24px;
 }
+
+.banner-container {
+  text-align: center;
+  padding: 20px;
+  background: #f3e8fd;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #a205ea;
+  box-shadow: 0 2px 6px rgba(162, 5, 234, 0.1);
+}
+
+.heading-purple {
+  color: #a205ea;
+  margin: 0;
+}
+
+.no-fds-message {
+  font-size: 16px;
+  color: #8008bc;
+  margin: 10px 0 0;
+}
+
 .benefit-column {
   display: flex;
   flex-direction: column;
@@ -191,4 +213,8 @@ button:hover {
   font-size: 34px;
   color: white;
   box-shadow: 0 0 15px rgba(162, 5, 234, 0.2);
+}
+.action-buttons {
+  display: flex;
+  gap: 10px;
 }

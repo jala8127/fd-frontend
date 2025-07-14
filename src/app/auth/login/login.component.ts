@@ -18,6 +18,7 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   showPassword = false;
+  invalidEmail: boolean = false;
 
   constructor(
     private router: Router,
@@ -30,8 +31,43 @@ export class LoginComponent {
     this.showPassword = !this.showPassword;
   }
 
-  OnRegisterClick() {
+  validateEmail(email: string): boolean {
+    const emailRegex = /^[a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)*@[a-zA-Z]+\.[a-z]{2,}$/;
+    return emailRegex.test(email);
+  }
+
+  onEmailChange() {
+    this.invalidEmail = this.email.trim() !== '' && !this.validateEmail(this.email);
+  }
+
+  checkEmailExistsBeforeRegister(event: Event) {
+    event.preventDefault(); 
+    const emailToCheck = this.email.trim();
+
+ if (!emailToCheck) {
     this.router.navigate(['/register']);
+    return;
+  }
+
+    if (!this.validateEmail(emailToCheck)) {
+      this.invalidEmail = true;
+      this.toastr.error("Invalid email format.");
+      return;
+    }
+    this.invalidEmail = false;
+
+    this.authService.checkEmailExists(emailToCheck).subscribe({
+      next: (exists: boolean) => {
+        if (exists) {
+          this.toastr.warning("This email is already registered. Please login instead.");
+        } else {
+          this.router.navigate(['/register']);
+        }
+      },
+      error: () => {
+        this.toastr.error("Error checking email availability.");
+      }
+    });
   }
 
   onLoginClick() {
@@ -42,6 +78,13 @@ export class LoginComponent {
       this.toastr.warning("Email and Password/MPIN are required.");
       return;
     }
+
+    if (!this.validateEmail(email)) {
+      this.invalidEmail = true;
+      this.toastr.error("Invalid email format.");
+      return;
+    }
+    this.invalidEmail = false;
 
     const isMpin = /^\d{6}$/.test(password);
 

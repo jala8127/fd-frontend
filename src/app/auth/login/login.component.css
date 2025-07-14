@@ -4,7 +4,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #e0b6f3;
+  background: #f1d7ff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -135,4 +135,27 @@
 
 .btn:hover {
   background-color: #8704ec;
+}
+.register-link {
+  margin-top: 16px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.register-link a {
+  color: #a205ea; 
+  cursor: pointer;
+  font-weight: 600;
+  margin-left: 4px;
+  text-decoration: underline;
+}
+
+.register-link a:hover {
+  color: #7a04b5;
+}
+.error-text {
+  color: #dc3545;
+  font-size: 13px;
+  margin-top: 4px;
+  margin-left: 2px;
 }

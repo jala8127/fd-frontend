@@ -2,35 +2,46 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { SchemeModalComponent } from '../scheme-modal/scheme-modal.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-admin-schemes',
   standalone: true,
   templateUrl: './admin-schemes.component.html',
   styleUrls: ['./admin-schemes.component.css'],
-  imports: [CommonModule, FormsModule, SchemeModalComponent]
+  imports: [CommonModule, FormsModule]
 })
 export class AdminSchemesComponent implements OnInit {
   cumulativeSchemes: any[] = [];
   nonCumulativeSchemes: any[] = [];
-  selectedScheme: any = null;
-  showModal = false;
-  isViewMode = false;
 
-  constructor(private http: HttpClient) {}
+  selectedScheme: any = null;
+  showModal: boolean = false;
+  isViewMode: boolean = false;
+
+  seniorRateMode: 'COMMON' | 'INDIVIDUAL' = 'COMMON';
+  commonSeniorRate: number = 0;
+  individualSeniorRates: { [schemeId: number]: number } = {};
+
+  constructor(private http: HttpClient,private toastr: ToastrService) {}
 
   ngOnInit(): void {
     this.loadSchemes();
   }
 
+  get allSchemes(): any[] {
+    return [...this.cumulativeSchemes, ...this.nonCumulativeSchemes];
+  }
+
   loadSchemes(): void {
-  this.http.get<any[]>('http://localhost:8080/api/schemes/all').subscribe(data => {
-    data.forEach(s => s.isActive = s.isActive === true || s.isActive === 'true');
-    this.cumulativeSchemes = data.filter(s => s.schemeType === 'CUMULATIVE');
-    this.nonCumulativeSchemes = data.filter(s => s.schemeType === 'NON_CUMULATIVE');
-  });
-}
+    this.http.get<any[]>('http://localhost:8080/api/schemes/all').subscribe(data => {
+      data.forEach(s => {
+        s.isActive = s.active === true || s.active === 'true';
+      });
+      this.cumulativeSchemes = data.filter(s => s.schemeType === 'CUMULATIVE');
+      this.nonCumulativeSchemes = data.filter(s => s.schemeType === 'NON_CUMULATIVE');
+    });
+  }
 
   openAddModal(): void {
     this.selectedScheme = {
@@ -46,10 +57,18 @@ export class AdminSchemesComponent implements OnInit {
     this.showModal = true;
   }
 
-  viewScheme(scheme: any): void {
-    this.selectedScheme = { ...scheme };
-    this.isViewMode = true;
+  openSeniorRateModal(): void {
+    this.selectedScheme = null;
+    this.isViewMode = false;
     this.showModal = true;
+
+    this.seniorRateMode = 'COMMON';
+    this.commonSeniorRate = 0;
+
+    this.individualSeniorRates = {};
+    this.allSchemes.forEach(s => {
+      this.individualSeniorRates[s.id] = s.seniorBonusRate || 0;
+    });
   }
 
   editScheme(scheme: any): void {
@@ -59,27 +78,13 @@ export class AdminSchemesComponent implements OnInit {
   }
 
   toggleStatus(scheme: any): void {
-  this.http.put<any>(`http://localhost:8080/api/schemes/${scheme.id}/toggle-status`, {})
-    .subscribe(
-      updated => {
-        console.log('Status updated:', updated);
+    this.http.put<any>(`http://localhost:8080/api/schemes/${scheme.id}/toggle-status`, {})
+      .subscribe(() => this.loadSchemes());
+  }
 
-        const list = scheme.schemeType === 'CUMULATIVE' 
-          ? this.cumulativeSchemes 
-          : this.nonCumulativeSchemes;
-
-        const index = list.findIndex(s => s.id === updated.id);
-        if (index !== -1) {
-          list[index] = { ...updated };
-        }
-      },
-      error => {
-        console.error('Toggle failed:', error);
-      }
-    );
-}
   closeModal(): void {
     this.showModal = false;
+    this.selectedScheme = null;
   }
 
   saveScheme(scheme: any): void {
@@ -99,5 +104,31 @@ export class AdminSchemesComponent implements OnInit {
       this.showModal = false;
       this.loadSchemes();
     });
+  }
+
+  handleSeniorRateSave(): void {
+    let payload: any[] = [];
+
+    if (this.seniorRateMode === 'COMMON') {
+      payload = this.allSchemes.map(s => ({
+        ...s,
+        seniorBonusRate: this.commonSeniorRate
+      }));
+    } else {
+      payload = this.allSchemes.map(s => ({
+        ...s,
+        seniorBonusRate: this.individualSeniorRates[s.id] ?? s.seniorBonusRate
+      }));
+    }
+
+    this.http.put('http://localhost:8080/api/schemes/update-senior-rates', payload)
+      .subscribe(() => {
+        this.toastr.success('Senior bonus rates updated.');
+        this.closeModal();
+        this.loadSchemes();
+      }, error => {
+        console.error('Error updating senior rates:', error);
+        this.toastr.error('Failed to update senior bonus rates.');
+      });
   }
 }

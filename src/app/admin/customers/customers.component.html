@@ -49,7 +49,6 @@
       <div class="modal-content bg-light text-dark">
         <div class="modal-header">
           <h5 class="modal-title">Customer Details</h5>
-          <button type="button" class="btn-close" (click)="closeModal()"></button>
         </div>
         <div class="modal-body">
           <p><strong>Name:</strong> {{ selectedCustomer.name }}</p>
@@ -72,7 +71,6 @@
       <div class="modal-content bg-light text-dark">
         <div class="modal-header">
           <h5 class="modal-title">Add Customer</h5>
-          <button type="button" class="btn-close" (click)="closeModal()"></button>
         </div>
         <form (ngSubmit)="saveCustomer()">
           <div class="modal-body">

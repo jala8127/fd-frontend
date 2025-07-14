@@ -2,7 +2,10 @@
   <!-- Header -->
   <div class="scheme-header">
     <h2>FD Schemes Management</h2>
-    <button (click)="openAddModal()">+ Add Scheme</button>
+    <div class="actions" style="display: flex; gap: 12px">
+      <button (click)="openSeniorRateModal()">Set Senior Rate</button>
+      <button (click)="openAddModal()">+ Add Scheme</button>
+    </div>
   </div>
 
   <!-- Cumulative Schemes -->
@@ -35,8 +38,8 @@
             </td>
             <td>
               <button class="edit-btn" (click)="editScheme(scheme)">Edit</button>
-              <button 
-                [ngClass]="scheme.isActive ? 'deactivate-btn' : 'activate-btn'" 
+              <button
+                [ngClass]="scheme.isActive ? 'deactivate-btn' : 'activate-btn'"
                 (click)="toggleStatus(scheme)">
                 {{ scheme.isActive ? 'Deactivate' : 'Activate' }}
               </button>
@@ -78,8 +81,8 @@
             </td>
             <td>
               <button class="edit-btn" (click)="editScheme(scheme)">Edit</button>
-              <button 
-                [ngClass]="scheme.isActive ? 'deactivate-btn' : 'activate-btn'" 
+              <button
+                [ngClass]="scheme.isActive ? 'deactivate-btn' : 'activate-btn'"
                 (click)="toggleStatus(scheme)">
                 {{ scheme.isActive ? 'Deactivate' : 'Activate' }}
               </button>
@@ -91,9 +94,71 @@
     <ng-template #noNonCumulative><p>No non-cumulative schemes available.</p></ng-template>
   </div>
 </div>
-<app-scheme-modal
-  *ngIf="showModal"
-  [scheme]="selectedScheme"
-  (close)="closeModal()"
-  (save)="saveScheme($event)">
-</app-scheme-modal>
+
+<!-- 🔵 Add/Edit Modal -->
+<div class="modal-backdrop" *ngIf="showModal && selectedScheme">
+  <div class="modal-container">
+    <h2>
+      {{ isViewMode ? 'Scheme Details' : (selectedScheme?.id ? 'Edit Scheme' : 'Add New Scheme') }}
+    </h2>
+
+    <label>Scheme Name:</label>
+    <input [(ngModel)]="selectedScheme.schemeName" [readonly]="isViewMode" />
+
+    <label>Interest Rate (%):</label>
+    <input type="number" [(ngModel)]="selectedScheme.interestRate" [readonly]="isViewMode" />
+
+    <label>Tenure (months):</label>
+    <input type="number" [(ngModel)]="selectedScheme.tenureMonths" [readonly]="isViewMode" />
+
+    <label>Minimum Amount:</label>
+    <input type="number" [(ngModel)]="selectedScheme.minAmount" [readonly]="isViewMode" />
+
+    <label>Scheme Type:</label>
+    <select [(ngModel)]="selectedScheme.schemeType" [disabled]="isViewMode">
+      <option value="CUMULATIVE">CUMULATIVE</option>
+      <option value="NON_CUMULATIVE">NON-CUMULATIVE</option>
+    </select>
+
+    <label>Payout:</label>
+    <input [(ngModel)]="selectedScheme.payout" [readonly]="selectedScheme.schemeType === 'CUMULATIVE' || isViewMode" />
+
+    <div class="modal-actions">
+      <button *ngIf="!isViewMode" (click)="saveScheme(selectedScheme)">Save</button>
+      <button (click)="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!--  Senior Rate Modal -->
+<div class="modal-backdrop" *ngIf="showModal && !selectedScheme">
+  <div class="modal-container senior-rate-mode">
+    <h2>Set Senior Citizen Bonus Interest Rate</h2>
+
+    <label>
+      <input type="radio" name="rateMode" [(ngModel)]="seniorRateMode" value="COMMON" />
+      Common Rate for All Schemes
+    </label>
+    <label>
+      <input type="radio" name="rateMode" [(ngModel)]="seniorRateMode" value="INDIVIDUAL" />
+      Different Rate Per Scheme
+    </label>
+
+    <div *ngIf="seniorRateMode === 'COMMON'" class="common-rate-section">
+      <label>Bonus Rate (%):</label>
+      <input type="number" [(ngModel)]="commonSeniorRate" />
+    </div>
+
+    <div *ngIf="seniorRateMode === 'INDIVIDUAL'" class="individual-rate-section">
+      <div *ngFor="let s of allSchemes">
+        <label>{{ s.schemeName }}:</label>
+        <input type="number" [(ngModel)]="individualSeniorRates[s.id]" />
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button (click)="handleSeniorRateSave()">Save</button>
+      <button (click)="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>

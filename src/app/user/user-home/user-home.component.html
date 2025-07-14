@@ -1,48 +1,46 @@
 <div class="main-wrapper">
   <div class="user-home-container">
 
-    <!-- Welcome Section -->
     <div class="banner">
       <h1>Invest Smart with Our Fixed Deposits</h1>
       <p>Secure your future with high returns and flexible tenures.</p>
       <button [routerLink]="['/user/schemes']">Start Investing</button>
     </div>
 
-   <!-- Summary Grid (Dynamic) -->
-<div class="summary-grid" *ngIf="summary">
-  <div class="card">
-    <h3>Total Deposits</h3>
-    <p *ngIf="summary.totalAmount > 0">₹ {{ summary.totalAmount | number }}</p>
-    <p *ngIf="summary.totalAmount === 0">No investments made</p>
-  </div>
-  
-  <div class="card">
-    <h3>Active FDs</h3>
-    <p *ngIf="summary.activeFds > 0">{{ summary.activeFds }}</p>
-    <p *ngIf="summary.activeFds === 0">No Fixed Deposit's created</p>
-  </div>
-  
-  <div class="card">
-    <h3>Interest Earned</h3>
-    <p *ngIf="summary.interestEarned > 0">₹ {{ summary.interestEarned | number }}</p>
-    <p *ngIf="summary.interestEarned === 0">No interests earned</p>
-  </div>
-  
-  <div class="card">
-    <h3>Upcoming Maturity</h3>
-    <p *ngIf="summary.upcomingMaturity; else noMaturity">
-      {{ summary.upcomingMaturity | date: 'd MMM y' }}
-    </p>
-    <ng-template #noMaturity><p>No upcoming maturity</p></ng-template>
-  </div>
-</div>
+    <div class="summary-grid" *ngIf="summary">
+      <div class="card">
+        <h3>Total Deposits</h3>
+        <p *ngIf="summary.totalAmount > 0">₹ {{ summary.totalAmount | number }}</p>
+        <p *ngIf="summary.totalAmount === 0">No investments made</p>
+      </div>
 
-    <!-- Welcome Box -->
+      <div class="card">
+        <h3>Active FDs</h3>
+        <p *ngIf="summary.activeFds > 0">{{ summary.activeFds }}</p>
+        <p *ngIf="summary.activeFds === 0">No Fixed Deposit's created</p>
+      </div>
+
+      <div class="card">
+        <h3>Interest Earned</h3>
+        <p *ngIf="summary.interestEarned > 0">₹ {{ summary.interestEarned | number }}</p>
+        <p *ngIf="summary.interestEarned === 0">No interests earned</p>
+      </div>
+
+      <div class="card">
+        <h3>Upcoming Maturity</h3>
+        <p *ngIf="summary.upcomingMaturity; else noMaturity">
+          {{ summary.upcomingMaturity | date: 'd MMM y' }}
+        </p>
+        <ng-template #noMaturity>
+          <p>No upcoming maturity</p>
+        </ng-template>
+      </div>
+    </div>
+
     <div class="welcome-box">
       <h5>Manage your fixed deposits and view your earnings all in one place.</h5>
     </div>
 
-    <!-- Features Section with Auto Scroll -->
     <div class="features-scroll-outer">
       <div class="features-scroll-inner">
         <div class="feature-card" *ngFor="let feature of features">
@@ -53,36 +51,34 @@
       </div>
     </div>
 
-    <!-- Interest Table and Video Side-by-Side -->
+    <!-- Interest Table & Video -->
     <div class="interest-video-wrapper">
-      <!-- Interest Table -->
+
       <div class="interest-table">
         <h2>Current Interest Rates</h2>
-        <table>
-          <tr>
-            <th>Payouts</th>
-            <th>Interest Rate (General)</th>
-            <th>Interest Rate (Senior Citizen)</th>
-          </tr>
-          <tr>
-            <td>6 Months</td>
-            <td>6.50%</td>
-            <td>6.75%</td>
-          </tr>
-          <tr>
-            <td>12 Months</td>
-            <td>7.25%</td>
-            <td>7.50%</td>
-          </tr>
-          <tr>
-            <td>3 Years</td>
-            <td>8.00%</td>
-            <td>8.25%</td>
-          </tr>
+        <table *ngIf="interestSchemes.length > 0;">
+          <thead>
+            <tr>
+              <th>Payouts</th>
+              <th>Interest Rate (General)</th>
+              <th>Interest Rate (Senior Citizen)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let scheme of interestSchemes">
+              <td>{{ scheme.tenureMonths }} Months</td>
+              <td>{{ scheme.interestRate }}%</td>
+              <td>
+                {{
+                  (scheme.interestRate + (scheme.seniorBonusRate || 0)) |
+                  number: '1.2-2'
+                }}%
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
 
-      <!-- Video Section -->
       <div class="video-container">
         <p class="video-caption">Know more, Invest better</p>
         <video autoplay muted loop playsinline class="dashboard-video">
@@ -91,7 +87,6 @@
       </div>
     </div>
 
-    <!-- Help Section -->
     <div class="extra-section">
       <h4>Need Help?</h4>
       <p>Contact support or check our Help Center for assistance.</p>

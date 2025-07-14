@@ -18,9 +18,7 @@
 
 <div class="admin-payments-wrapper">
   <div class="payments-header">
-    <h2>Admin Payments Management</h2>
   </div>
-
   <!-- Search Bar -->
   <div class="table-search-wrapper">
     <input type="text" placeholder="Search by user/email" [(ngModel)]="searchText" />
@@ -40,9 +38,10 @@
       <tbody>
         <tr *ngFor="let payment of filteredPayments()">
           <td>{{ payment.userEmail }}</td>
-          <td>{{ payment.amount | currency }}</td>
-          <td>{{ payment.date | date }}</td>
-          <td>{{ payment.mode }}</td>
+          <td>{{ payment.amount }}</td>
+          <td>{{ payment.paymentDate | date: 'medium' }}</td>
+          <td>{{ payment.paymentMode }}</td>
+          
         </tr>
       </tbody>
     </table>

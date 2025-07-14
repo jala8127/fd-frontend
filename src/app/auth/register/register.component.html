@@ -6,11 +6,11 @@
   </div>
 
   <div class="register-container">
+    <div class="modal-header">
+    <div class="close-icon" (click)="goToLogin()">&times;</div>
+  </div>
     <h2 class="title">REGISTER</h2>
-
-    <!-- Step 1: Email -->
-   <!-- Step 1 & 2 Combined: Email & OTP -->
-<form *ngIf="!otpVerified" (ngSubmit)="otpSent ? verifyOtp() : sendOtp()">
+    <form *ngIf="!otpVerified" (ngSubmit)="otpSent ? verifyOtp() : sendOtp()">
   <div class="form-group">
     <label>Email</label>
     <input
