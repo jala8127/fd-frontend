@@ -1,12 +1,23 @@
+/* Make parent wrapper take full height and flex layout */
 .admin-deposit-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 65vh;
   padding: 20px;
   background-color: #ffffff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   max-width: 1200px;
-  margin-top: -30px;
-  overflow-x: auto;
+  margin: auto;
+  box-sizing: border-box;
 }
 
+.table-scroll-wrapper {
+  overflow-y: auto;
+  flex-grow: 1;
+  min-height: 57vh;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
 .deposits-header {
   display: flex;
   justify-content: space-between;
@@ -93,6 +104,8 @@ tr:hover {
   font-weight: 500;
   cursor: pointer;
   margin: 0 4px;
+  color: white;
+  background-color: #3190ea;
 }
 
 .edit-btn {
@@ -129,7 +142,7 @@ tr:hover {
   border-radius: 12px;
   width: 400px;
   max-width: 90%;
-  text-align: center;
+  text-align: left;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -163,6 +176,7 @@ tr:hover {
   cursor: pointer;
   border: none;
   transition: background-color 0.3s ease;
+  background-color: #c82333;
 }
 
 .modal-actions .confirm-btn {
@@ -186,4 +200,49 @@ tr:hover {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+.deposits-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.deposits-header input {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.modal-box {
+  max-width: 400px;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+}
+.searchbar {
+  margin-bottom: 1rem;
+}
+
+.searchbar input[type="text"] {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.searchbar input[type="text"]:focus {
+  border-color: #7e57c2;
+}
+
+.cancel-btn {
+  background-color: #c82333;
+  color:white;
+  border-color: #c82333;
+  border-radius: 5px;
 }

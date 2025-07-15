@@ -22,6 +22,7 @@ export class DepositsComponent implements OnInit {
   const email = localStorage.getItem('email');
   this.http.get<any[]>(`http://localhost:8080/api/deposits/user/${email}`).subscribe({
     next: data => this.deposits = data,
+    
     error: () => console.error("Failed to load FDs")
   });
 }

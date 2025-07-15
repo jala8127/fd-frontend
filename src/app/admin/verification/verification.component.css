@@ -24,7 +24,7 @@
   border-radius: 16px;
   box-shadow: 0 4px 10px rgba(174, 0, 255, 0.08);
   font-family: 'Segoe UI', sans-serif;
-  color: #4a007e;
+  color: #880eb5;
 }
 
 .kyc-container h2,
@@ -72,7 +72,6 @@
   margin: 6px 0;
 }
 
-/* Form Layout (Admin Read-Only View) */
 .form-row {
   display: flex;
   gap: 20px;
@@ -181,4 +180,65 @@ button:hover {
   .kyc-details {
     padding: 20px;
   }
+}
+.kyc-tabs {
+  display: flex;
+  justify-content:center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.tab {
+  position: relative; 
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #751a9c;
+  border-radius: 4px 4px 0 0;
+  transition: all 0.3s ease;
+}
+
+.tab:hover {
+  background-color: #ffffff;
+}
+
+.tab.active {
+  background-color: white;
+  color:#b114e1;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 3px;
+  background-color: #a205ea;
+  border-radius: 2px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: #fff9ff;
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }

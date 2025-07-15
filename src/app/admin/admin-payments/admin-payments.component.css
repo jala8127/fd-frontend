@@ -5,13 +5,14 @@
   margin: auto;
 }
 
-.settings-tabs {
+.payment-tabs {
   display: flex;
   justify-content: center;
   gap: 24px;
   margin-bottom: 20px;
-  border-bottom: 2px solid #f1e3fc;
+  border-bottom: 2px solid #ffffff;
   padding-bottom: 8px;
+  margin-top : -30px;
 }
 
 .tab-text {
@@ -51,11 +52,11 @@
 }
 
 .table-search-wrapper {
-  margin-bottom: 12px;
   width: 100%;
+  margin-bottom: 12px;
+  margin-top: -28px;
   background-color: white;
   border: 1px solid #ffffff;
-  border-bottom: none;
   border-radius: 5px 5px 0 0;
   padding: 12px;
 }
@@ -70,7 +71,8 @@
 }
 
 .table-container {
-  max-height: 465px;
+  display: block;
+  max-height: 380px; 
   overflow-y: auto;
   border: 1px solid #dee2e6;
   border-radius: 0 0 5px 5px;
@@ -83,16 +85,18 @@
   border-collapse: collapse;
   font-size: 14px;
   background-color: #fff;
+  min-width: 600px; 
 }
 
 .sticky-header th {
   position: sticky;
   top: 0;
   background-color: #f1d7ff;
-  z-index: 1;
+  z-index: 2;
   color: #7c00a1;
   font-weight: 600;
   text-align: center;
+  padding: 12px;
 }
 
 .colored-border-table th,

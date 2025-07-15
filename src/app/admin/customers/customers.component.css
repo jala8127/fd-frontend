@@ -12,6 +12,7 @@
 .table-container::-webkit-scrollbar {
   width: 0px;
 }
+
 .table-container::-webkit-scrollbar-thumb {
   background-color: #a7a7a7;
   border-radius: 0px;
@@ -46,9 +47,7 @@
   font-weight: 500;
 }
 
-.colored-border-table tr:nth-child(odd) {
-  background-color: #fdf6ff;
-}
+.colored-border-table tr:nth-child(odd),
 .colored-border-table tr:nth-child(even) {
   background-color: #fdf6ff;
 }
@@ -83,17 +82,17 @@
   color: white;
 }
 
-
 .modal-dialog {
-  max-width: 500px; 
+  max-width: 500px;
   margin: 1.75rem auto;
 }
 
-.modal-content {
+.modal-body {
   padding: 20px;
-  font-size: 14px; 
+  font-size: 14px;
   border-radius: 8px;
   font-family: 'Segoe UI', sans-serif;
+  text-align: left;
 }
 
 .modal-content input.form-control {
@@ -110,5 +109,24 @@
 
 .modal-content .btn {
   font-size: 13px;
-  padding: 6px 12px;
+  padding: 6px 22px;
+}
+
+.modal-footer.justify-space-between {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem 1rem;
+}
+
+.address-box {
+  background-color: #fdf6ff;
+  border: 1px solid #e0d7f1;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #7c00a1;
+  margin-top: 4px;
+  white-space: pre-wrap;
+  font-weight: 500;
 }

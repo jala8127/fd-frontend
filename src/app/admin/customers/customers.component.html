@@ -1,11 +1,9 @@
 <div class="container mt-4">
-  <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>Customer Management</h3>
     <button class="btn btn-primary" (click)="openAddModal()">Add Customer</button>
   </div>
 
-  <!-- Search Bar -->
   <div class="mb-3">
     <input
       type="text"
@@ -15,7 +13,6 @@
       (input)="filterCustomers()" />
   </div>
 
-  <!-- Customer Table -->
   <div class="table-responsive table-container">
     <table class="table table-striped bg-white text-dark colored-border-table">
       <thead class="table-primary sticky-header">
@@ -43,7 +40,6 @@
     </table>
   </div>
 
-  <!-- View Modal -->
   <div class="modal fade" id="viewCustomerModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content bg-light text-dark">
@@ -54,18 +50,29 @@
           <p><strong>Name:</strong> {{ selectedCustomer.name }}</p>
           <p><strong>Email:</strong> {{ selectedCustomer.email }}</p>
           <p><strong>Phone:</strong> {{ selectedCustomer.phone }}</p>
-          <p><strong>Address:</strong> {{ selectedCustomer.address || 'N/A' }}</p>
-          <!-- Add more fields if needed -->
+          <p><strong>DOB:</strong> {{ selectedCustomer.dob || 'N/A' }}</p>
+          <p><strong>PAN Number:</strong> {{ selectedCustomer.panNo || 'N/A' }}</p>
+          <p><strong>Status:</strong> {{ selectedCustomer.status || 'Not Submitted' }}</p>
+          <p><strong>Active FD:</strong> {{ selectedCustomer.activeFd || 'No Active FD' }}</p>
+          <div>
+          <strong>Address:</strong>
+          <div class="address-box mt-2">
+            {{ selectedCustomer.address || 'N/A' }}
+          </div>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button class="btn btn-danger" (click)="closeCustomerAccount()">Close Account</button>
-          <button class="btn btn-secondary" (click)="closeModal()">Close</button>
+        <div class="modal-footer justify-space-between">
+          <div class="left-btn">
+            <button class="btn btn-danger" (click)="closeCustomerAccount()">Close Account</button>
+          </div>
+          <div class="right-btn">
+            <button class="btn btn-secondary" (click)="closeModal()">Close</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Add Customer Modal -->
   <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content bg-light text-dark">
@@ -86,6 +93,14 @@
               <div class="col-md-6 mb-3">
                 <label>Phone</label>
                 <input type="text" class="form-control" [(ngModel)]="selectedCustomer.phone" name="phone" required />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Date of Birth</label>
+                <input type="date" class="form-control" [(ngModel)]="selectedCustomer.dob" name="dob" />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>PAN Number</label>
+                <input type="text" class="form-control" [(ngModel)]="selectedCustomer.panNo" name="panNo" />
               </div>
               <div class="col-md-6 mb-3">
                 <label>Address</label>

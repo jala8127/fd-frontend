@@ -1,5 +1,4 @@
-<!-- Minimal tab navigation (text-like style) -->
-<div class="settings-tabs">
+<div class="payment-tabs">
   <div
     class="tab-text"
     [class.active]="selectedTab === 'payments'"
@@ -29,6 +28,7 @@
     <table class="colored-border-table sticky-header">
       <thead>
         <tr>
+          <th>ID</th>
           <th>User Email</th>
           <th>Amount</th>
           <th>Date</th>
@@ -37,9 +37,10 @@
       </thead>
       <tbody>
         <tr *ngFor="let payment of filteredPayments()">
+          <td>{{ payment.id }}</td>
           <td>{{ payment.userEmail }}</td>
           <td>{{ payment.amount }}</td>
-          <td>{{ payment.paymentDate | date: 'medium' }}</td>
+          <td>{{ payment.paymentDate | date: 'mediumDate' }}</td>
           <td>{{ payment.paymentMode }}</td>
           
         </tr>

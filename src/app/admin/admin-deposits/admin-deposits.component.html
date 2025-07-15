@@ -1,37 +1,43 @@
 <div class="admin-deposit-wrapper">
- <div class="deposits-header">
-  <h2>All User Deposits</h2>
-  <button class="download-btn" (click)="showDownloadModal = true">Download Records</button>
-</div>
-  <table>
-    <thead>
-      <tr>
-        <th>FD ID</th>
-        <th>User Name</th>
-        <th>User ID</th>
-        <th>Amount</th>
-        <th>Tenure</th>
-        <th>Interest Rate</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let fd of allDeposits">
-        <td>{{ fd.depositId }}</td>
-        <td>{{ fd.userName }}</td>
-        <td>{{ fd.userId }}</td>
-        <td>{{ fd.amount }}</td>
-        <td>{{ fd.tenureMonths }} months</td>
-        <td>{{ fd.interestRate }}%</td>
-        <td>{{ fd.status }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="deposits-header">
+    <h2>All User Deposits</h2>
+    <button class="download-btn" (click)="showDownloadModal = true">Download Records</button>
+  </div>
 
-  <div *ngIf="allDeposits.length === 0" class="no-data">
-    No deposits found.
+  <div class="searchbar">
+    <input type="text" [(ngModel)]="searchText" placeholder="Search by user name or ID or Amount..." />
+  </div>
+
+  <div class="table-scroll-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>FD ID</th>
+          <th>User Name</th>
+          <th>User ID</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let fd of filteredDeposits()">
+          <td>{{ fd.depositId }}</td>
+          <td>{{ fd.userName }}</td>
+          <td>{{ fd.userId }}</td>
+          <td>₹{{ fd.amount }}</td>
+          <td>{{ fd.status }}</td>
+          <td><button (click)="viewDetails(fd)">View</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredDeposits().length === 0" class="no-data">
+      No deposits found.
+    </div>
   </div>
 </div>
+
 <!-- Confirm Download Modal -->
 <div class="modal-backdrop" *ngIf="showDownloadModal">
   <div class="modal-box">
@@ -42,5 +48,22 @@
       <button (click)="downloadActiveDepositsPdf()">Confirm Download</button>
       <button class="cancel-btn" (click)="showDownloadModal = false">Cancel</button>
     </div>
+  </div>
+</div>
+
+<!-- FD Detail Modal -->
+<div class="modal-backdrop" *ngIf="selectedFd">
+  <div class="modal-box">
+    <h3>FD Details</h3>
+    <p><strong>FD ID:</strong> {{ selectedFd.depositId }}</p>
+    <p><strong>User ID:</strong> {{ selectedFd.userId }}</p>
+    <p><strong>User Name:</strong> {{ selectedFd.userName }}</p>
+    <p><strong>Amount:</strong> ₹{{ selectedFd.amount }}</p>
+    <p><strong>Tenure:</strong> {{ selectedFd.tenureMonths }} months</p>
+    <p><strong>Interest Rate:</strong> {{ selectedFd.interestRate }}%</p>
+    <p><strong>Maturity Date:</strong> {{ selectedFd.maturityDate | date:'mediumDate' }}</p>
+    <p><strong>Payout Type:</strong> {{ selectedFd.payoutType }}</p>
+    <p><strong>Status:</strong> {{ selectedFd.status }}</p>
+    <button class="cancel-btn" (click)="selectedFd = null">Close</button>
   </div>
 </div>

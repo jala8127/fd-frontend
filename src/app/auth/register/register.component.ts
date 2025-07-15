@@ -13,58 +13,107 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
-  constructor(private router: Router, private http: HttpClient, private toastr: ToastrService) {}
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private toastr: ToastrService
+  ) {}
 
-  name: string = '';
-  email: string = '';
-  phone: string = '';
-  dob: string = '';
-  mpin: string = '';
-  confirmMpin: string = '';
-  otp: string = '';
-  generatedOtp: string = '';
+  name = '';
+  email = '';
+  phone = '';
+  dob = '';
+  mpin = '';
+  confirmMpin = '';
+  otp = '';
+  generatedOtp = '';
 
   showPassword = false;
 
-  otpSent: boolean = false;
-  otpVerified: boolean = false;
-  userDetailsFilled: boolean = false;
-  mpinSet: boolean = false;
+  otpSent = false;
+  otpVerified = false;
+  userDetailsFilled = false;
+  mpinSet = false;
+  isSendingOtp = false;
+
+  nameError = '';
+  phoneError = '';
+  dobError = '';
+  emailError = '';
+  mpinError = '';
+  confirmMpinError = '';
 
   togglePassword() {
     this.showPassword = !this.showPassword;
   }
 
-sendOtp() {
-  if (!this.email) {
-    this.toastr.warning('Enter an Email');
-    return;
+  onEmailChange() {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    this.emailError = emailRegex.test(this.email) ? '' : 'Invalid email format';
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(this.email)) {
-    this.toastr.error('Improper email format');
-    return;
+  onNameChange() {
+    const nameRegex = /^[A-Za-z.\s]{3,50}$/;
+    this.nameError = nameRegex.test(this.name) ? '' : 'Enter valid name';
   }
 
-  this.http.post('http://localhost:8080/api/auth/send-otp', null, {
-    params: { email: this.email },
-    responseType: 'text'
-  }).subscribe({
-    next: (otp) => {
-      this.generatedOtp = otp;
-      this.otpSent = true;
-      this.toastr.success('OTP Sent successfully!');
-    },
-    error: (err) => {
-      if (err.status === 409) {
-        this.toastr.error('Email already registered');
-      } else {
-        this.toastr.error('Failed to send OTP!');
-      }
+  onPhoneChange() {
+    this.phoneError = /^\d{10}$/.test(this.phone) ? '' : 'Enter valid Phone';
+  }
+
+  onDobChange() {
+    if (!this.dob) {
+      this.dobError = 'Date of birth is required';
+      return;
     }
-  });
-}
+
+    const birthDate = new Date(this.dob);
+    if (isNaN(birthDate.getTime())) {
+      this.dobError = 'Invalid date format';
+      return;
+    }
+
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    const dayDiff = today.getDate() - birthDate.getDate();
+
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      age--;
+    }
+
+    this.dobError = age < 18 ? 'You must be at least 18 years old' : '';
+  }
+
+  sendOtp() {
+    this.onEmailChange();
+
+    if (this.emailError) return;
+
+    this.isSendingOtp = true;
+
+    this.http
+      .post('http://localhost:8080/api/auth/send-otp', null, {
+        params: { email: this.email },
+        responseType: 'text'
+      })
+      .subscribe({
+        next: (otp) => {
+          this.generatedOtp = otp;
+          this.otpSent = true;
+          this.toastr.success('OTP Sent successfully!');
+          this.isSendingOtp = false;
+        },
+        error: (err) => {
+          this.isSendingOtp = false;
+          if (err.status === 409) {
+            this.emailError = 'Email already registered';
+          } else {
+            this.toastr.error('Failed to send OTP!');
+          }
+        }
+      });
+  }
 
   verifyOtp() {
     if (!this.otpSent) {
@@ -81,37 +130,36 @@ sendOtp() {
   }
 
   proceedUserDetails() {
-    if (!this.name || !this.phone || !this.dob) {
-      this.toastr.warning('Please enter all required fields');
-      return;
-    }
+    this.onNameChange();
+    this.onPhoneChange();
+    this.onDobChange();
 
-    if (!/^\d{10}$/.test(this.phone)) {
-      this.toastr.error('Phone number must be exactly 10 digits');
-      return;
-    }
+    if (this.nameError || this.phoneError || this.dobError) return;
 
-    const birthDate = new Date(this.dob);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    const dayDiff = today.getDate() - birthDate.getDate();
-
-    if (
-      age < 18 ||
-      (age === 18 && monthDiff < 0) ||
-      (age === 18 && monthDiff === 0 && dayDiff < 0)
-    ) {
-      this.toastr.error('You must be at least 18 years old');
-      return;
-    }
-
-    this.userDetailsFilled = true;
+    this.http
+      .get<boolean>('http://localhost:8080/api/auth/check-phone', {
+        params: { phone: this.phone }
+      })
+      .subscribe({
+        next: (exists) => {
+          if (exists) {
+            this.phoneError = 'Phone number already exists';
+          } else {
+            this.userDetailsFilled = true;
+          }
+        },
+        error: () => {
+          this.phoneError = 'Error checking phone number. Try again.';
+        }
+      });
   }
 
-  isValidMpin(): boolean {
+  validateMpinFields(): boolean {
+    this.mpinError = '';
+    this.confirmMpinError = '';
+
     if (!/^\d{6}$/.test(this.mpin)) {
-      this.toastr.warning('MPIN must be exactly 6 digits');
+      this.mpinError = 'MPIN must be exactly 6 digits';
       return false;
     }
 
@@ -119,13 +167,13 @@ sendOtp() {
     for (let digit of this.mpin) {
       digitCount[digit] = (digitCount[digit] || 0) + 1;
       if (digitCount[digit] > 3) {
-        this.toastr.warning('No digit can be repeated more than 3 times');
+        this.mpinError = 'No digit can repeat more than 3 times';
         return false;
       }
     }
 
     if (this.mpin !== this.confirmMpin) {
-      this.toastr.warning('MPINs do not match');
+      this.confirmMpinError = 'MPINs do not match';
       return false;
     }
 
@@ -133,7 +181,7 @@ sendOtp() {
   }
 
   setMpin() {
-    if (!this.isValidMpin()) return;
+    if (!this.validateMpinFields()) return;
 
     this.toastr.success('MPIN set successfully!');
     this.mpinSet = true;
@@ -148,24 +196,27 @@ sendOtp() {
       mpin: this.mpin
     };
 
-    this.http.post('http://localhost:8080/api/auth/register', payload, {
-      responseType: 'text'
-    }).subscribe({
-      next: (responseText) => {
-        if (responseText === 'Email already exists') {
-          this.toastr.error('Email already exists');
-        } else {
-          this.toastr.success(responseText);
-          this.router.navigate(['login']);
+    this.http
+      .post('http://localhost:8080/api/auth/register', payload, {
+        responseType: 'text'
+      })
+      .subscribe({
+        next: (responseText) => {
+          if (responseText === 'Email already exists') {
+            this.emailError = 'Email already exists';
+          } else {
+            this.toastr.success(responseText);
+            this.router.navigate(['login']);
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          this.toastr.error('Error creating account. Please try again.');
         }
-      },
-      error: (err) => {
-        console.error(err);
-        this.toastr.error('Error creating account. Please try again.');
-      }
-    });
+      });
   }
+
   goToLogin() {
-  this.router.navigate(['/login']);
-}
+    this.router.navigate(['/login']);
+  }
 }

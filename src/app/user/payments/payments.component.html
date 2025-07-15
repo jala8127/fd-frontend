@@ -23,7 +23,7 @@
             <td>{{ pay.schemeName }}</td>
             <td>₹{{ pay.amount }}</td>
             <td>{{ pay.paymentMode }}</td>
-            <td>{{ pay.date | date: 'mediumDate' }}</td>
+            <td>{{ pay.paymentDate | date: 'mediumDate' }}</td>
             <td>
               <span [ngClass]="pay.status === 'SUCCESS' ? 'status-success' : 'status-failed'">
                 {{ pay.status }}
@@ -123,12 +123,12 @@
   <div class="modal-backdrop" *ngIf="selectedPayment">
         <div class="payment-details-modal">
           <h2>Payment Details</h2>
-          <p><strong>Transaction ID:</strong> {{ selectedPayment.transactionId }}</p>
           <p><strong>Scheme:</strong> {{ selectedPayment.schemeName }}</p>
-          <p><strong>Amount:</strong> ₹{{ selectedPayment.amount }}</p>
           <p><strong>Payment Mode:</strong> {{ selectedPayment.paymentMode }}</p>
-          <p><strong>Date:</strong> {{ selectedPayment.date | date: 'fullDate' }}</p>
+          <p><strong>Amount:</strong> ₹{{ selectedPayment.amount }}</p>
+          <p><strong>Date:</strong> {{ selectedPayment.paymentDate | date: 'fullDate' }}</p>
           <p><strong>Status:</strong> {{ selectedPayment.status }}</p>
+          <p><strong>Transaction ID:</strong> {{ selectedPayment.transactionId }}</p>
           <p><strong>Description:</strong> {{ selectedPayment.description || 'N/A' }}</p>
           <button (click)="selectedPayment = null" class="btn-close-modal">Close</button>
         </div>

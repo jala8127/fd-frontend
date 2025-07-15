@@ -68,10 +68,10 @@
 
 .register-container {
   width: 750px;
+  max-width: 90%;
   min-height: 400px;
   padding: 30px;
-  margin: auto;
-  background: rgb(255, 255, 255);
+  background: #fff;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(56, 54, 54, 0.15);
   font-family: 'Segoe UI', sans-serif;
@@ -83,31 +83,7 @@
   text-align: center;
   color: #9100ff;
   margin-bottom: 25px;
-}
-
-.register-modal {
-  position: relative; /* make sure modal container is relative */
-}
-
-.close-btn {
-  position: absolute;
-  top: 15px;
-  left: 20px; /* left instead of right */
-  font-size: 24px;
-  color: #a205ea; /* app theme color */
-  cursor: pointer;
-  font-weight: bold;
-  z-index: 1000;
-  transition: transform 0.2s ease;
-}
-.register-modal {
-  position: relative;
-  background-color: white;
-  padding: 24px;
-  border-radius: 12px;
-  max-width: 500px;
-  margin: 0 auto;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-size: 28px;
 }
 
 .modal-header {
@@ -120,7 +96,7 @@
   top: 0;
   right: 0;
   font-size: 22px;
-  color: #a205ea; 
+  color: #a205ea;
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -129,20 +105,18 @@
 .close-icon:hover {
   transform: scale(1.2);
 }
-.close-btn:hover {
-  transform: scale(1.2);
-}
 
 .form-group {
   margin-bottom: 20px;
   position: relative;
+  text-align: left;
 }
 
 .form-group label {
   display: block;
   font-weight: 600;
   margin-bottom: 5px;
-  text-align: left;
+  font-size: 14px;
 }
 
 .form-group input {
@@ -153,14 +127,19 @@
   font-size: 14px;
   outline: none;
   background: transparent;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  border-bottom-color: #a205ea;
 }
 
 .toggle {
   position: absolute;
   right: 10px;
   top: 35px;
-  font-size: 12px;
-  color: #9900ff;
+  font-size: 13px;
+  color: #007bff;
   cursor: pointer;
   user-select: none;
 }
@@ -176,8 +155,37 @@
   font-size: 16px;
   cursor: pointer;
   margin-top: 10px;
+  transition: background-color 0.3s;
 }
 
 .btn:hover {
   background-color: #8704ec;
+}
+
+.spinner {
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #7e57c2;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.error-text {
+  color: #dc3545;
+  font-size: 13px;
+  margin-top: 4px;
+  margin-left: 2px;
 }

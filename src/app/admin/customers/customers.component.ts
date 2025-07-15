@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CustomerService, Customer } from '../../service/customer.service';
+import { ToastrService } from 'ngx-toastr';
 
 declare var bootstrap: any;
 
@@ -16,21 +17,40 @@ declare var bootstrap: any;
 export class CustomersComponent implements OnInit {
   customers: Customer[] = [];
   filteredCustomers: Customer[] = [];
+
   selectedCustomer: Customer = {
+    userId: undefined,
     name: '',
     email: '',
     phone: '',
+    dob: '',
+    mpin: '',
+    panNo: '',
     status: '',
     address: ''
   };
+
   searchTerm: string = '';
   isViewMode: boolean = false;
 
-  constructor(private customerService: CustomerService) {}
+  constructor(private customerService: CustomerService,
+    private http: HttpClient,
+    private toastr: ToastrService) {}
 
   ngOnInit(): void {
     this.getCustomers();
   }
+
+  loadCustomers(): void {
+  this.customerService.getAllCustomers().subscribe({
+    next: (data) => {
+      this.customers = data;
+    },
+    error: (err) => {
+      console.error('Error loading customers:', err);
+    }
+  });
+}
 
   getCustomers() {
     this.customerService.getAllCustomers().subscribe({
@@ -55,9 +75,13 @@ export class CustomersComponent implements OnInit {
 
   openAddModal() {
     this.selectedCustomer = {
+      userId: undefined,
       name: '',
       email: '',
       phone: '',
+      dob: '',
+      mpin: '',
+      panNo: '',
       status: '',
       address: ''
     };
@@ -91,8 +115,25 @@ export class CustomersComponent implements OnInit {
     });
   }
 
-  closeCustomerAccount() {
-    alert(`Close account for customer ID: ${this.selectedCustomer.userId}`);
-    this.closeModal();
-  }
+ closeCustomerAccount() {
+  const userId = this.selectedCustomer.userId;
+
+  this.http.put(`http://localhost:8080/api/user/users/${userId}/soft-delete`, {}, { responseType: 'text' })
+    .subscribe({
+      next: (message) => {
+        this.toastr.success(message);
+        this.closeModal();
+        this.loadCustomers(); 
+      },
+      error: (error) => {
+        if (error.status === 409) {
+          this.toastr.warning('User has an active FD account');
+        } else if (error.status === 404) {
+          this.toastr.error('User not found');
+        } else {
+          this.toastr.error('Something went wrong');
+        }
+      }
+    });
+}
 }

@@ -15,7 +15,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let fd of deposits">
-          <td>{{ fd.schemename }}</td>
+          <td>{{ fd.schemeName }}</td>
           <td>₹{{ fd.amount }}</td>
           <td>{{ fd.maturityDate | date:'mediumDate' }}</td>
           <td class="action-buttons">
@@ -37,7 +37,8 @@
   <div class="modal-backdrop" *ngIf="selectedFd">
     <div class="modal-box">
       <h2>FD Details</h2>
-      <p><strong>User:</strong> {{ selectedFd.userName }}</p>
+      <p><strong>User:</strong> {{ selectedFd.userEmail }}</p>
+      <p><strong>Scheme:</strong> {{ selectedFd.schemeName }}</p>
       <p><strong>Start Date:</strong> {{ selectedFd.startDate | date:'mediumDate' }}</p>
       <p><strong>Maturity Date:</strong> {{ selectedFd.maturityDate | date:'mediumDate' }}</p>
       <p><strong>Invested Amount:</strong> ₹{{ selectedFd.amount }}</p>

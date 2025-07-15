@@ -73,8 +73,8 @@ button:hover {
 }
 
 .confirm-box {
-  background-color: #f8f3ff;
-  border: 2px solid #d1a9f4;
+  background-color: #ffffff;
+
 }
 .modal-actions {
   margin-top: 20px;
@@ -217,4 +217,5 @@ button:hover {
 .action-buttons {
   display: flex;
   gap: 10px;
+  
 }
