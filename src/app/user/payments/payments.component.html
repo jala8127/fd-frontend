@@ -1,7 +1,5 @@
 <div class="page-wrapper">
-
   <div class="payment-page">
-
     <div class="payment-history">
       <div class="banner-container">
         <h2 class="heading-purple">Your Payment History</h2>
@@ -48,89 +46,120 @@
         <button (click)="goToSchemes()">Create New Deposit</button>
       </div>
     </div>
-
   </div>
 
-  <div class="modal-backdrop" *ngIf="scheme">
-    <div class="modal-wrapper scrollable">
-      <div class="modal-box">
-        <div class="payment-container">
-          <h2 *ngIf="!paymentResult">Confirm Your Deposit</h2>
+<!-- Confirm Deposit Modal -->
+<div class="modal-backdrop" *ngIf="scheme">
+  <div class="modal-wrapper scrollable">
+    <div class="modal-box">
+      <div class="payment-container">
+        <ng-container *ngIf="!paymentResult">
+          <h2>Confirm Your Deposit</h2>
 
-          <ng-container *ngIf="!paymentResult">
-            <div class="payment-summary">
-              <p><strong>Scheme:</strong> {{ scheme.schemeName }}</p>
-              <p><strong>Amount:</strong> ₹{{ investmentAmount }}</p>
-              <p><strong>Interest Rate:</strong> {{ scheme.interestRate }}%</p>
-              <p><strong>Tenure:</strong> {{ scheme.tenureMonths }} months</p>
-            </div>
-
-            <div class="form-group">
-              <label>Select Payment Mode:</label>
-              <select [(ngModel)]="paymentMode" name="paymentMode">
-                <option value="">-- Select --</option>
-                <option value="UPI">UPI</option>
-                <option value="CARD">Card</option>
-              </select>
-            </div>
-
-            <div *ngIf="paymentMode === 'UPI'" class="form-group">
-              <label>Enter UPI ID:</label>
-              <input type="text" [(ngModel)]="paymentDetails" placeholder="example@upi" />
-            </div>
-
-            <div *ngIf="paymentMode === 'CARD'" class="form-group">
-              <label>Enter Card Number:</label>
-              <input type="text" [(ngModel)]="paymentDetails" maxlength="19" placeholder="1234-5678-9012-3456" />
-            </div>
-
-            <div class="btn-group">
-              <button (click)="confirmPayment()" [disabled]="isProcessing || !paymentDetails">
-                {{ isProcessing ? 'Processing...' : 'Pay & Create FD' }}
-              </button>
-              <button class="cancel-btn" (click)="scheme = null">Cancel</button>
-            </div>
-          </ng-container>
-
-          <div class="payment-feedback" *ngIf="showLoader">
-            <div class="spinner"></div>
+          <div class="payment-summary">
+            <p><strong>Scheme:</strong> {{ scheme.schemeName }}</p>
+            <p><strong>Amount:</strong> ₹{{ investmentAmount }}</p>
+            <p><strong>Interest Rate:</strong> {{ scheme.interestRate }}%</p>
+            <p><strong>Tenure:</strong> {{ scheme.tenureMonths }} months</p>
           </div>
 
-          <div class="payment-feedback" *ngIf="!showLoader && paymentResult">
-            <div class="result-circle" [ngClass]="paymentResult === 'SUCCESS' ? 'success' : 'fail'">
-              <div class="icon-wrapper">
-                {{ paymentResult === 'SUCCESS' ? '✔' : '✖' }}
-              </div>
+          <div class="form-group">
+            <label>Select Payment Mode:</label>
+            <select [(ngModel)]="paymentMode" name="paymentMode" (change)="paymentDetailsTouched = false">
+              <option value="">-- Select --</option>
+              <option value="UPI">UPI</option>
+              <option value="CARD">Card</option>
+            </select>
+          </div>
+
+          <div *ngIf="paymentMode === 'UPI'" class="form-group">
+            <label>Enter UPI ID:</label>
+            <input type="text"
+                   [(ngModel)]="paymentDetails"
+                   placeholder="example@upi"
+                   (ngModelChange)="paymentDetailsTouched = true"
+                   [class.invalid-input]="paymentDetailsTouched && !isUPIValid()" />
+            <div class="error-msg" *ngIf="paymentDetailsTouched && !isUPIValid()">
+              Invalid UPI ID format.
             </div>
+          </div>
 
-            <h2 class="result-title" [ngClass]="paymentResult === 'SUCCESS' ? 'text-success' : 'text-fail'">
-              {{ paymentResult === 'SUCCESS' ? 'Payment Successful!' : 'Payment Failed!' }}
-            </h2>
+          <div *ngIf="paymentMode === 'CARD'" class="form-group">
+            <label>Enter Card Number:</label>
+            <input type="text"
+                   [(ngModel)]="paymentDetails"
+                   maxlength="19"
+                   placeholder="1234-5678-9012-3456"
+                   (ngModelChange)="paymentDetailsTouched = true"
+                   [class.invalid-input]="paymentDetailsTouched && !isCardValid()" />
+            <div class="error-msg" *ngIf="paymentDetailsTouched && !isCardValid()">
+              Invalid Card Number. Must be 16 digits.
+            </div>
+          </div>
 
-            <p class="feedback-msg">
-              {{ paymentResult === 'SUCCESS' ? 'Your deposit was successful.' : 'Something went wrong.' }}
-            </p>
-
-            <button (click)="closeModal()" [ngClass]="paymentResult === 'SUCCESS' ? 'btn-done' : 'btn-retry'">
-              {{ paymentResult === 'SUCCESS' ? 'Done' : 'Try Again' }}
+          <div class="btn-group">
+            <button (click)="confirmPayment()" [disabled]="isProcessing || !isPaymentValid()">
+              {{ isProcessing ? 'Processing...' : 'Pay & Create FD' }}
             </button>
+            <button class="cancel-btn" (click)="closeModal()">Cancel</button>
           </div>
+        </ng-container>
+
+        <div class="payment-feedback" *ngIf="showLoader">
+          <div class="spinner"></div>
+        </div>
+
+        <div class="payment-feedback" *ngIf="!showLoader && paymentResult">
+          <div class="result-circle" [ngClass]="paymentResult === 'SUCCESS' ? 'success' : 'fail'">
+            <div class="icon-wrapper">
+              {{ paymentResult === 'SUCCESS' ? '✔' : '✖' }}
+            </div>
+          </div>
+
+          <h2 class="result-title" [ngClass]="paymentResult === 'SUCCESS' ? 'text-success' : 'text-fail'">
+            {{ paymentResult === 'SUCCESS' ? 'Payment Successful!' : 'Payment Failed!' }}
+          </h2>
+
+          <p class="feedback-msg">
+            {{ paymentResult === 'SUCCESS' ? 'Your deposit was successful.' : 'Something went wrong.' }}
+          </p>
+
+          <button (click)="closeModal()" [ngClass]="paymentResult === 'SUCCESS' ? 'btn-done' : 'btn-retry'">
+            {{ paymentResult === 'SUCCESS' ? 'Done' : 'Try Again' }}
+          </button>
         </div>
       </div>
     </div>
   </div>
+</div>
 
+  <!-- Payment View Modal -->
   <div class="modal-backdrop" *ngIf="selectedPayment">
-        <div class="payment-details-modal">
-          <h2>Payment Details</h2>
-          <p><strong>Scheme:</strong> {{ selectedPayment.schemeName }}</p>
-          <p><strong>Payment Mode:</strong> {{ selectedPayment.paymentMode }}</p>
-          <p><strong>Amount:</strong> ₹{{ selectedPayment.amount }}</p>
-          <p><strong>Date:</strong> {{ selectedPayment.paymentDate | date: 'fullDate' }}</p>
-          <p><strong>Status:</strong> {{ selectedPayment.status }}</p>
-          <p><strong>Transaction ID:</strong> {{ selectedPayment.transactionId }}</p>
-          <p><strong>Description:</strong> {{ selectedPayment.description || 'N/A' }}</p>
-          <button (click)="selectedPayment = null" class="btn-close-modal">Close</button>
-        </div>
-      </div>
+    <div class="payment-details-modal">
+      <h2>Payment Details</h2>
+      <p><strong>Scheme:</strong> {{ selectedPayment.schemeName }}</p>
+      <p><strong>Payment Mode:</strong> {{ selectedPayment.paymentMode }}</p>
+      <p><strong>Amount:</strong> ₹{{ selectedPayment.amount }}</p>
+      <p><strong>Date:</strong> {{ selectedPayment.paymentDate | date: 'fullDate' }}</p>
+      <p><strong>Status:</strong> {{ selectedPayment.status }}</p>
+      <p><strong>Transaction ID:</strong> {{ selectedPayment.transactionId }}</p>
+      <p><strong>Description:</strong> {{ selectedPayment.description || 'N/A' }}</p>
+      <button (click)="selectedPayment = null" class="btn-close-modal">Close</button>
+    </div>
+    <div *ngIf="paymentMode === 'UPI'" class="form-group" >
+  <label>Enter UPI ID:</label>
+  <input type="text" [(ngModel)]="paymentDetails" placeholder="example@upi" (ngModelChange)="paymentDetailsTouched = true" />
+  <div class="error-text" *ngIf="paymentDetailsTouched && !isUPIValid">
+    Invalid UPI ID format.
+  </div>
+</div>
+<div *ngIf="paymentMode === 'CARD'" class="form-group">
+  <label>Enter Card Number:</label>
+  <input type="text" [(ngModel)]="paymentDetails" maxlength="19" placeholder="1234-5678-9012-3456" (ngModelChange)="paymentDetailsTouched = true" />
+  <div class="error-text" *ngIf="paymentDetailsTouched && !isCardValid">
+    Invalid Card Number. Must be 16 digits.
+  </div>
+</div>
+  </div>
+  
 </div>

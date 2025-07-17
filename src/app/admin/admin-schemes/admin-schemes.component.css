@@ -1,3 +1,4 @@
+/* Container */
 .fd-schemes-container {
   height: 75vh;
   width: 150vh;
@@ -11,16 +12,19 @@
   width: 0px;
 }
 
+/* Header */
 .scheme-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
 }
+
 .scheme-header h2 {
   font-size: 26px;
   color: #7c00a1;
 }
+
 .scheme-header button {
   background-color: #a205ea;
   color: white;
@@ -31,10 +35,12 @@
   font-weight: 600;
   cursor: pointer;
 }
+
 .scheme-header button:hover {
   background-color: #8c04cc;
 }
 
+/* Section titles */
 .section-title {
   font-size: 20px;
   color: #5d007b;
@@ -43,6 +49,7 @@
   padding-bottom: 4px;
 }
 
+/* Scheme section styling */
 .scheme-section {
   margin-bottom: 40px;
   background: #faf5ff;
@@ -51,27 +58,32 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
+/* Scroll wrapper */
 .scroll-wrapper {
   overflow-x: auto;
 }
 
+/* Table */
 .scheme-table {
   width: 137vh;
   border-collapse: collapse;
   font-size: 14px;
 }
+
 .scheme-table th,
 .scheme-table td {
   padding: 10px 12px;
   border: 1px solid #ddd;
   text-align: center;
 }
+
 .scheme-table th {
   background-color: #f1d7ff;
   color: #7c00a1;
   font-weight: 600;
 }
 
+/* Active/Inactive status */
 .active {
   color: green;
   font-weight: bold;
@@ -81,6 +93,7 @@
   font-weight: bold;
 }
 
+/* Buttons inside table */
 .scheme-table td button {
   padding: 6px 12px;
   font-size: 13px;
@@ -103,6 +116,7 @@
   color: white;
 }
 
+/* Modal backdrop */
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -117,6 +131,7 @@
   overflow-y: auto;
 }
 
+/* Modal box */
 .modal-container {
   background: #fff;
   padding: 24px 28px;
@@ -158,6 +173,7 @@
   box-sizing: border-box;
 }
 
+/* Modal actions */
 .modal-actions {
   margin-top: 20px;
   display: flex;
@@ -173,31 +189,33 @@
   font-weight: 600;
   cursor: pointer;
 }
-.actions {
-  display: flex;
-  gap: 54px; 
-}
 .modal-actions button:first-child {
   background-color: #a205ea;
   color: white;
+}
+.modal-actions button:first-child:hover {
+  background-color: #8c04cc;
 }
 .modal-actions button:last-child {
   background-color: #e2e2e2;
   color: black;
 }
-.modal-actions button:first-child:hover {
-  background-color: #8c04cc;
-}
 .modal-actions button:last-child:hover {
   background-color: #ccc;
 }
 
+/* Actions group in header */
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Senior rate modal layout */
 .senior-rate-mode .modal-container {
   width: 500px;
   max-height: 90vh;
   overflow-y: auto;
 }
-
 .senior-rate-mode h2 {
   text-align: center;
   color: #7c00a1;
@@ -223,12 +241,10 @@
   align-items: center;
   margin-bottom: 10px;
 }
-
 .individual-rate-section label {
   flex: 1;
   font-size: 13px;
 }
-
 .individual-rate-section input {
   flex: 0 0 80px;
   margin-left: 12px;
@@ -237,4 +253,39 @@
 
 input[type='radio'] {
   margin-right: 6px;
+}
+
+/* Penalty Rate Modal */
+.penalty-rate-modal {
+  background: #fff;
+  padding: 24px;
+  border-radius: 14px;
+  width: 360px;
+  max-width: 95%;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+}
+
+.penalty-rate-modal h3 {
+  text-align: center;
+  color: #7c00a1;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.penalty-rate-modal label {
+  font-weight: 600;
+  color: #5d007b;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.penalty-rate-modal input[type='number'] {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 16px;
 }

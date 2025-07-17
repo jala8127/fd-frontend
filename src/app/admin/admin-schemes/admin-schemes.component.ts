@@ -23,7 +23,10 @@ export class AdminSchemesComponent implements OnInit {
   commonSeniorRate: number = 0;
   individualSeniorRates: { [schemeId: number]: number } = {};
 
-  constructor(private http: HttpClient,private toastr: ToastrService) {}
+  showPenaltyModal: boolean = false;
+  penaltyRate: number = 1.0;
+
+  constructor(private http: HttpClient, private toastr: ToastrService) {}
 
   ngOnInit(): void {
     this.loadSchemes();
@@ -107,19 +110,15 @@ export class AdminSchemesComponent implements OnInit {
   }
 
   handleSeniorRateSave(): void {
-    let payload: any[] = [];
-
-    if (this.seniorRateMode === 'COMMON') {
-      payload = this.allSchemes.map(s => ({
-        ...s,
-        seniorBonusRate: this.commonSeniorRate
-      }));
-    } else {
-      payload = this.allSchemes.map(s => ({
-        ...s,
-        seniorBonusRate: this.individualSeniorRates[s.id] ?? s.seniorBonusRate
-      }));
-    }
+    const payload = this.seniorRateMode === 'COMMON'
+      ? this.allSchemes.map(s => ({
+          ...s,
+          seniorBonusRate: this.commonSeniorRate
+        }))
+      : this.allSchemes.map(s => ({
+          ...s,
+          seniorBonusRate: this.individualSeniorRates[s.id] ?? s.seniorBonusRate
+        }));
 
     this.http.put('http://localhost:8080/api/schemes/update-senior-rates', payload)
       .subscribe(() => {
@@ -129,6 +128,30 @@ export class AdminSchemesComponent implements OnInit {
       }, error => {
         console.error('Error updating senior rates:', error);
         this.toastr.error('Failed to update senior bonus rates.');
+      });
+  }
+
+  openPenaltyModal(): void {
+    // Optional: load current penalty rate from server
+    this.http.get<number>('http://localhost:8080/api/schemes/penalty')
+      .subscribe(rate => {
+        this.penaltyRate = rate;
+        this.showPenaltyModal = true;
+      }, err => {
+        this.toastr.error('Failed to load current penalty rate.');
+        this.showPenaltyModal = true;
+      });
+  }
+
+  savePenaltyRate(): void {
+    this.http.put('http://localhost:8080/api/schemes/penalty', this.penaltyRate)
+      .subscribe(() => {
+        this.toastr.success(`Penalty rate saved: ${this.penaltyRate}%`);
+        this.showPenaltyModal = false;
+        this.loadSchemes();
+      }, error => {
+        console.error('Error saving penalty rate:', error);
+        this.toastr.error('Failed to save penalty rate.');
       });
   }
 }

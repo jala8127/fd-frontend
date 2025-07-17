@@ -153,9 +153,13 @@
 .register-link a:hover {
   color: #7a04b5;
 }
-.error-text {
-  color: #dc3545;
-  font-size: 13px;
+.invalid-input {
+  border: 1px solid red;
+  outline: none;
+}
+
+.error-msg {
+  color: red;
+  font-size: 0.85rem;
   margin-top: 4px;
-  margin-left: 2px;
 }

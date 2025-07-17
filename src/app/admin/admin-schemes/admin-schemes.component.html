@@ -1,14 +1,15 @@
 <div class="fd-schemes-container">
-  <!-- Header -->
+  <!--  Header -->
   <div class="scheme-header">
     <h2>FD Schemes Management</h2>
-    <div class="actions" style="display: flex; gap: 12px">
+    <div class="actions">
+      <button (click)="openPenaltyModal()">Set Penalty Rate</button>
       <button (click)="openSeniorRateModal()">Set Senior Rate</button>
       <button (click)="openAddModal()">+ Add Scheme</button>
     </div>
   </div>
 
-  <!-- Cumulative Schemes -->
+  <!--  Cumulative Schemes Section -->
   <div class="scheme-section">
     <h3 class="section-title">Cumulative Schemes</h3>
     <div class="scroll-wrapper">
@@ -51,7 +52,7 @@
     <ng-template #noCumulative><p>No cumulative schemes available.</p></ng-template>
   </div>
 
-  <!-- Non-Cumulative Schemes -->
+  <!--  Non-Cumulative Schemes Section -->
   <div class="scheme-section">
     <h3 class="section-title">Non-Cumulative Schemes</h3>
     <div class="scroll-wrapper">
@@ -95,7 +96,7 @@
   </div>
 </div>
 
-<!-- 🔵 Add/Edit Modal -->
+<!--  Add/Edit Scheme Modal -->
 <div class="modal-backdrop" *ngIf="showModal && selectedScheme">
   <div class="modal-container">
     <h2>
@@ -159,6 +160,21 @@
     <div class="modal-actions">
       <button (click)="handleSeniorRateSave()">Save</button>
       <button (click)="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!--  Penalty Rate Modal -->
+<div class="modal-backdrop" *ngIf="showPenaltyModal">
+  <div class="modal-container penalty-rate-modal">
+    <h2>Set Common Penalty Rate</h2>
+
+    <label for="penaltyInput">Penalty Rate (%):</label>
+    <input type="number" id="penaltyInput" [(ngModel)]="penaltyRate" step="0.1" />
+
+    <div class="modal-actions">
+      <button (click)="savePenaltyRate()">Save</button>
+      <button (click)="showPenaltyModal = false">Cancel</button>
     </div>
   </div>
 </div>

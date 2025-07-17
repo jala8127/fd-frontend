@@ -22,7 +22,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let fd of filteredDeposits()">
-          <td>{{ fd.depositId }}</td>
+          <td>{{ fd.id }}</td>
           <td>{{ fd.userName }}</td>
           <td>{{ fd.userId }}</td>
           <td>₹{{ fd.amount }}</td>
@@ -45,7 +45,7 @@
     <p>All details of active Fixed Deposits will be downloaded as a PDF.</p>
 
     <div class="modal-actions">
-      <button (click)="downloadActiveDepositsPdf()">Confirm Download</button>
+      <button class="confirm-btn"(click)="downloadActiveDepositsPdf()">Confirm Download</button>
       <button class="cancel-btn" (click)="showDownloadModal = false">Cancel</button>
     </div>
   </div>
@@ -55,7 +55,7 @@
 <div class="modal-backdrop" *ngIf="selectedFd">
   <div class="modal-box">
     <h3>FD Details</h3>
-    <p><strong>FD ID:</strong> {{ selectedFd.depositId }}</p>
+    <p><strong>FD ID:</strong> {{ selectedFd.id }}</p>
     <p><strong>User ID:</strong> {{ selectedFd.userId }}</p>
     <p><strong>User Name:</strong> {{ selectedFd.userName }}</p>
     <p><strong>Amount:</strong> ₹{{ selectedFd.amount }}</p>

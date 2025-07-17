@@ -6,7 +6,7 @@
 }
 
 .main-wrapper::-webkit-scrollbar {
-  width: 6px;
+  width: 0px;
 }
 .main-wrapper::-webkit-scrollbar-thumb {
   background-color: #ffffff;

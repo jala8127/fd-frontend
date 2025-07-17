@@ -1,4 +1,3 @@
-/* Make parent wrapper take full height and flex layout */
 .admin-deposit-wrapper {
   display: flex;
   flex-direction: column;
@@ -105,22 +104,7 @@ tr:hover {
   cursor: pointer;
   margin: 0 4px;
   color: white;
-  background-color: #3190ea;
-}
-
-.edit-btn {
-  background-color: #ffc107;
-  color: black;
-}
-
-.activate-btn {
-  background-color: #28a745;
-  color: white;
-}
-
-.deactivate-btn {
-  background-color: #dc3545;
-  color: white;
+  background-color: #316cea;
 }
 
 .modal-backdrop {
@@ -154,7 +138,7 @@ tr:hover {
 }
 
 .modal-box p {
-  font-size: 15px;
+  font-size: 14px;
   color: #444;
   margin-bottom: 20px;
   line-height: 1.5;
@@ -176,7 +160,7 @@ tr:hover {
   cursor: pointer;
   border: none;
   transition: background-color 0.3s ease;
-  background-color: #c82333;
+  background-color: #d72335;
 }
 
 .modal-actions .confirm-btn {
@@ -240,9 +224,12 @@ tr:hover {
   border-color: #7e57c2;
 }
 
-.cancel-btn {
-  background-color: #c82333;
-  color:white;
-  border-color: #c82333;
+.modal-backdrop .cancel-btn{
+  background-color: rgb(242, 58, 58);
+  color: rgb(255, 255, 255);
+  border-style: none;
   border-radius: 5px;
+  font-size: 18px;
+  height:45px;
+  width:70px;
 }

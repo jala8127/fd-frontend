@@ -13,7 +13,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./payments.component.css']
 })
 export class PaymentsComponent implements OnInit {
-
   payments: any[] = [];
   scheme: any = null;
 
@@ -21,7 +20,9 @@ export class PaymentsComponent implements OnInit {
   investmentAmount: number = 0;
 
   paymentMode: string = 'UPI';
-  paymentDetails: string = '';  
+  paymentDetails: string = '';
+  paymentDetailsTouched: boolean = false;
+
   selectedPayment: any = null;
 
   isProcessing = false;
@@ -41,13 +42,23 @@ export class PaymentsComponent implements OnInit {
     const navState = history.state;
     if (navState.scheme && navState.investmentAmount) {
       this.openDepositModal(navState.scheme, navState.investmentAmount);
+      history.replaceState({}, '');
     }
   }
 
   fetchPaymentHistory() {
     this.http.get<any[]>(`http://localhost:8080/api/payments/user/${this.userEmail}`)
       .subscribe({
-        next: (data) => this.payments = data,
+        next: (data) => {
+          this.payments = data.sort((a, b) =>
+            new Date(b.paymentDate).getTime() - new Date(a.paymentDate).getTime()
+          );
+          console.log("Fetched Payments:", this.payments);
+        },
+        error: (err) => {
+          console.error("Failed to fetch payments", err);
+          this.toastr.error("Failed to load payment history.");
+        }
       });
   }
 
@@ -64,22 +75,40 @@ export class PaymentsComponent implements OnInit {
     this.investmentAmount = amount;
     this.paymentDetails = '';
     this.paymentMode = 'UPI';
+    this.paymentResult = null;
+    this.paymentDetailsTouched = false;
+  }
+
+  onPaymentDetailsChange() {
+    this.paymentDetailsTouched = true;
+  }
+
+  onPaymentModeChange() {
+    this.paymentDetails = '';
+    this.paymentDetailsTouched = false;
+  }
+
+  isUPIValid(): boolean {
+    return /^[\w.-]+@[\w]+$/.test(this.paymentDetails);
+  }
+
+  isCardValid(): boolean {
+    return /^\d{16}$/.test(this.paymentDetails.replace(/-/g, ''));
+  }
+
+  isPaymentValid(): boolean {
+    return this.paymentMode === 'UPI'
+      ? this.isUPIValid()
+      : this.paymentMode === 'CARD'
+      ? this.isCardValid()
+      : false;
   }
 
   confirmPayment() {
-    if (!this.paymentDetails || !this.paymentMode) {
-      this.toastr.warning('Please fill in payment details.');
-      return;
-    }
+    this.paymentDetailsTouched = true;
 
-    // Simple format validation (you can enhance this)
-    if (this.paymentMode === 'UPI' && !/^[\w.-]+@[\w]+$/.test(this.paymentDetails)) {
-      this.toastr.error('Invalid UPI ID format.');
-      return;
-    }
-
-    if (this.paymentMode === 'CARD' && !/^\d{16}$/.test(this.paymentDetails.replace(/-/g, ''))) {
-      this.toastr.error('Invalid Card Number. Must be 16 digits.');
+    if (!this.paymentDetails || !this.paymentMode || !this.isPaymentValid()) {
+      this.toastr.warning('Please correct the payment details.');
       return;
     }
 
@@ -94,6 +123,7 @@ export class PaymentsComponent implements OnInit {
       const body = {
         email: this.userEmail,
         schemeId: this.scheme.id,
+        schemeName: this.scheme.schemeName,
         amount: this.investmentAmount,
         paymentMode: this.paymentMode,
         status: status,
@@ -105,14 +135,16 @@ export class PaymentsComponent implements OnInit {
           this.paymentResult = status;
           this.showLoader = false;
           this.playSound(status === 'SUCCESS' ? 'success' : 'fail');
-          this.fetchPaymentHistory();
         },
         error: () => {
           this.paymentResult = 'FAILED';
           this.showLoader = false;
           this.playSound('fail');
         },
-        complete: () => this.isProcessing = false
+        complete: () => {
+          this.isProcessing = false;
+          this.fetchPaymentHistory();
+        }
       });
     }, 2500);
   }
@@ -121,12 +153,17 @@ export class PaymentsComponent implements OnInit {
     this.scheme = null;
     this.paymentResult = null;
     this.showLoader = false;
+    this.paymentDetails = '';
+    this.paymentMode = 'UPI';
+    this.investmentAmount = 0;
+    this.paymentDetailsTouched = false;
   }
 
   playSound(type: 'success' | 'fail') {
     const audio = new Audio();
     audio.src = type === 'success' ? 'assets/success.mp3' : 'assets/fail.mp3';
-    audio.load();
-    audio.play().catch(err => console.error("Sound play error", err));
+    audio.play()
+      .then(() => console.log(`${type} sound played`))
+      .catch(err => console.error("Sound play error", err));
   }
 }

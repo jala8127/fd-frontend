@@ -1,100 +1,158 @@
-<div class="container">
+<div class="wrapper">
+  <div class="container">
+    <!-- Dashboard Summary -->
+    <div class="dashboard-cards">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">Total Deposits</div>
+          <div class="card-value">₹{{ totalDeposits }}</div>
+        </div>
+      </div>
 
-  <!-- Dashboard Cards -->
-  <div class="dashboard-cards">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Total Deposits</h5>
-        <p class="card-value">{{ totalDeposits }}</p>
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">Today's Payouts</div>
+          <div class="card-value">₹{{ todaysPayouts }}</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">Today's Received</div>
+          <div class="card-value">₹{{ todaysReceived }}</div>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Today's Payouts</h5>
-        <p class="card-value">{{ todaysPayouts }}</p>
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button class="action-btn" (click)="toggleModal('addCustomer', true)">Add Customer</button>
+      <button class="action-btn" (click)="toggleModal('kyc', true)">Verify Kyc</button>
+      <button class="action-btn" (click)="toggleModal('manualDeposit', true)">Create Deposit</button>
+      <button class="action-btn" (click)="toggleModal('closeDeposit', true)">Close Deposit</button>
+    </div>
+
+    <!-- Modals -->
+    <ng-container *ngIf="showAddCustomerModal">
+      <div class="modal">
+        <div class="modal-content">
+          <form #customerForm="ngForm" (ngSubmit)="addCustomer(customerForm)">
+            <h3 class="modal-title">Add New Customer</h3>
+            <label>Name</label>
+            <input name="name" ngModel required placeholder="Enter full name" />
+            <label>Email</label>
+            <input name="email" ngModel required type="email" placeholder="Enter email address" />
+            <label>Phone</label>
+            <input name="phone" ngModel required type="tel" placeholder="Enter phone number" />
+            <div class="modal-footer">
+              <button type="submit" class="btn-confirm">Save</button>
+              <button type="button" class="btn-cancel" (click)="toggleModal('addCustomer', false)">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="showManualDepositModal">
+      <div class="modal">
+        <div class="modal-content">
+          <form #depositForm="ngForm" (ngSubmit)="makeManualDeposit(depositForm)">
+            <h3 class="modal-title">Manual Deposit</h3>
+            <label>Customer ID</label>
+            <input name="customerId" ngModel required placeholder="Enter customer ID" />
+            <label>Amount</label>
+            <input name="amount" ngModel required type="number" placeholder="Enter amount" />
+            <label>Date</label>
+            <input name="date" ngModel required type="date" />
+            <div class="modal-footer">
+              <button type="submit" class="btn-confirm">Deposit</button>
+              <button type="button" class="btn-cancel" (click)="toggleModal('manualDeposit', false)">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="showKycModal">
+      <div class="modal">
+        <div class="modal-content">
+          <form #kycForm="ngForm" (ngSubmit)="verifyKYC(kycForm)">
+            <h3 class="modal-title">Manual KYC Verification</h3>
+            <label>Customer ID</label>
+            <input name="customerIdKyc" ngModel required placeholder="Enter customer ID" />
+            <label>Upload Document</label>
+            <input type="file" (change)="onDocumentSelected($event)" required />
+            <div class="modal-footer">
+              <button type="submit" class="btn-confirm">Verify</button>
+              <button type="button" class="btn-cancel" (click)="toggleModal('kyc', false)">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </ng-container>
+
+     <ng-container *ngIf="showCloseDepositModal">
+      <div class="modal">
+        <div class="modal-content">
+          <form #depositForm="ngForm" (ngSubmit)="closeDeposit(depositForm)">
+            <h3 class="modal-title">Close Deposit</h3>
+            <label>Customer ID</label>
+            <input name="customerId" ngModel required placeholder="Enter customer ID" />
+            <label>Reason</label>
+            <input name="amount" ngModel required type="number" placeholder="Enter amount" />
+            <label>Date</label>
+            <input name="date" ngModel required type="date" />
+            <div class="modal-footer">
+              <button type="submit" class="btn-confirm">Deposit</button>
+              <button type="button" class="btn-cancel" (click)="toggleModal('closeDeposit', false)">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Analytics Section -->
+    <div class="dashboard-analytics">
+      <!-- Bar Chart -->
+      <div class="chart-box">
+        <h4>Payouts vs Payments</h4>
+        <canvas baseChart
+                [data]="barChartData"
+                [labels]="barChartLabels"
+                [options]="barChartOptions"
+                [legend]="true"
+                [type]="'bar'">
+        </canvas>
+      </div>
+
+      <!-- Transactions Table -->
+      <div class="transactions-box">
+        <h4>Recent Transactions</h4>
+        <table class="transaction-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Mode</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let txn of recentTransactions">
+              <td>{{ txn.customer }}</td>
+              <td>₹{{ txn.amount }}</td>
+              <td>{{ txn.mode }}</td>
+              <td [ngClass]="{
+                    'status-success': txn.status === 'SUCCESS',
+                    'status-failed': txn.status === 'FAILED',
+                    'status-pending': txn.status === 'PENDING'
+                  }">{{ txn.status }}</td>
+              <td>{{ txn.date | date: 'shortDate' }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Today's Received</h5>
-        <p class="card-value">{{ todaysReceived }}</p>
-      </div>
-    </div>
   </div>
-
-  <!-- Action Buttons -->
-  <div class="action-buttons">
-    <button (click)="toggleModal('addCustomer', true)">Add Customer</button>
-    <button (click)="toggleModal('manualDeposit', true)">Manual Deposit</button>
-    <button (click)="toggleModal('kyc', true)">KYC Verification</button>
-  </div>
-
-  <!-- Add Customer Modal -->
-  <div class="modal" *ngIf="showAddCustomerModal">
-    <div class="modal-content">
-      <form #customerForm="ngForm" (ngSubmit)="addCustomer(customerForm)">
-        <h3>Add New Customer</h3>
-
-        <label>Name</label>
-        <input name="name" ngModel required placeholder="Enter full name" />
-
-        <label>Email</label>
-        <input name="email" ngModel required type="email" placeholder="Enter email address" />
-
-        <label>Phone</label>
-        <input name="phone" ngModel required type="tel" placeholder="Enter phone number" />
-
-        <div class="modal-footer">
-          <button type="submit" class="btn-primary">Save</button>
-          <button type="button" (click)="toggleModal('addCustomer', false)">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Manual Deposit Modal -->
-  <div class="modal" *ngIf="showManualDepositModal">
-    <div class="modal-content">
-      <form #depositForm="ngForm" (ngSubmit)="makeManualDeposit(depositForm)">
-        <h3>Manual Deposit</h3>
-
-        <label>Customer ID</label>
-        <input name="customerId" ngModel required placeholder="Enter customer ID" />
-
-        <label>Amount</label>
-        <input name="amount" ngModel required type="number" placeholder="Enter amount" />
-
-        <label>Date</label>
-        <input name="date" ngModel required type="date" />
-
-        <div class="modal-footer">
-          <button type="submit" class="btn-primary">Deposit</button>
-          <button type="button" (click)="toggleModal('manualDeposit', false)">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- KYC Modal -->
-  <div class="modal" *ngIf="showKycModal">
-    <div class="modal-content">
-      <form #kycForm="ngForm" (ngSubmit)="verifyKYC(kycForm)">
-        <h3>Manual KYC Verification</h3>
-
-        <label>Customer ID</label>
-        <input name="customerIdKyc" ngModel required placeholder="Enter customer ID" />
-
-        <label>Upload Document</label>
-        <input type="file" (change)="onDocumentSelected($event)" required />
-
-        <div class="modal-footer">
-          <button type="submit" class="btn-primary">Verify</button>
-          <button type="button" (click)="toggleModal('kyc', false)">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
 </div>
