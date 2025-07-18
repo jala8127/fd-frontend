@@ -15,9 +15,17 @@ export class DepositsComponent implements OnInit {
   selectedFd: any = null;
   showWithdrawModal = false;
 
+  isProcessing = false;
+  showLoader = false;
+  paymentResult: 'SUCCESS' | 'FAILED' | null = null;
+
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
+    this.fetchDeposits();
+  }
+
+  fetchDeposits(): void {
     const email = localStorage.getItem('email');
     this.http.get<any[]>(`http://localhost:8080/api/deposits/all`).subscribe({
       next: data => {
@@ -33,28 +41,25 @@ export class DepositsComponent implements OnInit {
   }
 
   prepareCloseFd(fd: any) {
-  console.log("FD clicked for closure:", fd);
-  console.log("FD ID:", fd.id);  
-
-  if (!fd.id) {
-    alert("Invalid FD record: Missing ID");
-    return;
-  }
-
-  this.http.get<any>(`http://localhost:8080/api/deposits/preview-close/${fd.id}`).subscribe({
-    next: (res) => {
-      this.selectedFd = {
-        ...fd,
-        ...res,
-        penality: res.penality ?? 0
-      };
-      this.showWithdrawModal = true;
-    },
-    error: () => {
-      alert("Unable to fetch FD preview details.");
+    if (!fd.id) {
+      alert("Invalid FD record: Missing ID");
+      return;
     }
-  });
-}
+
+    this.http.get<any>(`http://localhost:8080/api/deposits/preview-close/${fd.id}`).subscribe({
+      next: (res) => {
+        this.selectedFd = {
+          ...fd,
+          ...res,
+          penality: res.penality ?? 0
+        };
+        this.showWithdrawModal = true;
+      },
+      error: () => {
+        alert("Unable to fetch FD preview details.");
+      }
+    });
+  }
 
   get finalPayout(): number {
     return (
@@ -70,23 +75,53 @@ export class DepositsComponent implements OnInit {
       return;
     }
 
-    this.http.put<any>(`http://localhost:8080/api/deposits/close/${this.selectedFd.id}`, {}).subscribe({
-      next: (res) => {
-        this.showWithdrawModal = false;
-        this.selectedFd = null;
+    this.isProcessing = true;
+    this.showLoader = true;
+    this.paymentResult = null;
 
-        this.deposits = this.deposits.map(fd =>
-          fd.id === res.id ? { ...fd, status: 'CLOSED', closeDate: res.closeDate } : fd
-        ).filter(fd => fd.status === 'ACTIVE');
-      },
-      error: () => {
-        alert('Failed to close FD');
-      }
-    });
+    const withdrawalPayload = {
+      fdId: this.selectedFd.id,
+      email: this.selectedFd.userEmail,
+      payoutAmount: this.finalPayout,
+      status: 'PRE_MATURE',
+      penalty: this.selectedFd.penality || 0
+    };
+
+    setTimeout(() => {
+     this.http.put(`http://localhost:8080/api/deposits/close/${this.selectedFd.id}`, {}).subscribe({
+        next: () => {
+          this.paymentResult = 'SUCCESS';
+          this.showLoader = false;
+          this.playSound('success');
+
+          this.fetchDeposits();
+        },
+        error: (err) => {
+          console.error('Withdrawal failed', err);
+          this.paymentResult = 'FAILED';
+          this.showLoader = false;
+          this.playSound('fail');
+        },
+        complete: () => {
+          this.isProcessing = false;
+        }
+      });
+    }, 2000);
   }
 
   closeModal() {
     this.selectedFd = null;
     this.showWithdrawModal = false;
+    this.paymentResult = null;
+    this.showLoader = false;
+    this.isProcessing = false;
+  }
+
+  playSound(type: 'success' | 'fail') {
+    const audio = new Audio();
+    audio.src = type === 'success' ? 'assets/success.mp3' : 'assets/fail.mp3';
+    audio.play()
+      .then(() => console.log(`${type} sound played`))
+      .catch(err => console.error("Sound play error", err));
   }
 }

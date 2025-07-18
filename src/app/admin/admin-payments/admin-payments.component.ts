@@ -13,6 +13,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 export class AdminPaymentsComponent implements OnInit {
   selectedTab: 'payments' | 'payouts' = 'payments';
   searchText: string = '';
+  selectedPayout: any = null;
 
   payments: any[] = [];
   payouts: any[] = [];
@@ -21,18 +22,30 @@ export class AdminPaymentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchPayments();
+    this.fetchPayouts();
   }
 
-fetchPayments() {
-  this.http.get<any[]>('http://localhost:8080/api/payments/all').subscribe({
-    next: (data) => {
-      this.payments = data;
-    },
-    error: (err) => {
-      console.error('Failed to load payments:', err);
-    }
-  });
-}
+  fetchPayments() {
+    this.http.get<any[]>('http://localhost:8080/api/payments/all').subscribe({
+      next: (data) => {
+        this.payments = data;
+      },
+      error: (err) => {
+        console.error('Failed to load payments:', err);
+      }
+    });
+  }
+
+  fetchPayouts() {
+    this.http.get<any[]>('http://localhost:8080/api/payouts').subscribe({
+      next: (data) => {
+        this.payouts = data;
+      },
+      error: (err) => {
+        console.error('Failed to load payouts:', err);
+      }
+    });
+  }
 
   filteredPayments() {
     return this.payments.filter(p =>
@@ -46,8 +59,12 @@ fetchPayments() {
     );
   }
 
-  processPayout(payout: any) {
-    payout.status = 'Paid';
-    alert(`Payout of ₹${payout.amount} marked as paid for ${payout.userEmail}`);
+  viewPayout(payout: any) {
+    console.log('Opening modal for:', payout);
+    this.selectedPayout = payout;
+  }
+
+  closeModal() {
+    this.selectedPayout = null;
   }
 }

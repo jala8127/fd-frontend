@@ -1,9 +1,11 @@
 <div class="deposits-scroll-wrapper">
   <div class="deposits-page">
+    <!-- Banner -->
     <div class="banner-container">
       <h2 class="heading-purple">Your Deposits</h2>
     </div>
 
+    <!-- FD Table -->
     <table *ngIf="deposits.length > 0; else noFds">
       <thead>
         <tr>
@@ -16,11 +18,11 @@
       </thead>
       <tbody>
         <tr *ngFor="let fd of deposits">
-          <td>{{ fd.schemeName || 'N/A' }}</td>
-          <td>₹{{ fd.amount }}</td>
-          <td>₹{{ fd.interestEarned }}</td>
-          <td>{{ fd.maturityDate | date: 'mediumDate' }}</td>
-          <td class="action-buttons">
+          <td data-label="Scheme">{{ fd.schemeName || 'N/A' }}</td>
+          <td data-label="Amount">₹{{ fd.amount || 0 }}</td>
+          <td data-label="Interest Earned">₹{{ fd.interestEarned || 0 }}</td>
+          <td data-label="Maturity Date">{{ fd.maturityDate | date: 'mediumDate' }}</td>
+          <td class="action-buttons" data-label="Action">
             <button class="btn-view" (click)="openFdModal(fd)">View</button>
             <button class="btn-withdraw" (click)="prepareCloseFd(fd)">Close FD</button>
           </td>
@@ -28,6 +30,7 @@
       </tbody>
     </table>
 
+    <!-- No FDs Fallback -->
     <ng-template #noFds>
       <div class="banner-container">
         <p class="no-fds-message">No active deposits found.</p>
@@ -35,18 +38,18 @@
     </ng-template>
   </div>
 
-  <!-- View FD Modal -->
-  <div class="modal-backdrop" *ngIf="selectedFd && !showWithdrawModal">
+  <!-- ----------------- View FD Modal ----------------- -->
+  <div class="modal-backdrop" *ngIf="selectedFd && !showWithdrawModal && !paymentResult">
     <div class="modal-box">
       <h2>FD Details</h2>
       <p><strong>User:</strong> {{ selectedFd.userEmail }}</p>
       <p><strong>Scheme:</strong> {{ selectedFd.schemeName || 'N/A' }}</p>
       <p><strong>Start Date:</strong> {{ selectedFd.startDate | date: 'mediumDate' }}</p>
       <p><strong>Maturity Date:</strong> {{ selectedFd.maturityDate | date: 'mediumDate' }}</p>
-      <p><strong>Invested Amount:</strong> ₹{{ selectedFd.amount }}</p>
-      <p><strong>Interest Earned:</strong> ₹{{ selectedFd.interestEarned }}</p>
-      <p><strong>Maturity Amount:</strong> ₹{{ selectedFd.maturityAmount }}</p>
-      <p><strong>Payout Type:</strong> {{ selectedFd.payoutType }}</p>
+      <p><strong>Invested Amount:</strong> ₹{{ selectedFd.amount || 0 }}</p>
+      <p><strong>Interest Earned:</strong> ₹{{ selectedFd.interestEarned || 0 }}</p>
+      <p><strong>Maturity Amount:</strong> ₹{{ selectedFd.maturityAmount || 0 }}</p>
+      <p><strong>Payout Type:</strong> {{ selectedFd.payoutType || 'N/A' }}</p>
 
       <div class="modal-actions">
         <button class="cancel-btn" (click)="closeModal()">Close</button>
@@ -54,33 +57,65 @@
     </div>
   </div>
 
-  <!-- Confirm Withdraw Modal -->
-  <div class="modal-backdrop" *ngIf="showWithdrawModal && selectedFd">
+  <!-- ---------------- Confirm Withdraw Modal ---------------- -->
+  <div class="modal-backdrop" *ngIf="showWithdrawModal && selectedFd && !paymentResult">
     <div class="modal-box confirm-box">
       <h3>Confirm FD Closure</h3>
       <p><strong>Scheme Name:</strong> {{ selectedFd.schemeName || 'N/A' }}</p>
-      <p><strong>Deposited Amount:</strong> ₹{{ selectedFd.amount }}</p>
+      <p><strong>Deposited Amount:</strong> ₹{{ selectedFd.amount || 0 }}</p>
       <p><strong>Tenure:</strong> {{ selectedFd.tenureMonths }} months</p>
-      <p><strong>Expected Maturity Amount:</strong> ₹{{ selectedFd.maturityAmount }}</p>
-      <p><strong>Interest Earned Till Now:</strong> ₹{{ selectedFd.interestEarned }}</p>
+      <p><strong>Expected Maturity Amount:</strong> ₹{{ selectedFd.maturityAmount || 0 }}</p>
+      <p><strong>Interest Earned Till Now:</strong> ₹{{ selectedFd.interestEarned || 0 }}</p>
       <p><strong>Penalty Amount:</strong> ₹{{ selectedFd.penality || 0 }}</p>
-      <p><strong>Final Payout (After Penalty):</strong> 
-        <span style="color: green; font-weight: bold;">
-          ₹{{ finalPayout }}
-        </span>
+      <p><strong>Final Payout (After Penalty):</strong>
+        <span class="text-success">₹{{ finalPayout }}</span>
       </p>
 
       <div class="modal-actions">
         <button class="btn-confirm" (click)="confirmWithdraw()">Confirm Withdraw</button>
-        <button class="cancel-btn" (click)="showWithdrawModal = false">Cancel</button>
+        <button class="cancel-btn" (click)="closeModal()">Cancel</button>
       </div>
     </div>
   </div>
 
-  <!-- Benefits Section -->
+  <!-- ----------------- Withdraw Loader ----------------- -->
+  <div class="modal-backdrop" *ngIf="showLoader && !paymentResult">
+    <div class="modal-box loading-box">
+      <div class="spinner"></div>
+      <p>Processing withdrawal...</p>
+    </div>
+  </div>
+
+  <!-- ----------------- Payment Result Feedback ----------------- -->
+  <div class="modal-backdrop" *ngIf="paymentResult">
+    <div class="modal-box feedback-box">
+      <div class="result-circle" [ngClass]="paymentResult === 'SUCCESS' ? 'success' : 'failure'">
+  <div class="icon-wrapper">
+    {{ paymentResult === 'SUCCESS' ? '✔' : '✖' }}
+  </div>
+</div>
+
+      <h2 class="result-title" [ngClass]="paymentResult === 'SUCCESS' ? 'text-success' : 'text-fail'">
+        {{ paymentResult === 'SUCCESS' ? 'Withdrawal Successful!' : 'Withdrawal Failed!' }}
+      </h2>
+
+      <p class="feedback-msg">
+        {{ paymentResult === 'SUCCESS'
+          ? 'The amount will be reflected in your bank account shortly.'
+          : 'Something went wrong. Please try again later.' }}
+      </p>
+
+      <button (click)="closeModal()" [ngClass]="paymentResult === 'SUCCESS' ? 'btn-done' : 'btn-retry'">
+        {{ paymentResult === 'SUCCESS' ? 'Done' : 'Try Again' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ----------------- Benefits Section ----------------- -->
   <section class="fd-benefits-section">
     <h2 class="fd-benefits-heading">Benefits of Deposits</h2>
     <div class="fd-benefits-wrapper">
+      <!-- Left Column -->
       <div class="benefit-column left">
         <div class="benefit-box">
           <i class="fas fa-piggy-bank"></i>
@@ -112,12 +147,14 @@
         </div>
       </div>
 
+      <!-- Center Icon -->
       <div class="benefit-center">
         <div class="central-icon">
           <i class="fas fa-rupee-sign"></i>
         </div>
       </div>
 
+      <!-- Right Column -->
       <div class="benefit-column right">
         <div class="benefit-box">
           <i class="fas fa-hand-holding-usd"></i>

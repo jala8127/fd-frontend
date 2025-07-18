@@ -1,6 +1,26 @@
 <div class="page-wrapper">
   <div class="payment-page">
-    <div class="payment-history">
+
+    <!-- Tabs -->
+    <div class="tab-header">
+      <div
+        class="tab"
+        [class.active]="selectedTab === 'payments'"
+        (click)="selectedTab = 'payments'"
+      >
+        Payments
+      </div>
+      <div
+        class="tab"
+        [class.active]="selectedTab === 'payouts'"
+        (click)="selectedTab = 'payouts'"
+      >
+        Payouts
+      </div>
+    </div>
+
+    <!-- Payments Tab Content -->
+    <div *ngIf="selectedTab === 'payments'" class="payment-history">
       <div class="banner-container">
         <h2 class="heading-purple">Your Payment History</h2>
       </div>
@@ -27,7 +47,9 @@
                 {{ pay.status }}
               </span>
             </td>
-            <td><button class="btn-view" (click)="openPaymentModal(pay)">View</button></td>
+            <td>
+              <button class="btn-view" (click)="openPaymentModal(pay)">View</button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -38,6 +60,43 @@
         </div>
       </ng-template>
     </div>
+
+    <!-- Payouts Tab Content -->
+    <div *ngIf="selectedTab === 'payouts'" class="payment-history">
+      <div class="banner-container">
+        <h2 class="heading-purple">Your Payout History</h2>
+      </div>
+
+      <table *ngIf="payouts.length > 0; else noPayouts">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pay of payouts">
+            <td>{{ pay.userEmail }}</td>
+            <td>₹{{ pay.amountPaid }}</td>
+            <td>{{ pay.payoutType }}</td>
+            <td>{{ pay.payoutDate | date: 'mediumDate' }}</td>
+            <td>
+              <button class="btn-view" (click)="openPayoutModal(pay)">View</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #noPayouts>
+        <div class="banner-container">
+          <p class="no-data">You have not received any payouts yet.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
 
     <div class="banner">
       <div class="banner-content">
@@ -146,20 +205,17 @@
       <p><strong>Description:</strong> {{ selectedPayment.description || 'N/A' }}</p>
       <button (click)="selectedPayment = null" class="btn-close-modal">Close</button>
     </div>
-    <div *ngIf="paymentMode === 'UPI'" class="form-group" >
-  <label>Enter UPI ID:</label>
-  <input type="text" [(ngModel)]="paymentDetails" placeholder="example@upi" (ngModelChange)="paymentDetailsTouched = true" />
-  <div class="error-text" *ngIf="paymentDetailsTouched && !isUPIValid">
-    Invalid UPI ID format.
   </div>
-</div>
-<div *ngIf="paymentMode === 'CARD'" class="form-group">
-  <label>Enter Card Number:</label>
-  <input type="text" [(ngModel)]="paymentDetails" maxlength="19" placeholder="1234-5678-9012-3456" (ngModelChange)="paymentDetailsTouched = true" />
-  <div class="error-text" *ngIf="paymentDetailsTouched && !isCardValid">
-    Invalid Card Number. Must be 16 digits.
-  </div>
-</div>
-  </div>
-  
-</div>
+    <!-- Payout Modal -->
+  <div class="modal-backdrop-1" *ngIf="selectedPayout">
+    <div class="payout-details-modal">
+        <h2>Payout Details</h2>
+        <p><strong>User Email:</strong> {{ selectedPayout.userEmail }}</p>
+        <p><strong>Amount:</strong> ₹{{ selectedPayout.amountPaid }}</p>
+        <p><strong>Status:</strong> {{ selectedPayout.payoutType }}</p>
+        <p><strong>Date:</strong> {{ selectedPayout.payoutDate | date: 'short' }}</p>
+        <!-- <button class="btn-close-modal" (click)="closeModal()">Close</button> -->
+        <button (click)="selectedPayout = null" class="btn-close-modal">Close</button>
+      </div>
+    </div>
+

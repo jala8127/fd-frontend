@@ -14,16 +14,19 @@ import { Router } from '@angular/router';
 })
 export class PaymentsComponent implements OnInit {
   payments: any[] = [];
-  scheme: any = null;
+  payouts: any[] = [];
 
+  selectedPayment: any = null;
+  selectedPayout: any = null;
+  selectedTab: string = 'payments';
+
+  scheme: any = null;
   userEmail: string = '';
   investmentAmount: number = 0;
 
   paymentMode: string = 'UPI';
   paymentDetails: string = '';
   paymentDetailsTouched: boolean = false;
-
-  selectedPayment: any = null;
 
   isProcessing = false;
   showLoader = false;
@@ -38,36 +41,56 @@ export class PaymentsComponent implements OnInit {
   ngOnInit(): void {
     this.userEmail = localStorage.getItem('email') || '';
     this.fetchPaymentHistory();
+    this.fetchPayoutHistory();
 
     const navState = history.state;
     if (navState.scheme && navState.investmentAmount) {
       this.openDepositModal(navState.scheme, navState.investmentAmount);
-      history.replaceState({}, '');
+      history.replaceState({}, ''); 
     }
   }
 
   fetchPaymentHistory() {
-    this.http.get<any[]>(`http://localhost:8080/api/payments/user/${this.userEmail}`)
-      .subscribe({
-        next: (data) => {
-          this.payments = data.sort((a, b) =>
-            new Date(b.paymentDate).getTime() - new Date(a.paymentDate).getTime()
-          );
-          console.log("Fetched Payments:", this.payments);
-        },
-        error: (err) => {
-          console.error("Failed to fetch payments", err);
-          this.toastr.error("Failed to load payment history.");
-        }
-      });
+    this.http.get<any[]>(`http://localhost:8080/api/payments/user/${this.userEmail}`).subscribe({
+      next: (data) => {
+        this.payments = data.sort((a, b) =>
+          new Date(b.paymentDate).getTime() - new Date(a.paymentDate).getTime()
+        );
+      },
+      error: (err) => {
+        console.error("Failed to fetch payments", err);
+        this.toastr.error("Failed to load payment history.");
+      }
+    });
+  }
+
+  fetchPayoutHistory() {
+    this.http.get<any[]>(`http://localhost:8080/api/payouts/user/${this.userEmail}`).subscribe({
+      next: (data) => {
+        this.payouts = data.sort((a, b) =>
+          new Date(b.payoutDate).getTime() - new Date(a.payoutDate).getTime()
+        );
+      },
+      error: (err) => {
+        console.error("Failed to fetch payouts", err);
+        this.toastr.error("Failed to load payout history.");
+      }
+    });
   }
 
   openPaymentModal(payment: any) {
     this.selectedPayment = payment;
   }
 
-  goToSchemes() {
-    this.router.navigate(['/user/schemes']);
+  openPayoutModal(payout: any) {
+    this.selectedPayout = payout;
+  }
+
+  closeModal() {
+    this.selectedPayment = null;
+    this.selectedPayout = null;
+    this.scheme = null;
+    this.paymentResult = null;
   }
 
   openDepositModal(scheme: any, amount: number) {
@@ -93,10 +116,12 @@ export class PaymentsComponent implements OnInit {
   }
 
   isCardValid(): boolean {
-    return /^\d{16}$/.test(this.paymentDetails.replace(/-/g, ''));
+    return /^\d{16}$/.test(this.paymentDetails.replace(/\s|-/g, ''));
   }
 
   isPaymentValid(): boolean {
+    if (!this.paymentDetails) return false;
+
     return this.paymentMode === 'UPI'
       ? this.isUPIValid()
       : this.paymentMode === 'CARD'
@@ -107,8 +132,8 @@ export class PaymentsComponent implements OnInit {
   confirmPayment() {
     this.paymentDetailsTouched = true;
 
-    if (!this.paymentDetails || !this.paymentMode || !this.isPaymentValid()) {
-      this.toastr.warning('Please correct the payment details.');
+    if (!this.isPaymentValid()) {
+      this.toastr.warning('Please enter valid payment details.');
       return;
     }
 
@@ -116,32 +141,31 @@ export class PaymentsComponent implements OnInit {
     this.showLoader = true;
     this.paymentResult = null;
 
+    const body = {
+      email: this.userEmail,
+      schemeId: this.scheme.id,
+      schemeName: this.scheme.schemeName,
+      amount: this.investmentAmount,
+      paymentMode: this.paymentMode,
+      status: '', 
+      paymentDetails: this.paymentDetails
+    };
+
     setTimeout(() => {
       const isSuccess = Math.random() < 0.7;
-      const status = isSuccess ? 'SUCCESS' : 'FAILED';
-
-      const body = {
-        email: this.userEmail,
-        schemeId: this.scheme.id,
-        schemeName: this.scheme.schemeName,
-        amount: this.investmentAmount,
-        paymentMode: this.paymentMode,
-        status: status,
-        paymentDetails: this.paymentDetails
-      };
+      body.status = isSuccess ? 'SUCCESS' : 'FAILED';
 
       this.http.post('http://localhost:8080/api/payments/create', body).subscribe({
         next: () => {
-          this.paymentResult = status;
-          this.showLoader = false;
-          this.playSound(status === 'SUCCESS' ? 'success' : 'fail');
+          this.paymentResult = body.status as 'SUCCESS' | 'FAILED';
+          this.playSound(this.paymentResult.toLowerCase() as 'success' | 'fail');
         },
         error: () => {
           this.paymentResult = 'FAILED';
-          this.showLoader = false;
           this.playSound('fail');
         },
         complete: () => {
+          this.showLoader = false;
           this.isProcessing = false;
           this.fetchPaymentHistory();
         }
@@ -149,21 +173,18 @@ export class PaymentsComponent implements OnInit {
     }, 2500);
   }
 
-  closeModal() {
-    this.scheme = null;
-    this.paymentResult = null;
-    this.showLoader = false;
-    this.paymentDetails = '';
-    this.paymentMode = 'UPI';
-    this.investmentAmount = 0;
-    this.paymentDetailsTouched = false;
-  }
-
   playSound(type: 'success' | 'fail') {
     const audio = new Audio();
-    audio.src = type === 'success' ? 'assets/success.mp3' : 'assets/fail.mp3';
-    audio.play()
-      .then(() => console.log(`${type} sound played`))
-      .catch(err => console.error("Sound play error", err));
+    audio.src = type === 'success'
+      ? 'assets/success.mp3'
+      : 'assets/fail.mp3';
+
+    audio.play().catch(err => {
+      console.warn(`Error playing sound: ${type}`, err);
+    });
+  }
+
+  goToSchemes() {
+    this.router.navigate(['/user/schemes']);
   }
 }

@@ -1,3 +1,4 @@
+<!-- Tab Navigation -->
 <div class="payment-tabs">
   <div
     class="tab-text"
@@ -15,12 +16,15 @@
   </div>
 </div>
 
+<!-- Wrapper -->
 <div class="admin-payments-wrapper">
-  <div class="payments-header">
-  </div>
-  <!-- Search Bar -->
+  <!-- Search Input -->
   <div class="table-search-wrapper">
-    <input type="text" placeholder="Search by user/email" [(ngModel)]="searchText" />
+    <input
+      type="text"
+      placeholder="Search by user/email"
+      [(ngModel)]="searchText"
+    />
   </div>
 
   <!-- Payments Table -->
@@ -39,10 +43,9 @@
         <tr *ngFor="let payment of filteredPayments()">
           <td>{{ payment.id }}</td>
           <td>{{ payment.userEmail }}</td>
-          <td>{{ payment.amount }}</td>
+          <td>₹{{ payment.amount }}</td>
           <td>{{ payment.paymentDate | date: 'mediumDate' }}</td>
           <td>{{ payment.paymentMode }}</td>
-          
         </tr>
       </tbody>
     </table>
@@ -53,32 +56,44 @@
     <table class="colored-border-table sticky-header">
       <thead>
         <tr>
+          <th>ID</th>
           <th>User Email</th>
-          <th>Payout Reason</th>
+          <th>Payout Type</th>
           <th>Amount</th>
           <th>Due Date</th>
-          <th>Status</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let payout of filteredPayouts()">
+          <td>{{ payout.id }}</td>
           <td>{{ payout.userEmail }}</td>
-          <td>{{ payout.reason }}</td>
-          <td>{{ payout.amount | currency }}</td>
-          <td>{{ payout.dueDate | date }}</td>
-          <td>{{ payout.status }}</td>
+          <td>{{ payout.payoutType }}</td>
+          <td>₹{{ payout.amountPaid }}</td>
+          <td>{{ payout.payoutDate | date: 'mediumDate' }}</td>
           <td>
-            <button
-              class="btn-primary"
-              (click)="processPayout(payout)"
-              [disabled]="payout.status === 'Paid'"
-            >
-              Mark as Paid
-            </button>
+            <button class="btn btn-primary" (click)="viewPayout(payout)">View</button>
           </td>
         </tr>
       </tbody>
     </table>
+  </div>
+</div>
+
+<!-- Payout Modal (OUTSIDE main wrapper) -->
+<div class="modal-overlay" *ngIf="selectedPayout">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Payout Details</h2>
+    </div>
+    <div class="modal-content">
+      <p><strong>User Email:</strong> {{ selectedPayout.userEmail }}</p>
+      <p><strong>Scheme Name:</strong> {{ selectedPayout.schemeName }}</p>
+      <p><strong>Amount:</strong> ₹{{ selectedPayout.amountPaid }}</p>
+      <p><strong>Status:</strong> {{ selectedPayout.payoutType }}</p>
+      <p><strong>Date:</strong> {{ selectedPayout.payoutDate | date: 'short' }}</p>
+      <p><strong>Transaction ID:</strong> {{ selectedPayout.transactionId }}</p>
+      <button class="btn-close-modal" (click)="closeModal()">Close</button>
+    </div>
   </div>
 </div>
