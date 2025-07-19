@@ -37,30 +37,51 @@
     </div>
   </div>
 
-  <!-- Modal -->
-  <div class="modal-backdrop" *ngIf="selectedScheme">
-    <div class="modal-container">
-      <h3>{{ selectedScheme.schemeName }}</h3>
-      <p><strong>Interest Rate:</strong> {{ selectedScheme.interestRate }}%</p>
-      <p><strong>Tenure:</strong> {{ selectedScheme.tenureMonths }} months</p>
-      <p><strong>Payout:</strong> {{ selectedScheme.payout }}</p>
+ <!-- KYC MODAL -->
+<div class="kyc-modal-backdrop" *ngIf="showKycModal">
+  <div class="kyc-modal-container">
+    <button type="button" class="btn-close" aria-label="Close" (click)="showKycModal = false"></button>
+    <h3>KYC Required</h3>
+    <p>You need to complete your KYC before making a deposit.</p>
+    <div class="modal-actions">
+      <button (click)="goToKyc()">Complete KYC</button>
+    </div>
+  </div>
+</div>
 
-      <label>Enter Investment Amount (₹):</label>
-      <input type="number" [(ngModel)]="investmentAmount" />
+<!-- SCHEME VIEW MODAL -->
+<div class="scheme-modal-backdrop" *ngIf="selectedScheme && !showKycModal">
+  <div class="scheme-modal-container">
+    <button type="button" class="btn-close" aria-label="Close" (click)="selectedScheme = null"></button>
+    <h3>{{ selectedScheme.schemeName }}</h3>
+    <p><strong>Interest Rate:</strong> {{ selectedScheme.interestRate }}%</p>
+    <p><strong>Tenure:</strong> {{ selectedScheme.tenureMonths }} months</p>
+    <p><strong>Payout:</strong> {{ selectedScheme.payout }}</p>
 
-      <div *ngIf="investmentAmount">
-        <div *ngIf="selectedScheme.schemeType === 'CUMULATIVE'; else nonCumulative">
-          <p class="result">Maturity Amount: ₹{{ calculateMaturityAmount(selectedScheme) }}</p>
-        </div>
-        <ng-template #nonCumulative>
-          <p class="result">Total Interest Earned: ₹{{ calculateNonCumulativeInterest(selectedScheme) }}</p>
-        </ng-template>
+    <label>Enter Investment Amount (₹):</label>
+    <input type="number" [(ngModel)]="investmentAmount" />
+
+    <div *ngIf="investmentAmount">
+      <div class="validation-msg" *ngIf="investmentAmount < selectedScheme.minAmount">
+        Minimum investment amount is ₹{{ selectedScheme.minAmount }}
       </div>
-
-      <div class="modal-actions">
-        <button (click)="createDeposit()">Create Deposit</button>
-        <button class="close" (click)="selectedScheme = null">Close</button>
+      <div class="validation-msg" *ngIf="investmentAmount > 500000">
+        Maximum investment allowed is ₹5,00,000
       </div>
+    </div>
+
+    <div *ngIf="investmentAmount >= selectedScheme.minAmount && investmentAmount <= 500000">
+      <div *ngIf="selectedScheme.schemeType === 'CUMULATIVE'; else nonCumulative">
+        <p class="result">Maturity Amount: ₹{{ calculateMaturityAmount(selectedScheme) }}</p>
+      </div>
+      <ng-template #nonCumulative>
+        <p class="result">Total Interest Earned: ₹{{ calculateNonCumulativeInterest(selectedScheme) }}</p>
+      </ng-template>
+    </div>
+
+    <div class="modal-actions">
+      <button [disabled]="!isInvestmentValid()" (click)="createDeposit()">Create Deposit</button>
+       <button class="close" (click)="selectedScheme = null">Close</button>
     </div>
   </div>
 </div>

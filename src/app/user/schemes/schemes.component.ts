@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-schemes',
@@ -15,15 +16,28 @@ export class SchemesComponent implements OnInit {
   activeSchemes: any[] = [];
   cumulativeSchemes: any[] = [];
   nonCumulativeSchemes: any[] = [];
+  private loggedInUserEmail: string | null = null;
 
   selectedScheme: any = null;
   investmentAmount: number = 0;
+  showKycModal: boolean = false;
+  userKycVerified: boolean = false;
+  kycStatus: string = ''; 
 
-  constructor(private http: HttpClient,private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private authService: AuthService 
+  ) {}
 
   ngOnInit(): void {
-    this.loadSchemes();
+    const email = this.authService.getUserEmail();
+    if (email) {
+      this.loggedInUserEmail = email;
+    }
 
+    this.loadSchemes();
+    this.checkKycStatus();
   }
 
   loadSchemes(): void {
@@ -34,9 +48,57 @@ export class SchemesComponent implements OnInit {
     });
   }
 
-  viewScheme(scheme: any): void {
-    this.selectedScheme = scheme;
-    this.investmentAmount = 0;
+  checkKycStatus() {
+    const email = this.loggedInUserEmail;
+
+    if (!email) return;
+
+    this.http.get('http://localhost:8080/api/user/kyc-status?email=' + email, { responseType: 'text' })
+  .subscribe({
+    next: (status) => {
+      console.log('KYC Status:', status);
+      this.kycStatus = status;
+    },
+    error: (error) => {
+      console.error('Error fetching KYC status', error);
+    }
+  });
+  }
+
+ viewScheme(scheme: any): void {
+  if (this.kycStatus !== 'APPROVED') {
+    this.showKycModal = true;
+    this.selectedScheme = null; 
+    return;
+  }
+
+  this.selectedScheme = scheme;
+  this.investmentAmount = scheme.minAmount || 0;
+}
+  isInvestmentValid(): boolean {
+    return (
+      this.investmentAmount >= this.selectedScheme.minAmount &&
+      this.investmentAmount <= 500000
+    );
+  }
+
+    createDeposit(): void {
+      if (this.kycStatus !== 'APPROVED') {
+        this.showKycModal = true;
+        return;
+      }
+
+      this.router.navigate(['/user/payments'], {
+        state: {
+          scheme: this.selectedScheme,
+          investmentAmount: this.investmentAmount
+        }
+      });
+    }
+
+  goToKyc(): void {
+    this.showKycModal = false;
+    this.router.navigate(['/user/kyc']);
   }
 
   calculateMaturityAmount(scheme: any): number {
@@ -54,13 +116,4 @@ export class SchemesComponent implements OnInit {
     const interest = principal * rate * time / 100;
     return Math.round(interest);
   }
-
-  createDeposit(): void {
-  this.router.navigate(['/user/payments'], {
-    state: { 
-      scheme: this.selectedScheme, 
-      investmentAmount: this.investmentAmount 
-    }
-  });
-}
 }

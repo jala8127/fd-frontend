@@ -211,10 +211,11 @@
     <div class="payout-details-modal">
         <h2>Payout Details</h2>
         <p><strong>User Email:</strong> {{ selectedPayout.userEmail }}</p>
+        <p><strong>Scheme:</strong> {{ selectedPayout.schemeName }}</p>
         <p><strong>Amount:</strong> ₹{{ selectedPayout.amountPaid }}</p>
+        <p><strong>Date:</strong> {{ selectedPayout.payoutDate | date: 'fullDate' }}</p>
         <p><strong>Status:</strong> {{ selectedPayout.payoutType }}</p>
-        <p><strong>Date:</strong> {{ selectedPayout.payoutDate | date: 'short' }}</p>
-        <!-- <button class="btn-close-modal" (click)="closeModal()">Close</button> -->
+        <p><strong>Reference ID:</strong> {{ selectedPayout.transactionId }}</p>
         <button (click)="selectedPayout = null" class="btn-close-modal">Close</button>
       </div>
     </div>

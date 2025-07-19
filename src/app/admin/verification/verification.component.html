@@ -100,16 +100,49 @@
       </div>
     </div>
 
-    <!-- Aadhaar Document -->
-    <div class="form-group" *ngIf="selectedKyc.aadhaarDocument">
-      <label>Aadhaar Document</label>
-      <input type="text" [value]="selectedKyc.aadhaarDocument" readonly />
+    <!-- Bank Details -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Bank Name</label>
+        <input type="text" [value]="selectedKyc.bankName" readonly />
+      </div>
+      <div class="form-group">
+        <label>Account Number</label>
+        <input type="text" [value]="selectedKyc.accountNumber" readonly />
+      </div>
     </div>
 
-    <!-- Rejection Reason for completed tab -->
+    <div class="form-group">
+      <label>IFSC Code</label>
+      <input type="text" [value]="selectedKyc.ifscCode" readonly />
+    </div>
+
+    <!-- Aadhaar Document Link -->
+    <div class="form-group" *ngIf="selectedKyc.aadhaarDocument">
+      <label>Aadhaar Document</label>
+      <a [href]="'http://localhost:8080/uploads/' + selectedKyc.aadhaarDocument" target="_blank" class="view-document-btn">
+        View Document
+      </a>
+    </div>
+
+    <!-- Rejection Reason for completed tab (read-only) -->
     <div *ngIf="selectedTab === 'completed' && selectedKyc.status === 'REJECTED'">
       <label>Rejection Reason</label>
-      <textarea [value]="selectedKyc.rejectionReason" readonly rows="3" class="reason-input"></textarea>
+      <textarea [value]="formattedRejectionReason" readonly rows="3" class="reason-input"></textarea>
+    </div>
+
+    <!-- Rejection Reason Input for pending tab (editable) -->
+    <div *ngIf="action === 'REJECTED'" class="form-group">
+        <label for="rejectionReason">Reason for Rejection</label>
+        <textarea
+            id="rejectionReason"
+            name="rejectionReason"
+            class="reason-input"
+            [(ngModel)]="rejectionReason"
+            rows="4"
+            placeholder="Please provide a clear reason for rejection..."
+            required
+        ></textarea>
     </div>
 
     <!-- Action Buttons - Pending Tab -->

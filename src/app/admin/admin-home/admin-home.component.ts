@@ -28,7 +28,6 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
 
   refreshSubscription!: Subscription;
 
-  // Chart.js Variables
   barChartType: ChartType = 'bar';
   barChartLabels: string[] = ['JAN', 'FEB', 'MARCH', 'APRIL', 'MAY'];
   barChartData: ChartConfiguration<'bar'>['data'] = {

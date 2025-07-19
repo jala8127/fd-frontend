@@ -39,4 +39,11 @@ export class CustomerService {
   addCustomer(customer: Customer): Observable<Customer> {
     return this.http.post<Customer>(`${this.authApi}/register`, customer);
   }
+  getLoggedInUserDetails() {
+  return this.http.get<any>(`/api/user/profile`);
+  }
+
+  updateUserField(field: string, value: any) {
+  return this.http.put(`/api/user/update-field`, { field, value });
+  }
 }

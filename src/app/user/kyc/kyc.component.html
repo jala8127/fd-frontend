@@ -1,86 +1,255 @@
 <div class="page-wrapper">
   <div class="form-scroll-wrapper">
     <div class="kyc-container">
+      <div class="scheme-modal-container"></div>
       <h2>KYC Verification</h2>
 
-      <!-- KYC Form -->
-      <div *ngIf="!isSubmitted">
-        <form (ngSubmit)="submitKyc()" #kycForm="ngForm">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="fullName">Full Name (as per Aadhaar)</label>
-              <input type="text" id="fullName" name="fullName" [(ngModel)]="kycData.fullName" required />
-            </div>
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" id="email" name="email" [(ngModel)]="kycData.email" required />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="phone">Phone Number</label>
-              <input type="tel" id="phone" name="phone" [(ngModel)]="kycData.phone" required />
-            </div>
-            <div class="form-group">
-              <label for="dob">Date of Birth</label>
-              <input type="date" id="dob" name="dob" [(ngModel)]="kycData.dob" required />
+      <!-- KYC Form: Only shows if KYC has not been submitted yet -->
+      <form (ngSubmit)="submitKyc()" #kycForm="ngForm" *ngIf="!isSubmitted" novalidate>
+        <!-- PERSONAL INFO -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fullName">Full Name (as per Aadhaar)</label>
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              [(ngModel)]="kycData.fullName"
+              required
+              pattern="^[a-zA-Z. ]{3,}$"
+              #fullName="ngModel"
+            />
+            <div class="error" *ngIf="fullName.invalid && fullName.touched">
+              Valid full name required (letters only).
             </div>
           </div>
 
           <div class="form-group">
-            <label for="currentAddress">Current Address</label>
-            <textarea id="currentAddress" name="currentAddress" [(ngModel)]="kycData.currentAddress" rows="3" required></textarea>
-          </div>
-          <div class="form-group">
-            <label for="permanentAddress">Permanent Address</label>
-            <textarea id="permanentAddress" name="permanentAddress" [(ngModel)]="kycData.permanentAddress" rows="3" required></textarea>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="aadhaarNumber">Aadhaar Number</label>
-              <input type="text" id="aadhaarNumber" name="aadhaarNumber" [(ngModel)]="kycData.aadhaarNumber" pattern="\\d{12}" required />
-            </div>
-            <div class="form-group">
-              <label for="panNumber">PAN Number</label>
-              <input type="text" id="panNumber" name="panNumber" [(ngModel)]="kycData.panNumber" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" required />
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              [(ngModel)]="kycData.email"
+              required
+              email
+              #email="ngModel"
+            />
+            <div class="error" *ngIf="email.invalid && email.touched">
+              Enter a valid email.
             </div>
           </div>
-
-          <div class="form-group">
-            <label for="aadhaarDoc">Upload Aadhaar Document</label>
-            <input type="file" id="aadhaarDoc" name="aadhaarDoc" (change)="onFileChange($event)" required />
-          </div>
-
-          <div style="text-align: center;">
-            <button type="submit">Submit KYC</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- APPROVED -->
-      <div *ngIf="isSubmitted && status === 'APPROVED'">
-        <p style="color: rgb(2, 143, 2); font-weight: bold; text-align: center;">KYC Passed</p>
-        <div class="banner">
-          <h1>Invest Smart with Our Fixed Deposits</h1>
-          <p>Secure your future with high returns and flexible tenures.</p>
-          <button (click)="goToSchemes()">Start Investing</button>
         </div>
-      </div>
 
-      <!-- REJECTED -->
-      <div *ngIf="isSubmitted && status === 'REJECTED'">
-        <p style="color: red; font-weight: bold;">KYC Rejected</p>
-        <p>Reason: {{ reason }}</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              [(ngModel)]="kycData.phone"
+              required
+              pattern="^[6-9][0-9]{9}$"
+              #phone="ngModel"
+            />
+            <div class="error" *ngIf="phone.invalid && phone.touched">
+              Enter a valid 10-digit phone number starting with 6-9.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="dob">Date of Birth</label>
+            <input
+              type="date"
+              id="dob"
+              name="dob"
+              [(ngModel)]="kycData.dob"
+              required
+              [max]="maxValidDob"
+              #dob="ngModel"
+            />
+            <div class="error" *ngIf="dob.invalid && dob.touched">
+              You must be at least 18 years old.
+            </div>
+          </div>
+        </div>
+
+        <!-- ADDRESSES -->
+        <div class="form-group">
+          <label for="currentAddress">Current Address</label>
+          <textarea
+            id="currentAddress"
+            name="currentAddress"
+            [(ngModel)]="kycData.currentAddress"
+            (ngModelChange)="onSameAsCurrentChange()"
+            required
+            pattern="^.{10,}"
+            #currentAddress="ngModel"
+            rows="3"
+          ></textarea>
+          <div class="error" *ngIf="currentAddress.invalid && currentAddress.touched">
+            Enter a detailed address (area, city, state).
+          </div>
+        </div>
+
+        <!-- "Same as Current Address" Checkbox -->
+        <div class="form-group checkbox-group">
+          <input
+            type="checkbox"
+            id="sameAsCurrent"
+            name="sameAsCurrent"
+            [(ngModel)]="sameAsCurrent"
+            (change)="onSameAsCurrentChange()"
+          />
+          <label for="sameAsCurrent">Permanent address is the same as current address</label>
+        </div>
+
+        <div class="form-group">
+          <label for="permanentAddress">Permanent Address</label>
+          <textarea
+            id="permanentAddress"
+            name="permanentAddress"
+            [(ngModel)]="kycData.permanentAddress"
+            [disabled]="sameAsCurrent"
+            required
+            pattern="^.{10,}"
+            #permanentAddress="ngModel"
+            rows="3"
+          ></textarea>
+          <div class="error" *ngIf="permanentAddress.invalid && permanentAddress.touched">
+            Enter a detailed address (area, city, state).
+          </div>
+        </div>
+
+        <!-- IDENTIFIERS -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="aadhaarNumber">Aadhaar Number</label>
+            <input
+              type="text"
+              id="aadhaarNumber"
+              name="aadhaarNumber"
+              [(ngModel)]="kycData.aadhaarNumber"
+              required
+              pattern="^\d{12}$"
+              #aadhaarNumber="ngModel"
+            />
+            <div class="error" *ngIf="aadhaarNumber.invalid && aadhaarNumber.touched">
+              Enter a valid 12-digit Aadhaar number.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="panNumber">PAN Number</label>
+            <input
+              type="text"
+              id="panNumber"
+              name="panNumber"
+              [(ngModel)]="kycData.panNumber"
+              required
+              pattern="[A-Z]{5}[0-9]{4}[A-Z]"
+              #panNumber="ngModel"
+            />
+            <div class="error" *ngIf="panNumber.invalid && panNumber.touched">
+              Enter a valid PAN number (e.g., ABCDE1234F).
+            </div>
+          </div>
+        </div>
+
+        <!-- BANK DETAILS -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bankName">Bank Name</label>
+            <input
+              type="text"
+              id="bankName"
+              name="bankName"
+              [(ngModel)]="kycData.bankName"
+              required
+              pattern="^[a-zA-Z ]{3,}$"
+              #bankName="ngModel"
+            />
+            <div class="error" *ngIf="bankName.invalid && bankName.touched">
+              Enter a valid bank name.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="accountNumber">Account Number</label>
+            <input
+              type="text"
+              id="accountNumber"
+              name="accountNumber"
+              [(ngModel)]="kycData.accountNumber"
+              required
+              pattern="^\d{9,18}$"
+              #accountNumber="ngModel"
+            />
+            <div class="error" *ngIf="accountNumber.invalid && accountNumber.touched">
+              Enter a valid account number.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="ifscCode">IFSC Code</label>
+          <input
+            type="text"
+            id="ifscCode"
+            name="ifscCode"
+            [(ngModel)]="kycData.ifscCode"
+            required
+            pattern="^[A-Za-z0-9]{11}$"
+            #ifscCode="ngModel"
+          />
+          <div class="error" *ngIf="ifscCode.invalid && ifscCode.touched">
+            Enter a valid 11-character IFSC code.
+          </div>
+        </div>
+
+        <!-- DOCUMENT UPLOAD -->
+        <div class="form-group">
+          <label for="aadhaarDoc">Upload Aadhaar Document (PDF, JPG, PNG)</label>
+          <input
+            type="file"
+            id="aadhaarDoc"
+            name="aadhaarDoc"
+            (change)="onFileChange($event)"
+            accept=".pdf,.jpg,.jpeg,.png"
+            required
+          />
+        </div>
+
+        <!-- SUBMIT -->
         <div style="text-align: center;">
-          <button (click)="reApply()">Re-Apply</button>
+          <button type="submit" [disabled]="kycForm.invalid">Submit KYC</button>
         </div>
-      </div>
+      </form>
 
-      <!-- PENDING -->
-      <div *ngIf="isSubmitted && status === 'PENDING'">
-        <p style="color: orange; font-weight: bold;">KYC Pending, In Review</p>
+      <!-- STATUS DISPLAY: Shows only if KYC has been submitted -->
+      <div *ngIf="isSubmitted" class="status-display">
+        <!-- PENDING -->
+        <div *ngIf="status === 'PENDING'">
+          <p class="status-pending"style="color: orange; font-weight: bold;text-align: center;">Your KYC application is pending and currently under review.</p>
+        </div>
+
+        <!-- APPROVED -->
+        <div *ngIf="status === 'APPROVED'">
+          <p class="status-approved"style="color: green; font-weight: bold; text-align: center;">Congratulations! Your KYC has been approved.</p>
+          <div style="text-align: center;">
+            <button (click)="goToSchemes()">Start Investing</button>
+          </div>
+        </div>
+
+        <!-- REJECTED -->
+        <div *ngIf="status === 'REJECTED'">
+          <p class="status-rejected"style="color: red; font-weight: bold;text-align: center;">Your KYC application has been rejected.</p>
+          <p class="rejection-reason"style="text-align: center;"><strong>Reason:</strong> {{ reason }}</p>
+          <div style="text-align: center;">
+            <button (click)="reApply()">Re-Apply</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

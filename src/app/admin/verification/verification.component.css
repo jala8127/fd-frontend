@@ -242,3 +242,21 @@ button:hover {
   padding: 28px 32px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
+
+.reason-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  margin-top: 5px;
+  box-sizing: border-box; 
+  resize: vertical; 
+}
+
+.reason-input:focus {
+  border-color: #bb00ff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(153, 0, 255, 0.5);
+}
+ 

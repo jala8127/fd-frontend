@@ -17,6 +17,7 @@
 }
 
 .kyc-container {
+  position: relative;
   max-width: 700px;
   margin: 0 auto;
   background-color: #fff9ff;
@@ -215,12 +216,37 @@
 }
 
 .banner button {
-  background-color: #a205ea;
-  color: white;
+  background-color: #a913ee;
+  color: rgb(255, 255, 255);
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
   font-size: 16px;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: left; 
+  margin-bottom: 20px; 
+}
+.checkbox-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  cursor: pointer; 
+  accent-color: #a200ff; 
+}
+
+.checkbox-group label {
+  font-size: 1rem; 
+  color: #6d007f;
+  cursor: pointer; 
 }

@@ -1,42 +1,39 @@
-<div class="settings-page">
-  <h2 class="settings-title">Settings</h2>
+<div *ngIf="activeTab === 'personal'" class="form-section">
+  <h3>Personal Info</h3>
 
-  <!-- Top tab navigation -->
-  <div class="settings-tabs">
-    <div
-      class="tab-item"
-      [class.active]="activeTab === 'personal'"
-      (click)="activeTab = 'personal'"
-    >
-      Personal Info
-    </div>
-    <div
-      class="tab-item"
-      [class.active]="activeTab === 'security'"
-      (click)="activeTab = 'security'"
-    >
-      Login & Security
-    </div>
-  </div>
+  <div class="form-row" *ngFor="let field of personalForm?.controls | keyvalue">
+    <label class="field-label">{{ field.key | titlecase }}</label>
 
-  <div class="tab-content">
+    <!-- <input
+      *ngIf="!field.value.disabled"
+      class="field-input"
+      [formControl]="field.value"
+      [readonly]="!isEditing[field.key]"
+    />
 
-    <div *ngIf="activeTab === 'personal'">
-      <h3>Personal Info</h3>
-      <p><strong>Name:</strong><span class="edit-link">Edit</span></p>
-      <p><strong>phone</strong> <span class="edit-link">Edit</span></p>
-      <p><strong>Dob :</strong><span class="edit-link">Edit</span></p>
-      <p><strong>Adress:</strong> <span class="edit-link">Edit</span></p>
-      <p><strong>Pan no:</strong> <span class="edit-link">Edit</span></p>
-      <p><strong>Status</strong> <span class="edit-link">Edit</span></p>
-      <p><strong>Active no FD's</strong> <span class="edit-link">Edit</span></p>
-      <p><strong>Bank name</strong> <span class="edit-link">Edit</span></p>
-      <p><strong>Bank Acc no</strong> <span class="edit-link">Edit</span></p>
-      <p><strong>Bank IFSC</strong> <span class="edit-link">Edit</span></p>
-    </div>
-    
-    <div *ngIf="activeTab === 'security'">
-      <h3>Login & Security</h3>
+    <input
+      *ngIf="field.value.disabled"
+      class="field-input disabled"
+      [formControl]="field.value"
+      readonly
+    /> -->
+
+    <div class="field-actions">
+      <button
+        *ngIf="!field.value.disabled && !isEditing[field.key]"
+        (click)="enableEdit(field.key)"
+        class="edit-btn"
+      >
+        Edit
+      </button>
+
+      <button
+        *ngIf="isEditing[field.key]"
+        (click)="saveField(field.key)"
+        class="save-btn"
+      >
+        Save
+      </button>
     </div>
   </div>
 </div>

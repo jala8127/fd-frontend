@@ -21,7 +21,10 @@ export class KycComponent implements OnInit {
     currentAddress: '',
     permanentAddress: '',
     aadhaarNumber: '',
-    panNumber: ''
+    panNumber: '',
+    bankName: '',
+    accountNumber: '',
+    ifscCode: ''
   };
 
   selectedFile: File | null = null;
@@ -29,6 +32,8 @@ export class KycComponent implements OnInit {
   isSubmitted = false;
   status: 'APPROVED' | 'PENDING' | 'REJECTED' | '' = '';
   reason: string = '';
+  maxValidDob: string = '';
+  sameAsCurrent = false; // Property for the new checkbox
 
   constructor(
     private http: HttpClient,
@@ -41,58 +46,52 @@ export class KycComponent implements OnInit {
     if (userJson) {
       const user = JSON.parse(userJson);
       this.userId = user.userId;
+      this.kycData.fullName = user.name || '';
+      this.kycData.email = user.email || '';
+      this.kycData.phone = user.phone || '';
+      this.kycData.dob = user.dob || '';
     }
+
+    const today = new Date();
+    today.setFullYear(today.getFullYear() - 18);
+    this.maxValidDob = today.toISOString().split('T')[0];
+
+    // Re-enabled to fetch user's KYC status on load
     this.checkKycStatus();
   }
 
   onFileChange(event: any) {
-    this.selectedFile = event.target.files[0];
+    this.selectedFile = event.target.files?.[0] || null;
   }
 
-  isValidAadhaar(aadhaar: string): boolean {
-    const aadhaarRegex = /^\d{12}$/;
-    return aadhaarRegex.test(aadhaar);
-  }
-
-  isValidPan(pan: string): boolean {
-    const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
-    return panRegex.test(pan.toUpperCase());
+  /* Handles the "Same as Current Address" checkbox logic.*/
+  onSameAsCurrentChange(): void {
+    if (this.sameAsCurrent) {
+      this.kycData.permanentAddress = this.kycData.currentAddress;
+    } else {
+      this.kycData.permanentAddress = ''; // Clear the address when unchecked
+    }
   }
 
   submitKyc() {
-    const aadhaar = this.kycData.aadhaarNumber;
-    const pan = this.kycData.panNumber.toUpperCase();
-
-    if (!this.isValidAadhaar(aadhaar)) {
-      this.toastr.error('Aadhaar must be exactly 12 digits', 'Validation Failed');
-      return;
-    }
-
-    if (!this.isValidPan(pan)) {
-      this.toastr.error('PAN format must be like ABCDE1234F', 'Validation Failed');
-      return;
+    if (!this.kycData.user) {
+        this.kycData.user = { userId: this.userId };
     }
 
     const formData = new FormData();
 
-    formData.append('userId', this.userId.toString());
-    formData.append('fullName', this.kycData.fullName);
-    formData.append('email', this.kycData.email);
-    formData.append('phone', this.kycData.phone);
-    formData.append('dob', this.kycData.dob);
-    formData.append('currentAddress', this.kycData.currentAddress);
-    formData.append('permanentAddress', this.kycData.permanentAddress);
-    formData.append('panNumber', pan);
-    formData.append('aadhaarNumber', aadhaar);
+    formData.append('kycData', new Blob([JSON.stringify(this.kycData)], {
+      type: 'application/json'
+    }));
 
     if (this.selectedFile) {
-      formData.append('aadhaarDocument', this.selectedFile);
+      formData.append('kycDocument', this.selectedFile, this.selectedFile.name);
+    } else {
+        this.toastr.error('Aadhaar document is required.', 'Validation Failed');
+        return;
     }
 
-    this.http.post<{ message: string }>(
-      'http://localhost:8080/api/kyc/submit',
-      formData
-    ).subscribe({
+    this.http.post('http://localhost:8080/api/kyc/submit', formData).subscribe({
       next: () => {
         this.toastr.success('KYC submitted successfully!', 'Success');
         this.isSubmitted = true;
@@ -100,7 +99,8 @@ export class KycComponent implements OnInit {
       },
       error: (err) => {
         console.error('KYC submission failed:', err);
-        this.toastr.error('Something went wrong while submitting KYC', 'Error');
+        const errorMessage = err.error?.message || 'Something went wrong while submitting KYC';
+        this.toastr.error(errorMessage, 'Error');
       }
     });
   }
@@ -126,6 +126,7 @@ export class KycComponent implements OnInit {
     this.isSubmitted = false;
     this.status = '';
     this.reason = '';
+    this.selectedFile = null;
     this.kycData = {
       fullName: '',
       email: '',
@@ -134,9 +135,20 @@ export class KycComponent implements OnInit {
       currentAddress: '',
       permanentAddress: '',
       aadhaarNumber: '',
-      panNumber: ''
+      panNumber: '',
+      bankName: '',
+      accountNumber: '',
+      ifscCode: ''
     };
-    this.selectedFile = null;
+    // Re-populate user data after clearing
+    const userJson = localStorage.getItem('user');
+    if (userJson) {
+      const user = JSON.parse(userJson);
+      this.kycData.fullName = user.name || '';
+      this.kycData.email = user.email || '';
+      this.kycData.phone = user.phone || '';
+      this.kycData.dob = user.dob || '';
+    }
   }
 
   goToSchemes() {

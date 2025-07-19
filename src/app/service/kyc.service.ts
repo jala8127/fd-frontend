@@ -10,9 +10,9 @@ export class KycService {
 
   constructor(private http: HttpClient) {}
 
-  submitKyc(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/submit`, data);
-  }
+  submitKyc(data: FormData): Observable<any> {
+  return this.http.post(`${this.apiUrl}/submit`, data);
+}
 
   getKycStatus(email: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/status/${email}`);
