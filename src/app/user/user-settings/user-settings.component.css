@@ -1,103 +1,170 @@
 .settings-page {
   padding: 32px;
   font-family: 'Segoe UI', sans-serif;
-  background-color: #fff;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  max-width: 800px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-height: 85vh; 
+  overflow-y: auto; 
+  padding-right: 10px; 
 }
 
 .settings-title {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 24px;
-  color: #aa00ff;
+  color: #333;
 }
 
 .settings-tabs {
   display: flex;
   gap: 24px;
-  border-bottom: 1.5px solid #d4a3ef;
+  border-bottom: 2px solid #eee;
   margin-bottom: 24px;
 }
 
 .tab-item {
-  padding: 12px 0;
+  padding: 12px 4px;
   cursor: pointer;
   font-weight: 500;
-  color: #c067e6;
+  color: #666;
   position: relative;
+  border-bottom: 3px solid transparent;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.tab-item:hover {
+  color: #aa00ff;
 }
 
 .tab-item.active {
   color: #aa00ff;
-}
-
-.tab-item.active::after {
-  content: '';
-  position: absolute;
-  bottom: -1.5px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background-color: #b300ff;
-  border-radius: 2px;
+  font-weight: 600;
+  border-bottom-color: #aa00ff;
 }
 
 .tab-content {
   padding: 16px 0;
 }
 
-.edit-link {
-  color: #9c00cb;
-  margin-left: 12px;
-  cursor: pointer;
-  font-size: 14px;
-}
-.form-section {
-  max-width: 700px;
-  margin-top: 20px;
+.form-section h3 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
 }
 
 .form-row {
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   width: 100%;
+  gap: 16px;
+}
+
+.field-label-container {
+  flex: 0 0 150px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .field-label {
-  flex: 1;
-  font-weight: bold;
+  font-weight: 500;
   font-size: 15px;
+  color: #555;
+  text-transform: capitalize;
+}
+
+.edit-btn-inline {
+  padding: 8px 16px;
+  background: #aa00ff; 
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 0;
+  margin-right: 55px;
+  height: 35px;
+  border-radius: 6px;
+  width:80px
+}
+
+.edit-btn-inline:hover {
+  text-decoration: #7100aa;
 }
 
 .field-input {
-  flex: 3;
-  padding: 8px;
+  flex-grow: 1;
+  padding: 10px;
   font-size: 14px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.field-input:focus {
+  outline: none;
+  border-color: #aa00ff;
+  box-shadow: 0 0 0 3px rgba(170, 0, 255, 0.1);
+}
+
+.field-input[readonly] {
+  background-color: #f5f5f5;
+  color: #333;
+  border-color: #e0e0e0;
 }
 
 .field-input.disabled {
-  background-color: #f5f5f5;
-  color: #999;
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
 }
 
 .field-actions {
-  margin-left: 12px;
+  flex-basis: 170px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
-.edit-btn,
 .save-btn {
-  padding: 6px 12px;
-  font-size: 13px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
   border: none;
-  border-radius: 4px;
-  background-color: #a205ea;
+  border-radius: 6px;
+  background-color: #aa00ff;
   color: white;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 80px;
 }
 
-.edit-btn:hover,
 .save-btn:hover {
   background-color: #8204c9;
+}
+
+/* NEW: Style for the cancel button */
+.cancel-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  width: 80px;
+}
+
+.cancel-btn:hover {
+  background-color: #f0f0f0;
+  border-color: #adadad;
 }

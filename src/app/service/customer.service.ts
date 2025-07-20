@@ -7,12 +7,16 @@ export interface Customer {
   name: string;
   email: string;
   phone: string;
-  dob?: string;        
-  mpin?: string;       
-  panNo?: string;     
+  dob?: string;
+  mpin?: string;
+  panNo?: string;
   status?: string;
   address?: string;
   activeFd?: string;
+  bankName?: string;
+  bankAccNo?: string;
+  bankIfsc?: string;
+  [key: string]: any;
 }
 
 @Injectable({
@@ -24,6 +28,15 @@ export class CustomerService {
 
   constructor(private http: HttpClient) {}
 
+  getLoggedInUserDetails(): Observable<Customer> {
+    return this.http.get<Customer>(`${this.userApi}/profile`);
+  }
+
+  updateUserField(field: string, value: any): Observable<any> {
+    return this.http.put(`${this.userApi}/update-field`, { field, value });
+  }
+
+  // Other service methods...
   getAllCustomers(): Observable<Customer[]> {
     return this.http.get<Customer[]>(`${this.userApi}/all`);
   }
@@ -38,12 +51,5 @@ export class CustomerService {
 
   addCustomer(customer: Customer): Observable<Customer> {
     return this.http.post<Customer>(`${this.authApi}/register`, customer);
-  }
-  getLoggedInUserDetails() {
-  return this.http.get<any>(`/api/user/profile`);
-  }
-
-  updateUserField(field: string, value: any) {
-  return this.http.put(`/api/user/update-field`, { field, value });
   }
 }

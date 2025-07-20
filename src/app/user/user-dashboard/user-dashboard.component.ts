@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from '../../service/auth.service';
+import { CustomerService, Customer } from '../../service/customer.service'; 
 
 @Component({
   selector: 'app-user-dashboard',
@@ -24,28 +24,34 @@ import { AuthService } from '../../service/auth.service';
 ]})
 export class UserDashboardComponent implements OnInit {
 
+  selected = 'dashboard';
+  showModal = false;
+  user: Customer | null = null;
+
   constructor(
     private router: Router,
     private toastr: ToastrService,
-    private authService: AuthService
+    private customerService: CustomerService 
   ) {}
 
-  selected = 'dashboard';
-  showModal = false;
-  user: any = null;
-
- ngOnInit(): void {
-  const storedUser = localStorage.getItem('user');
-  if (storedUser) {
-    this.user = JSON.parse(storedUser);
-  } else {
-    console.warn('No user found in localStorage');
+  ngOnInit(): void {
+    this.customerService.getLoggedInUserDetails().subscribe({
+      next: (userData) => {
+        if (userData) {
+          this.user = userData;
+          console.log("Successfully fetched user for dashboard:", this.user);
+        } else {
+          this.toastr.error("Failed to retrieve user details.");
+          this.logout(); 
+        }
+      },
+      error: (err) => {
+        console.error("Error fetching user details for dashboard:", err);
+        this.toastr.error("Your session may have expired. Please log in again.");
+        this.logout(); 
+      }
+    });
   }
-  if (!this.user) {
-  this.toastr.warning("Please log in again.");
-  this.router.navigate(['/login']);
-}
-}
 
   onProfileClick(): void {
     this.showModal = true;
@@ -67,10 +73,11 @@ export class UserDashboardComponent implements OnInit {
     console.log('Notification clicked');
   }
 
- logout(): void {
-  localStorage.removeItem('user'); 
-  localStorage.removeItem('email'); 
-  this.toastr.success("Logout successful");
-  this.router.navigate(['/login']);
-}
+  logout(): void {
+    localStorage.removeItem('authToken'); 
+    localStorage.removeItem('user'); 
+    localStorage.removeItem('email'); 
+    this.toastr.success("Logout successful");
+    this.router.navigate(['/login']);
+  }
 }

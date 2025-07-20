@@ -27,49 +27,6 @@ export class LoginComponent {
     private employeeService: EmployeeService
   ) {}
 
-  togglePassword() {
-    this.showPassword = !this.showPassword;
-  }
-
-  validateEmail(email: string): boolean {
-    const emailRegex = /^[a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)*@[a-zA-Z]+\.[a-z]{2,}$/;
-    return emailRegex.test(email);
-  }
-
-  onEmailChange() {
-    this.invalidEmail = this.email.trim() !== '' && !this.validateEmail(this.email);
-  }
-
-  checkEmailExistsBeforeRegister(event: Event) {
-    event.preventDefault(); 
-    const emailToCheck = this.email.trim();
-
- if (!emailToCheck) {
-    this.router.navigate(['/register']);
-    return;
-  }
-
-    if (!this.validateEmail(emailToCheck)) {
-      this.invalidEmail = true;
-      this.toastr.error("Invalid email format.");
-      return;
-    }
-    this.invalidEmail = false;
-
-    this.authService.checkEmailExists(emailToCheck).subscribe({
-      next: (exists: boolean) => {
-        if (exists) {
-          this.toastr.warning("This email is already registered. Please login instead.");
-        } else {
-          this.router.navigate(['/register']);
-        }
-      },
-      error: () => {
-        this.toastr.error("Error checking email availability.");
-      }
-    });
-  }
-
   onLoginClick() {
     const email = this.email.trim();
     const password = this.password.trim();
@@ -92,15 +49,26 @@ export class LoginComponent {
       this.authService.loginUser(email, password).subscribe({
         next: (res: any) => {
           this.toastr.success("User Login successful");
-          localStorage.setItem('user', JSON.stringify(res));
-          localStorage.setItem('email', res.email);  
-          this.router.navigate(['/user/user-home']);
+
+          // --- THIS IS THE CRUCIAL FIX ---
+          // 1. Check if the token exists in the response from the backend.
+          if (res && res.token) {
+            // 2. Save the token to localStorage with the key 'authToken'.
+            //    The AuthInterceptor will look for this exact key.
+            localStorage.setItem('authToken', res.token); 
+            localStorage.setItem('user', JSON.stringify(res));
+            localStorage.setItem('email', res.email);  
+            this.router.navigate(['/user/user-home']);
+          } else {
+            this.toastr.error("Login successful, but no token was received from the server.");
+          }
         },
         error: (err: any) => {
           if (err.status === 404 || err.status === 401) {
             this.tryEmployeeLogin(email, password);
           } else {
-            this.toastr.error("Something went wrong.");
+            // The 403 error will be caught here
+            this.toastr.error("Invalid login credentials.");
           }
         }
       });
@@ -113,11 +81,61 @@ export class LoginComponent {
     this.employeeService.loginEmployee(email, password).subscribe({
       next: (res: any) => {
         this.toastr.success("Employee Login successful");
-        localStorage.setItem('employee', JSON.stringify(res));
-        this.router.navigate(['/admin/admin-home']);  
+        // --- ALSO FIX IT HERE FOR EMPLOYEES ---
+        if (res && res.token) {
+            localStorage.setItem('authToken', res.token);
+            localStorage.setItem('employee', JSON.stringify(res));
+            this.router.navigate(['/admin/admin-home']);  
+        } else {
+            this.toastr.error("Login successful, but no token was received from the server.");
+        }
       },
       error: () => {
         this.toastr.error("Invalid login credentials.");
+      }
+    });
+  }
+  
+  // --- Other methods below are unchanged ---
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
+
+  validateEmail(email: string): boolean {
+    const emailRegex = /^[a-zA-Z0-9]+([._-]?[a-zA-Z0-9]+)*@[a-zA-Z]+\.[a-z]{2,}$/;
+    return emailRegex.test(email);
+  }
+
+  onEmailChange() {
+    this.invalidEmail = this.email.trim() !== '' && !this.validateEmail(this.email);
+  }
+
+  checkEmailExistsBeforeRegister(event: Event) {
+    event.preventDefault(); 
+    const emailToCheck = this.email.trim();
+
+    if (!emailToCheck) {
+      this.router.navigate(['/register']);
+      return;
+    }
+
+    if (!this.validateEmail(emailToCheck)) {
+      this.invalidEmail = true;
+      this.toastr.error("Invalid email format.");
+      return;
+    }
+    this.invalidEmail = false;
+
+    this.authService.checkEmailExists(emailToCheck).subscribe({
+      next: (exists: boolean) => {
+        if (exists) {
+          this.toastr.warning("This email is already registered. Please login instead.");
+        } else {
+          this.router.navigate(['/register']);
+        }
+      },
+      error: () => {
+        this.toastr.error("Error checking email availability.");
       }
     });
   }

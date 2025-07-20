@@ -1,39 +1,76 @@
-<div *ngIf="activeTab === 'personal'" class="form-section">
-  <h3>Personal Info</h3>
+<div class="settings-page">
+  <h2 class="settings-title">Settings</h2>
 
-  <div class="form-row" *ngFor="let field of personalForm?.controls | keyvalue">
-    <label class="field-label">{{ field.key | titlecase }}</label>
+  <!-- Top tab navigation -->
+  <div class="settings-tabs">
+    <div
+      class="tab-item"
+      [class.active]="activeTab === 'personal'"
+      (click)="activeTab = 'personal'"
+    >
+      Personal Info
+    </div>
+    <div
+      class="tab-item"
+      [class.active]="activeTab === 'security'"
+      (click)="activeTab = 'security'"
+    >
+      Login & Security
+    </div>
+  </div>
 
-    <!-- <input
-      *ngIf="!field.value.disabled"
-      class="field-input"
-      [formControl]="field.value"
-      [readonly]="!isEditing[field.key]"
-    />
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <!-- Personal Info Section -->
+    <div *ngIf="activeTab === 'personal' && personalForm" class="form-section">
+      <h3>Personal Info</h3>
 
-    <input
-      *ngIf="field.value.disabled"
-      class="field-input disabled"
-      [formControl]="field.value"
-      readonly
-    /> -->
+      <div class="form-row" *ngFor="let field of formFields">
+        <div class="field-label-container">
+          <label class="field-label">{{ field.label }}</label>
+        </div>
 
-    <div class="field-actions">
-      <button
-        *ngIf="!field.value.disabled && !isEditing[field.key]"
-        (click)="enableEdit(field.key)"
-        class="edit-btn"
-      >
-        Edit
-      </button>
+        <!-- The input field -->
+        <input
+          class="field-input"
+          [formControl]="field.control"
+          [readonly]="!isEditing[field.key]"
+          [class.disabled]="field.control.disabled"
+        />
 
-      <button
-        *ngIf="isEditing[field.key]"
-        (click)="saveField(field.key)"
-        class="save-btn"
-      >
-        Save
-      </button>
+        <!-- Action buttons container -->
+        <div class="field-actions">
+
+          <button
+            *ngIf="!field.control.disabled && !isEditing[field.key]"
+            (click)="enableEdit(field.key)"
+            class="edit-btn-inline"
+          >
+            Edit
+          </button>
+          
+          <button
+            *ngIf="isEditing[field.key] && field.control.dirty"
+            (click)="saveField(field.key)"
+            class="save-btn"
+          >
+            Save
+          </button>
+          <button
+            *ngIf="isEditing[field.key]"
+            (click)="cancelEdit(field.key)"
+            class="cancel-btn"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login & Security Section -->
+    <div *ngIf="activeTab === 'security'">
+      <h3>Login & Security</h3>
+      <p>Manage your login credentials and security settings.</p>
     </div>
   </div>
 </div>

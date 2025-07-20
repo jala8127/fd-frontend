@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { CustomerService, Customer } from '../../service/customer.service';
 
 @Component({
   selector: 'app-kyc',
@@ -28,58 +29,70 @@ export class KycComponent implements OnInit {
   };
 
   selectedFile: File | null = null;
-  userId: number = 0;
+  userId: number | undefined = 0; 
   isSubmitted = false;
   status: 'APPROVED' | 'PENDING' | 'REJECTED' | '' = '';
   reason: string = '';
   maxValidDob: string = '';
-  sameAsCurrent = false; // Property for the new checkbox
+  sameAsCurrent = false;
 
   constructor(
     private http: HttpClient,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private customerService: CustomerService
   ) {}
 
   ngOnInit(): void {
-    const userJson = localStorage.getItem('user');
-    if (userJson) {
-      const user = JSON.parse(userJson);
-      this.userId = user.userId;
-      this.kycData.fullName = user.name || '';
-      this.kycData.email = user.email || '';
-      this.kycData.phone = user.phone || '';
-      this.kycData.dob = user.dob || '';
-    }
-
     const today = new Date();
     today.setFullYear(today.getFullYear() - 18);
     this.maxValidDob = today.toISOString().split('T')[0];
 
-    // Re-enabled to fetch user's KYC status on load
-    this.checkKycStatus();
+    this.customerService.getLoggedInUserDetails().subscribe({
+      next: (user: Customer) => {
+        if (user) {
+          this.userId = user.userId;
+          this.kycData.fullName = user.name || '';
+          this.kycData.email = user.email || '';
+          this.kycData.phone = user.phone || '';
+          this.kycData.dob = user.dob || '';
+          
+          this.checkKycStatus();
+        } else {
+          this.toastr.error("Could not retrieve user details for KYC.");
+        }
+      },
+      error: (err) => {
+        console.error("Failed to load user for KYC:", err);
+        this.toastr.error("Session may have expired. Please log in again.");
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
   onFileChange(event: any) {
     this.selectedFile = event.target.files?.[0] || null;
   }
 
-  /* Handles the "Same as Current Address" checkbox logic.*/
   onSameAsCurrentChange(): void {
     if (this.sameAsCurrent) {
       this.kycData.permanentAddress = this.kycData.currentAddress;
     } else {
-      this.kycData.permanentAddress = ''; // Clear the address when unchecked
+      this.kycData.permanentAddress = '';
     }
   }
 
   submitKyc() {
-    if (!this.kycData.user) {
-        this.kycData.user = { userId: this.userId };
+
+    if (!this.userId) {
+        this.toastr.error('User ID is missing. Cannot submit KYC.');
+        return;
     }
+    
+
+    this.kycData.user = { userId: this.userId };
 
     const formData = new FormData();
-
     formData.append('kycData', new Blob([JSON.stringify(this.kycData)], {
       type: 'application/json'
     }));
@@ -90,6 +103,7 @@ export class KycComponent implements OnInit {
         this.toastr.error('Aadhaar document is required.', 'Validation Failed');
         return;
     }
+
 
     this.http.post('http://localhost:8080/api/kyc/submit', formData).subscribe({
       next: () => {
@@ -106,6 +120,9 @@ export class KycComponent implements OnInit {
   }
 
   checkKycStatus() {
+
+    if (!this.userId) return;
+
     this.http.get<any[]>('http://localhost:8080/api/kyc/all').subscribe(data => {
       const userKyc = data.find(k => k.user?.userId === this.userId);
       if (userKyc) {
@@ -127,28 +144,8 @@ export class KycComponent implements OnInit {
     this.status = '';
     this.reason = '';
     this.selectedFile = null;
-    this.kycData = {
-      fullName: '',
-      email: '',
-      phone: '',
-      dob: '',
-      currentAddress: '',
-      permanentAddress: '',
-      aadhaarNumber: '',
-      panNumber: '',
-      bankName: '',
-      accountNumber: '',
-      ifscCode: ''
-    };
-    // Re-populate user data after clearing
-    const userJson = localStorage.getItem('user');
-    if (userJson) {
-      const user = JSON.parse(userJson);
-      this.kycData.fullName = user.name || '';
-      this.kycData.email = user.email || '';
-      this.kycData.phone = user.phone || '';
-      this.kycData.dob = user.dob || '';
-    }
+
+    this.ngOnInit();
   }
 
   goToSchemes() {
