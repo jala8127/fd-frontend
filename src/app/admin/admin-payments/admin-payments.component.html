@@ -22,7 +22,7 @@
   <div class="table-search-wrapper">
     <input
       type="text"
-      placeholder="Search by user/email"
+      placeholder="Search by user email"
       [(ngModel)]="searchText"
     />
   </div>
@@ -37,15 +37,19 @@
           <th>Amount</th>
           <th>Date</th>
           <th>Payment Mode</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let payment of filteredPayments()">
           <td>{{ payment.id }}</td>
           <td>{{ payment.userEmail }}</td>
-          <td>₹{{ payment.amount }}</td>
+          <td>₹{{ payment.amount |number:'1.0-0'}}</td>
           <td>{{ payment.paymentDate | date: 'mediumDate' }}</td>
           <td>{{ payment.paymentMode }}</td>
+          <td>
+            <button class="btn btn-primary" (click)="viewPayment(payment)">View</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -69,7 +73,7 @@
           <td>{{ payout.id }}</td>
           <td>{{ payout.userEmail }}</td>
           <td>{{ payout.payoutType }}</td>
-          <td>₹{{ payout.amountPaid }}</td>
+          <td>₹{{ payout.amountPaid | number:'1.0-0' }}</td>
           <td>{{ payout.payoutDate | date: 'mediumDate' }}</td>
           <td>
             <button class="btn btn-primary" (click)="viewPayout(payout)">View</button>
@@ -80,7 +84,7 @@
   </div>
 </div>
 
-<!-- Payout Modal (OUTSIDE main wrapper) -->
+<!-- Payout Modal -->
 <div class="modal-overlay" *ngIf="selectedPayout">
   <div class="modal">
     <div class="modal-header">
@@ -89,10 +93,35 @@
     <div class="modal-content">
       <p><strong>User Email:</strong> {{ selectedPayout.userEmail }}</p>
       <p><strong>Scheme Name:</strong> {{ selectedPayout.schemeName }}</p>
-      <p><strong>Amount:</strong> ₹{{ selectedPayout.amountPaid }}</p>
-      <p><strong>Status:</strong> {{ selectedPayout.payoutType }}</p>
-      <p><strong>Date:</strong> {{ selectedPayout.payoutDate | date: 'short' }}</p>
+      <p><strong>Amount Paid:</strong> ₹{{ selectedPayout.amountPaid | number:'1.2-2' }}</p>
+      <p><strong>Payout Type:</strong> {{ selectedPayout.payoutType }}</p>
+      <p><strong>Payout Date:</strong> {{ selectedPayout.payoutDate | date: 'fullDate' }}</p>
       <p><strong>Transaction ID:</strong> {{ selectedPayout.transactionId }}</p>
+    </div>
+    <!-- ADDED modal-footer container -->
+    <div class="modal-footer">
+      <button class="btn-close-modal" (click)="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="modal-overlay" *ngIf="selectedPayment">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Payment Details</h2>
+    </div>
+    <div class="modal-content">
+      <p><strong>User Email:</strong> {{ selectedPayment.userEmail }}</p>
+      <p><strong>Scheme Name:</strong> {{ selectedPayment.schemeName }}</p>
+      <p><strong>Amount:</strong> ₹{{ selectedPayment.amount | number:'1.2-2' }}</p>
+      <p><strong>Payment Mode:</strong> {{ selectedPayment.paymentMode }}</p>
+      <p><strong>Status:</strong> {{ selectedPayment.status }}</p>
+      <p><strong>Payment Date:</strong> {{ selectedPayment.paymentDate | date: 'fullDate' }}</p>
+      <p><strong>Transaction ID:</strong> {{ selectedPayment.transactionId }}</p>
+    </div>
+    <!-- ADDED modal-footer container -->
+    <div class="modal-footer">
       <button class="btn-close-modal" (click)="closeModal()">Close</button>
     </div>
   </div>

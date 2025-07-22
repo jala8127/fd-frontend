@@ -9,6 +9,8 @@
     <table *ngIf="deposits.length > 0; else noFds">
       <thead>
         <tr>
+
+          <th>ID</th>
           <th>Scheme</th>
           <th>Amount</th>
           <th>Interest Earned</th>
@@ -18,6 +20,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let fd of deposits">
+          <td data-label="ID">{{ fd.id}}</td>
           <td data-label="Scheme">{{ fd.schemeName || 'N/A' }}</td>
           <td data-label="Amount">₹{{ fd.amount || 0 }}</td>
           <td data-label="Interest Earned">₹{{ fd.interestEarned || 0 }}</td>

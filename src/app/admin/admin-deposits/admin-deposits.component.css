@@ -22,6 +22,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  margin-top: -50px;
 }
 
 .deposits-header h2 {
@@ -41,6 +42,7 @@
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s ease;
+  margin-bottom: 20px;
 }
 
 .download-btn:hover {
@@ -77,8 +79,7 @@ td {
   white-space: nowrap;
 }
 
-tr:nth-child(even),
-tr:nth-child(odd) {
+tr:nth-child(even){
   background-color: #fdf6ff;
 }
 
@@ -97,14 +98,15 @@ tr:hover {
 
 .admin-deposit-wrapper table button {
   padding: 6px 12px;
-  font-size: 13px;
+  font-size: 12px;
   border: none;
   border-radius: 6px;
   font-weight: 500;
   cursor: pointer;
   margin: 0 4px;
   color: white;
-  background-color: #316cea;
+  background-color: #a205ea;
+  height: 30px;
 }
 
 .modal-backdrop {
@@ -160,7 +162,7 @@ tr:hover {
   cursor: pointer;
   border: none;
   transition: background-color 0.3s ease;
-  background-color: #d72335;
+  background-color: #ce2d3d;
 }
 
 .modal-actions .confirm-btn {
@@ -173,7 +175,7 @@ tr:hover {
 }
 
 .modal-actions .cancel-btn {
-  background-color: #dc3545;
+  background-color: #c82d3d;
   color: white;
 }
 
@@ -225,7 +227,7 @@ tr:hover {
 }
 
 .modal-backdrop .cancel-btn{
-  background-color: rgb(242, 58, 58);
+  background-color: rgb(208, 55, 55);
   color: rgb(255, 255, 255);
   border-style: none;
   border-radius: 5px;

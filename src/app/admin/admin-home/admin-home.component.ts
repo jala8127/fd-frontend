@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { interval, Subscription } from 'rxjs';
 import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration, ChartType } from 'chart.js';
+import { EmployeeService } from '../../service/employee.service'; 
+import { ToastrService } from 'ngx-toastr'; 
 
 @Component({
   selector: 'app-admin-home',
@@ -15,17 +16,15 @@ import { ChartConfiguration, ChartType } from 'chart.js';
 })
 export class AdminHomeComponent implements OnInit, OnDestroy {
   totalDeposits = 0;
-  todaysPayouts = 0;
-  todaysReceived = 0;
+  monthlyPayouts = 0;
+  monthlyReceived = 0;
 
   showAddCustomerModal = false;
   showManualDepositModal = false;
   showCloseDepositModal = false;
   showKycModal = false;
-
   selectedDocument: File | null = null;
   recentTransactions: any[] = [];
-
   refreshSubscription!: Subscription;
 
   barChartType: ChartType = 'bar';
@@ -58,13 +57,16 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
     }
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private employeeService: EmployeeService, 
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.fetchDashboardData();
     this.fetchRecentTransactions();
 
-    this.refreshSubscription = interval(10000).subscribe(() => {
+    this.refreshSubscription = interval(30000).subscribe(() => {
       this.fetchDashboardData();
     });
   }
@@ -83,52 +85,58 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
   }
 
   fetchDashboardData(): void {
-    this.http.get<{ total: number }>('/api/admin/total-deposits')
-      .subscribe(res => this.totalDeposits = res.total);
+    this.employeeService.getTotalDeposits().subscribe({
+      next: res => this.totalDeposits = res.total,
+      error: err => console.error('Failed to load total deposits', err)
+    });
 
-    this.http.get<{ total: number }>('/api/admin/todays-payouts')
-      .subscribe(res => this.todaysPayouts = res.total);
+    this.employeeService.getMonthlyPayouts().subscribe({
+      next: res => this.monthlyPayouts = res.total,
+      error: err => console.error('Failed to load monthly payouts', err)
+    });
 
-    this.http.get<{ total: number }>('/api/admin/todays-received')
-      .subscribe(res => this.todaysReceived = res.total);
+    this.employeeService.getMonthlyReceived().subscribe({
+      next: res => this.monthlyReceived = res.total,
+      error: err => console.error('Failed to load monthly received', err)
+    });
   }
 
   fetchRecentTransactions(): void {
-    this.http.get<any[]>('/api/admin/recent-transactions')
-      .subscribe(data => {
-        this.recentTransactions = data.slice(0, 5);
-      });
+    this.employeeService.getRecentTransactions().subscribe({
+      next: data => this.recentTransactions = data.slice(0, 4),
+      error: err => console.error('Failed to load recent transactions', err)
+    });
   }
 
   addCustomer(form: NgForm): void {
     if (form.valid) {
-      this.http.post('/api/admin/add-customer', form.value)
-        .subscribe(() => {
-          form.resetForm();
-          this.toggleModal('addCustomer', false);
-        });
+      this.employeeService.addCustomer(form.value).subscribe(() => {
+        this.toastr.success('Customer added successfully!');
+        form.resetForm();
+        this.toggleModal('addCustomer', false);
+      });
     }
   }
 
   makeManualDeposit(form: NgForm): void {
     if (form.valid) {
-      this.http.post('/api/admin/manual-deposit', form.value)
-        .subscribe(() => {
-          form.resetForm();
-          this.fetchDashboardData();
-          this.toggleModal('manualDeposit', false);
-        });
+      this.employeeService.makeManualDeposit(form.value).subscribe(() => {
+        this.toastr.success('Deposit made successfully!');
+        form.resetForm();
+        this.fetchDashboardData();
+        this.toggleModal('manualDeposit', false);
+      });
     }
   }
 
   closeDeposit(form: NgForm): void {
     if (form.valid) {
-      this.http.post('/api/admin/close-deposit', form.value)
-        .subscribe(() => {
-          form.resetForm();
-          this.fetchDashboardData();
-          this.toggleModal('closeDeposit', false);
-        });
+      this.employeeService.closeDeposit(form.value).subscribe(() => {
+        this.toastr.success('Deposit closed successfully!');
+        form.resetForm();
+        this.fetchDashboardData();
+        this.toggleModal('closeDeposit', false);
+      });
     }
   }
 
@@ -146,12 +154,12 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
       formData.append('customerId', kycData.customerIdKyc);
       formData.append('document', this.selectedDocument);
 
-      this.http.post('/api/admin/verify-kyc', formData)
-        .subscribe(() => {
-          form.resetForm();
-          this.selectedDocument = null;
-          this.toggleModal('kyc', false);
-        });
+      this.employeeService.verifyKyc(formData).subscribe(() => {
+        this.toastr.success('KYC verified successfully!');
+        form.resetForm();
+        this.selectedDocument = null;
+        this.toggleModal('kyc', false);
+      });
     }
   }
 }

@@ -36,7 +36,6 @@ export class CustomerService {
     return this.http.put(`${this.userApi}/update-field`, { field, value });
   }
 
-  // Other service methods...
   getAllCustomers(): Observable<Customer[]> {
     return this.http.get<Customer[]>(`${this.userApi}/all`);
   }

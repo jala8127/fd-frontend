@@ -47,7 +47,6 @@
   font-weight: 500;
 }
 
-.colored-border-table tr:nth-child(odd),
 .colored-border-table tr:nth-child(even) {
   background-color: #fdf6ff;
 }
@@ -65,21 +64,8 @@
   font-weight: 500;
   cursor: pointer;
   margin: 0 4px;
-}
-
-.edit-btn {
-  background-color: #ffc107;
-  color: black;
-}
-
-.activate-btn {
-  background-color: #28a745;
-  color: white;
-}
-
-.deactivate-btn {
-  background-color: #dc3545;
-  color: white;
+  color:white;
+  background-color: #a004cf;
 }
 
 .modal-dialog {
@@ -129,4 +115,19 @@
   margin-top: 4px;
   white-space: pre-wrap;
   font-weight: 500;
+}
+.btn {
+  background-color: #a004cf;
+  border-color: #a004cf;
+} 
+.modal-content .btn-danger{
+  background-color: rgb(206, 23, 23);
+  border:none;
+}
+.modal-content .btn-secondary{
+  background-color:#7b7b7b;
+  border: none;
+}
+.d-flex{
+  margin-top: -30px;
 }

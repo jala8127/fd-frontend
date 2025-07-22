@@ -5,6 +5,7 @@
   background-color: #fefefe;
   display: flex;
   justify-content: center;
+  margin-top: -50px;
   align-items: center;
 }
 
@@ -175,7 +176,7 @@ button:hover {
   .form-row {
     flex-direction: column;
   }
-
+  
   .kyc-container,
   .kyc-details {
     padding: 20px;

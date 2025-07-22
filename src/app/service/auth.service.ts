@@ -16,7 +16,7 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/employees/login`, { email, password });
   }
   getUserEmail(): string {
-    return localStorage.getItem('email') || '';
+    return sessionStorage.getItem('email') || '';
   }
 
   checkEmailExists(email: string): Observable<boolean> {

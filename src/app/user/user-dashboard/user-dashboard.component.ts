@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CustomerService, Customer } from '../../service/customer.service'; 
+import { InactivityService } from '../../service/inactivity.service'; 
+import { Subscription } from 'rxjs'; 
 
 @Component({
   selector: 'app-user-dashboard',
@@ -22,35 +24,57 @@ import { CustomerService, Customer } from '../../service/customer.service';
     ])
   ])
 ]})
-export class UserDashboardComponent implements OnInit {
+export class UserDashboardComponent implements OnInit, OnDestroy {
 
   selected = 'dashboard';
   showModal = false;
   user: Customer | null = null;
+  private inactivitySubscription!: Subscription;
 
   constructor(
     private router: Router,
     private toastr: ToastrService,
-    private customerService: CustomerService 
+    private customerService: CustomerService,
+    private inactivityService: InactivityService 
   ) {}
 
   ngOnInit(): void {
+    this.inactivityService.startMonitoring();
+    this.inactivitySubscription = this.inactivityService.getInactivityLogout().subscribe(() => {
+      this.logout();
+    });
+
     this.customerService.getLoggedInUserDetails().subscribe({
       next: (userData) => {
         if (userData) {
           this.user = userData;
-          console.log("Successfully fetched user for dashboard:", this.user);
         } else {
           this.toastr.error("Failed to retrieve user details.");
-          this.logout(); 
+          this.logout();
         }
       },
       error: (err) => {
         console.error("Error fetching user details for dashboard:", err);
         this.toastr.error("Your session may have expired. Please log in again.");
-        this.logout(); 
+        this.logout();
       }
     });
+  }
+
+  ngOnDestroy(): void {
+
+    this.inactivityService.stopMonitoring();
+    if (this.inactivitySubscription) {
+      this.inactivitySubscription.unsubscribe();
+    }
+  }
+
+  logout(): void {
+    sessionStorage.removeItem('authToken'); 
+    sessionStorage.removeItem('user'); 
+    sessionStorage.removeItem('email'); 
+    this.toastr.success("Logout successful");
+    this.router.navigate(['/login']);
   }
 
   onProfileClick(): void {
@@ -59,25 +83,5 @@ export class UserDashboardComponent implements OnInit {
 
   closeModal(): void {
     this.showModal = false;
-  }
-
-  select(menu: string): void {
-    this.selected = menu;
-  }
-
-  onSearchClick(): void {
-    console.log('Search clicked');
-  }
-
-  onNotificationClick(): void {
-    console.log('Notification clicked');
-  }
-
-  logout(): void {
-    localStorage.removeItem('authToken'); 
-    localStorage.removeItem('user'); 
-    localStorage.removeItem('email'); 
-    this.toastr.success("Logout successful");
-    this.router.navigate(['/login']);
   }
 }

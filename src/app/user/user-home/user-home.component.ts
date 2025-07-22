@@ -42,23 +42,24 @@ export class UserHomeComponent implements OnInit {
 
   ngOnInit(): void {
     const email = this.authService.getUserEmail();
-
-    this.http.get<any>(`http://localhost:8080/api/deposits/summary/${email}`).subscribe({
-      next: (data) => (this.summary = data),
-      error: (err) => console.error('Failed to load summary:', err)
-    });
+    if (email) {
+      this.http.get<any>(`http://localhost:8080/api/deposits/summary/${email}`).subscribe({
+        next: (data) => (this.summary = data),
+        error: (err) => console.error('Failed to load summary:', err)
+      });
+    }
 
     this.loadInterestRates();
   }
 
-loadInterestRates(): void {
-  this.http.get<any[]>('http://localhost:8080/api/schemes/all').subscribe({
-    next: (data) => {
-      this.interestSchemes = data.filter(
-        (s) => ['B1', 'B3', 'B4'].includes(s.schemeName)
-      );
-    },
-    error: (err) => console.error('Failed to load interest rates:', err)
-  });
-}
+  loadInterestRates(): void {
+    this.http.get<any[]>('http://localhost:8080/api/schemes/user/active').subscribe({
+      next: (data) => {
+        this.interestSchemes = data.filter(
+          (s) => ['B1', 'B3', 'B4'].includes(s.schemeName)
+        );
+      },
+      error: (err) => console.error('Failed to load interest rates:', err)
+    });
+  }
 }

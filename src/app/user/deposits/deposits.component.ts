@@ -26,12 +26,11 @@ export class DepositsComponent implements OnInit {
   }
 
   fetchDeposits(): void {
-    const email = localStorage.getItem('email');
-    this.http.get<any[]>(`http://localhost:8080/api/deposits/all`).subscribe({
+    this.http.get<any[]>(`http://localhost:8080/api/deposits/my-deposits`).subscribe({
       next: data => {
-        this.deposits = data.filter(fd => fd.userEmail === email && fd.status === 'ACTIVE');
+        this.deposits = data.filter(fd => fd.status === 'ACTIVE');
       },
-      error: () => console.error("Failed to load FDs")
+      error: (err) => console.error("Failed to load FDs", err)
     });
   }
 
@@ -79,21 +78,12 @@ export class DepositsComponent implements OnInit {
     this.showLoader = true;
     this.paymentResult = null;
 
-    const withdrawalPayload = {
-      fdId: this.selectedFd.id,
-      email: this.selectedFd.userEmail,
-      payoutAmount: this.finalPayout,
-      status: 'PRE_MATURE',
-      penalty: this.selectedFd.penality || 0
-    };
-
     setTimeout(() => {
      this.http.put(`http://localhost:8080/api/deposits/close/${this.selectedFd.id}`, {}).subscribe({
         next: () => {
           this.paymentResult = 'SUCCESS';
           this.showLoader = false;
           this.playSound('success');
-
           this.fetchDeposits();
         },
         error: (err) => {

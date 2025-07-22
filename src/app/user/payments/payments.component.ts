@@ -39,7 +39,7 @@ export class PaymentsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.userEmail = localStorage.getItem('email') || '';
+    this.userEmail = sessionStorage.getItem('email') || '';
     this.fetchPaymentHistory();
     this.fetchPayoutHistory();
 

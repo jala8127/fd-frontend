@@ -202,7 +202,7 @@
       <p><strong>Date:</strong> {{ selectedPayment.paymentDate | date: 'fullDate' }}</p>
       <p><strong>Status:</strong> {{ selectedPayment.status }}</p>
       <p><strong>Transaction ID:</strong> {{ selectedPayment.transactionId }}</p>
-      <p><strong>Description:</strong> {{ selectedPayment.description || 'N/A' }}</p>
+      <p><strong>Description:</strong> {{ selectedPayment.paymentDetails || 'N/A' }}</p>
       <button (click)="selectedPayment = null" class="btn-close-modal">Close</button>
     </div>
   </div>

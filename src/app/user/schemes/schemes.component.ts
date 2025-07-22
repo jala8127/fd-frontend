@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
+import { ToastrService } from 'ngx-toastr'; 
 
 @Component({
   selector: 'app-schemes',
@@ -23,78 +24,99 @@ export class SchemesComponent implements OnInit {
   showKycModal: boolean = false;
   userKycVerified: boolean = false;
   kycStatus: string = ''; 
+  
+  isLoadingKyc: boolean = true;
 
   constructor(
     private http: HttpClient,
     private router: Router,
-    private authService: AuthService 
+    private authService: AuthService,
+    private toastr: ToastrService 
   ) {}
 
   ngOnInit(): void {
-    const email = this.authService.getUserEmail();
-    if (email) {
-      this.loggedInUserEmail = email;
+    this.loggedInUserEmail = this.authService.getUserEmail();
+    if (this.loggedInUserEmail) {
+      this.checkKycStatus(); 
+    } else {
+        this.toastr.error("Could not find user email. Please log in again.");
+        this.isLoadingKyc = false; 
     }
 
     this.loadSchemes();
-    this.checkKycStatus();
   }
 
   loadSchemes(): void {
-    this.http.get<any[]>("http://localhost:8080/api/schemes/active").subscribe(data => {
-      this.activeSchemes = data;
-      this.cumulativeSchemes = data.filter(s => s.schemeType === 'CUMULATIVE');
-      this.nonCumulativeSchemes = data.filter(s => s.schemeType === 'NON_CUMULATIVE');
+    this.http.get<any[]>("http://localhost:8080/api/schemes/user/active").subscribe({
+        next: (data) => {
+            this.activeSchemes = data;
+            this.cumulativeSchemes = data.filter(s => s.schemeType === 'CUMULATIVE');
+            this.nonCumulativeSchemes = data.filter(s => s.schemeType === 'NON_CUMULATIVE');
+        },
+        error: (err) => {
+            console.error("Failed to load schemes:", err);
+            this.toastr.error("Could not load investment schemes.");
+        }
     });
   }
 
   checkKycStatus() {
-    const email = this.loggedInUserEmail;
+    this.isLoadingKyc = true; 
+    this.http.get<any>('http://localhost:8080/api/kyc/my-status').subscribe({
+        next: (response) => {
+          if (response && response.status) {
+            this.kycStatus = response.status;
+            console.log('Parsed KYC Status:', this.kycStatus);
+          } else {
+            console.warn('KYC status response was not in the expected format:', response);
+          }
+          this.isLoadingKyc = false; 
+        },
+        error: (error) => {
+          console.error('Error fetching KYC status', error);
+          this.toastr.error('Could not fetch KYC status.');
+          this.isLoadingKyc = false; 
+        }
+      });
+  }
 
-    if (!email) return;
-
-    this.http.get('http://localhost:8080/api/user/kyc-status?email=' + email, { responseType: 'text' })
-  .subscribe({
-    next: (status) => {
-      console.log('KYC Status:', status);
-      this.kycStatus = status;
-    },
-    error: (error) => {
-      console.error('Error fetching KYC status', error);
+  viewScheme(scheme: any): void {
+    if (this.isLoadingKyc) {
+      this.toastr.info("Please wait, checking KYC status...");
+      return;
     }
-  });
+    
+    if (this.kycStatus !== 'APPROVED') {
+      this.showKycModal = true;
+      this.selectedScheme = null; 
+      return;
+    }
+
+    this.selectedScheme = scheme;
+    this.investmentAmount = scheme.minAmount || 0;
   }
 
- viewScheme(scheme: any): void {
-  if (this.kycStatus !== 'APPROVED') {
-    this.showKycModal = true;
-    this.selectedScheme = null; 
-    return;
-  }
-
-  this.selectedScheme = scheme;
-  this.investmentAmount = scheme.minAmount || 0;
-}
   isInvestmentValid(): boolean {
+    if (!this.selectedScheme) return false;
     return (
       this.investmentAmount >= this.selectedScheme.minAmount &&
       this.investmentAmount <= 500000
     );
   }
 
-    createDeposit(): void {
-      if (this.kycStatus !== 'APPROVED') {
-        this.showKycModal = true;
-        return;
-      }
-
-      this.router.navigate(['/user/payments'], {
-        state: {
-          scheme: this.selectedScheme,
-          investmentAmount: this.investmentAmount
-        }
-      });
+  createDeposit(): void {
+    if (this.kycStatus !== 'APPROVED') {
+      this.showKycModal = true;
+      return;
     }
+
+    this.router.navigate(['/user/payments'], {
+      state: {
+        scheme: this.selectedScheme,
+        investmentAmount: this.investmentAmount
+      }
+    });
+  }
 
   goToKyc(): void {
     this.showKycModal = false;

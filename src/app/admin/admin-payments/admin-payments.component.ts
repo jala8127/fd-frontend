@@ -13,7 +13,10 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 export class AdminPaymentsComponent implements OnInit {
   selectedTab: 'payments' | 'payouts' = 'payments';
   searchText: string = '';
+  
+  // Properties to hold the data for each modal
   selectedPayout: any = null;
+  selectedPayment: any = null; // NEW: Property for the payment modal
 
   payments: any[] = [];
   payouts: any[] = [];
@@ -48,23 +51,36 @@ export class AdminPaymentsComponent implements OnInit {
   }
 
   filteredPayments() {
+    if (!this.searchText) {
+      return this.payments;
+    }
     return this.payments.filter(p =>
-      p.userEmail.toLowerCase().includes(this.searchText.toLowerCase())
+      p.userEmail && p.userEmail.toLowerCase().includes(this.searchText.toLowerCase())
     );
   }
 
   filteredPayouts() {
+    if (!this.searchText) {
+      return this.payouts;
+    }
     return this.payouts.filter(p =>
-      p.userEmail.toLowerCase().includes(this.searchText.toLowerCase())
+      p.userEmail && p.userEmail.toLowerCase().includes(this.searchText.toLowerCase())
     );
   }
 
+  // This method opens the Payout modal
   viewPayout(payout: any) {
-    console.log('Opening modal for:', payout);
     this.selectedPayout = payout;
   }
 
+  // NEW: This method opens the Payment modal
+  viewPayment(payment: any) {
+    this.selectedPayment = payment;
+  }
+
+  // UPDATED: This method now closes both modals
   closeModal() {
     this.selectedPayout = null;
+    this.selectedPayment = null;
   }
 }

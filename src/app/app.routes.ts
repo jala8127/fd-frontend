@@ -17,7 +17,6 @@ import { AboutComponent } from './user/about/about.component';
 import { HelpComponent } from './user/help/help.component';
 import { AdminSchemesComponent } from './admin/admin-schemes/admin-schemes.component';
 import { SupportComponent } from './admin/support/support.component';
-import { AdminSettingsComponent } from './admin/admin-settings/admin-settings.component';
 import { AdminDepositsComponent } from './admin/admin-deposits/admin-deposits.component';
 import { AdminPaymentsComponent } from './admin/admin-payments/admin-payments.component';
 
@@ -41,7 +40,6 @@ export const routes: Routes = [
           { path: 'customers', component: CustomersComponent },
           { path: 'verification', component: VerificationComponent },
           { path: 'support', component: SupportComponent },
-          { path: 'admin-settings', component: AdminSettingsComponent },
      ]
 },  
      {path: 'user',

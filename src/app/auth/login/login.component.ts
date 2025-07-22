@@ -50,14 +50,11 @@ export class LoginComponent {
         next: (res: any) => {
           this.toastr.success("User Login successful");
 
-          // --- THIS IS THE CRUCIAL FIX ---
-          // 1. Check if the token exists in the response from the backend.
           if (res && res.token) {
-            // 2. Save the token to localStorage with the key 'authToken'.
-            //    The AuthInterceptor will look for this exact key.
-            localStorage.setItem('authToken', res.token); 
-            localStorage.setItem('user', JSON.stringify(res));
-            localStorage.setItem('email', res.email);  
+
+            sessionStorage.setItem('authToken', res.token); 
+            sessionStorage.setItem('user', JSON.stringify(res));
+            sessionStorage.setItem('email', res.email);  
             this.router.navigate(['/user/user-home']);
           } else {
             this.toastr.error("Login successful, but no token was received from the server.");
@@ -67,7 +64,7 @@ export class LoginComponent {
           if (err.status === 404 || err.status === 401) {
             this.tryEmployeeLogin(email, password);
           } else {
-            // The 403 error will be caught here
+
             this.toastr.error("Invalid login credentials.");
           }
         }
@@ -81,10 +78,10 @@ export class LoginComponent {
     this.employeeService.loginEmployee(email, password).subscribe({
       next: (res: any) => {
         this.toastr.success("Employee Login successful");
-        // --- ALSO FIX IT HERE FOR EMPLOYEES ---
+
         if (res && res.token) {
-            localStorage.setItem('authToken', res.token);
-            localStorage.setItem('employee', JSON.stringify(res));
+            sessionStorage.setItem('authToken', res.token);
+            sessionStorage.setItem('employee', JSON.stringify(res));
             this.router.navigate(['/admin/admin-home']);  
         } else {
             this.toastr.error("Login successful, but no token was received from the server.");
@@ -96,7 +93,6 @@ export class LoginComponent {
     });
   }
   
-  // --- Other methods below are unchanged ---
   togglePassword() {
     this.showPassword = !this.showPassword;
   }

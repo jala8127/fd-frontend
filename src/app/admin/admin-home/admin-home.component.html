@@ -4,22 +4,25 @@
     <div class="dashboard-cards">
       <div class="card">
         <div class="card-body">
-          <div class="card-title">Total Deposits</div>
-          <div class="card-value">₹{{ totalDeposits }}</div>
+          <div class="card-title">Total Active Deposits</div>
+          <!-- UPDATED: Removed decimal points -->
+          <div class="card-value">₹{{ totalDeposits | number:'1.0-0' }}</div>
         </div>
       </div>
 
       <div class="card">
         <div class="card-body">
-          <div class="card-title">Today's Payouts</div>
-          <div class="card-value">₹{{ todaysPayouts }}</div>
+          <div class="card-title">This Month's Payouts</div>
+          <!-- UPDATED: Removed decimal points -->
+          <div class="card-value">₹{{ monthlyPayouts | number:'1.0-0' }}</div>
         </div>
       </div>
 
       <div class="card">
         <div class="card-body">
-          <div class="card-title">Today's Received</div>
-          <div class="card-value">₹{{ todaysReceived }}</div>
+          <div class="card-title">This Month's Payments</div>
+          <!-- UPDATED: Removed decimal points -->
+          <div class="card-value">₹{{ monthlyReceived | number:'1.0-0' }}</div>
         </div>
       </div>
     </div>
@@ -131,7 +134,7 @@
         <table class="transaction-table">
           <thead>
             <tr>
-              <th>Customer</th>
+              <th>ID</th>
               <th>Amount</th>
               <th>Mode</th>
               <th>Status</th>
@@ -141,7 +144,8 @@
           <tbody>
             <tr *ngFor="let txn of recentTransactions">
               <td>{{ txn.customer }}</td>
-              <td>₹{{ txn.amount }}</td>
+              <!-- UPDATED: Removed decimal points -->
+              <td>₹{{ txn.amount | number:'1.0-0' }}</td>
               <td>{{ txn.mode }}</td>
               <td [ngClass]="{
                     'status-success': txn.status === 'SUCCESS',

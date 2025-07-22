@@ -14,7 +14,7 @@
   </div>
 
   <div class="table-responsive table-container">
-    <table class="table table-striped bg-white text-dark colored-border-table">
+    <table class="colored-border-table">
       <thead class="table-primary sticky-header">
         <tr>
           <th>Customer ID</th>
@@ -33,7 +33,7 @@
           <td>{{ cust.phone }}</td>
           <td>{{ cust.status }}</td>
           <td>
-            <button class="btn btn-sm btn-info" (click)="openViewModal(cust)">View</button>
+            <button class="btn-info" (click)="openViewModal(cust)">View</button>
           </td>
         </tr>
       </tbody>

@@ -29,7 +29,7 @@ export class KycComponent implements OnInit {
   };
 
   selectedFile: File | null = null;
-  userId: number | undefined = 0; 
+  userId: number | undefined = 0;
   isSubmitted = false;
   status: 'APPROVED' | 'PENDING' | 'REJECTED' | '' = '';
   reason: string = '';
@@ -83,13 +83,11 @@ export class KycComponent implements OnInit {
   }
 
   submitKyc() {
-
     if (!this.userId) {
         this.toastr.error('User ID is missing. Cannot submit KYC.');
         return;
     }
     
-
     this.kycData.user = { userId: this.userId };
 
     const formData = new FormData();
@@ -103,7 +101,6 @@ export class KycComponent implements OnInit {
         this.toastr.error('Aadhaar document is required.', 'Validation Failed');
         return;
     }
-
 
     this.http.post('http://localhost:8080/api/kyc/submit', formData).subscribe({
       next: () => {
@@ -120,21 +117,25 @@ export class KycComponent implements OnInit {
   }
 
   checkKycStatus() {
-
-    if (!this.userId) return;
-
-    this.http.get<any[]>('http://localhost:8080/api/kyc/all').subscribe(data => {
-      const userKyc = data.find(k => k.user?.userId === this.userId);
-      if (userKyc) {
-        this.isSubmitted = true;
-        this.status = userKyc.status;
-        const rawReason = userKyc.rejectionReason;
-        try {
-          const parsed = typeof rawReason === 'string' ? JSON.parse(rawReason) : rawReason;
-          this.reason = parsed?.reason || parsed?.message || rawReason;
-        } catch {
-          this.reason = rawReason;
+    // FIXED: Call the new, secure endpoint for the logged-in user
+    this.http.get<any>('http://localhost:8080/api/kyc/my-status').subscribe({
+      next: (userKyc) => {
+        if (userKyc && userKyc.status !== 'NOT_SUBMITTED') {
+          this.isSubmitted = true;
+          this.status = userKyc.status;
+          const rawReason = userKyc.rejectionReason;
+          try {
+            const parsed = typeof rawReason === 'string' ? JSON.parse(rawReason) : rawReason;
+            this.reason = parsed?.reason || parsed?.message || rawReason;
+          } catch {
+            this.reason = rawReason;
+          }
+        } else {
+          this.isSubmitted = false;
         }
+      },
+      error: (err) => {
+        console.error("Failed to check KYC status:", err);
       }
     });
   }
@@ -144,7 +145,6 @@ export class KycComponent implements OnInit {
     this.status = '';
     this.reason = '';
     this.selectedFile = null;
-
     this.ngOnInit();
   }
 

@@ -18,7 +18,7 @@
 .tab-text {
   font-weight: 600;
   font-size: 22px;
-  color: #d764fa;
+  color: #c064fa;
   padding: 6px 12px;
   cursor: pointer;
   position: relative;
@@ -52,7 +52,7 @@
 .table-search-wrapper input {
   width: 100%;
   padding: 10px 14px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 14px;
   box-sizing: border-box;
@@ -63,14 +63,14 @@
   max-height: 380px;
   overflow-y: auto;
   border: 1px solid #dee2e6;
-  border-radius: 0 0 5px 5px;
+  border-radius: 8px;
   background-color: white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .table-container::-webkit-scrollbar {
   height: 8px;
-  width: 8px;
+  width: 0px;
 }
 .table-container::-webkit-scrollbar-thumb {
   background: #ccc;
@@ -103,13 +103,17 @@
   text-align: center;
 }
 
+.table-container tr:nth-child(even){
+  background-color: #fdf6ff;
+}
+
 .colored-border-table tr:hover {
   background-color: #faf5ff;
 }
 
 .btn-primary {
   font-size: 14px;
-  padding: 8px 16px;
+  padding: 6px 16px;
   border-radius: 6px;
   transition: background-color 0.2s ease;
   border: none;
@@ -117,6 +121,7 @@
   background-color: #a205ea;
   color: white;
   font-weight: 500;
+  height: 33px;
 }
 
 .btn-primary:hover:enabled {
@@ -127,74 +132,78 @@
   position: fixed;
   top: 0;
   left: 0;
-  height: 100vh;
-  width: 100vw;
-  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
-  padding: 20px;
-  box-sizing: border-box;
+  z-index: 1050;
 }
 
 .modal {
-  position: relative;
   background: white;
-  padding: 24px;
-  max-width: 460px;
-  width: 100%;
-  border-radius: 10px;
-  z-index: 1000;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  position:relative;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+  max-width: 500px;
+  width: 95%;
+  height: 70vh;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  height: auto ;
-  font-size: 15px;
-  line-height: 1.5;
-  font-weight: 400;
-  color: #201f1f;
+  justify-content: center;
 }
 
 .modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #ffffff; 
+ }
 
-.modal h2 {
-  font-size: 20px;
+.modal-header h2 {
   margin: 0;
+  font-size: 1.25rem;
+  color: #343a40;
   font-weight: 600;
 }
 
-.btn-close-modal {
-  margin-top: 15px;
-  padding: 8px 20px;
-  background-color: #e83838;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+.modal-content {
+  padding: 1.5rem;
 
-.close-btn:hover {
-  color: #555;
 }
 
 .modal-content p {
-  margin: 4px 0;
-  font-size: 15px;
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  color: #495057;
   text-align: left;
 }
 
 .modal-content strong {
   font-weight: 600;
-  color: #1f1e1e;
+  color: #212529;
+  min-width: 120px;
+  display: inline-block;
 }
 
-body, .admin-payments-wrapper {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.modal-footer {
+  padding: 1rem 1.5rem;
+
+  display: flex;
+  justify-content: flex-end; 
+}
+
+.btn-close-modal {
+  background-color: #dc3545; 
+  padding: 0.5rem 1.25rem;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease;
+}
+
+.btn-close-modal:hover {
+  background-color: #c82333; 
 }
