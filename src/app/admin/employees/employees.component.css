@@ -21,7 +21,7 @@
 .colored-border-table th {
   position: sticky;
   top: 0;
-  background-color: #f1d7ff !important;
+  background-color: #e7d7f7 !important;
   z-index: 1;
   color: #7c00a1;  
   font-weight: 600;
@@ -46,7 +46,7 @@
 }
 
 .colored-border-table tr:nth-child(even) {
-  background-color: #fdf6ff;
+  background-color: #f8f4fc;
 }
 
 

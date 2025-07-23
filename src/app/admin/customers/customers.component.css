@@ -30,7 +30,7 @@
 .sticky-header th {
   position: sticky;
   top: 0;
-  background-color: #f1d7ff;
+  background-color: #e7d7f7;
   color: #7c00a1;
   font-weight: 600;
   z-index: 1;
@@ -48,7 +48,7 @@
 }
 
 .colored-border-table tr:nth-child(even) {
-  background-color: #fdf6ff;
+  background-color: #f8f4fc;
 }
 
 .colored-border-table tr:hover {

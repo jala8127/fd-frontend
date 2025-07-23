@@ -59,7 +59,7 @@ table {
 }
 
 th {
-  background-color: #f1d7ff;
+  background-color: #e7d7f7;
   color: #7c00a1;
   font-weight: 600;
   text-align: center;
@@ -80,7 +80,7 @@ td {
 }
 
 tr:nth-child(even){
-  background-color: #fdf6ff;
+  background-color: #f8f4fc;
 }
 
 tr:hover {

@@ -47,12 +47,12 @@
 }
 
 .nav-items li:hover {
-  background-color: #e9c1ff;
+  background-color: #f6ecff;
   color: #981adb;
 }
 
 .nav-items .active {
-  background-color: #f5e8fd;
+  background-color: #e7d2fb;
   font-weight: bold;
   color: #a11adb;
 }
@@ -67,7 +67,7 @@
 
 .bottom-links {
   list-style: none;
-  border-top: 1px solid #e6cbf4;
+  border-top: 1px solid #e7d7f7;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -85,12 +85,12 @@
 }
 
 .bottom-links li:hover {
-  background-color: #e9c1ff;
+  background-color: #e7d7f7;
   color: #981adb;
 }
 
 .bottom-links .active {
-  background-color: #f5e8fd;
+  background-color: #f8f4fc;
   font-weight: bold;
   color: #a11adb;
 }

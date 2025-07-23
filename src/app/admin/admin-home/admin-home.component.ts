@@ -28,7 +28,7 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
   refreshSubscription!: Subscription;
 
   barChartType: ChartType = 'bar';
-  barChartLabels: string[] = ['JAN', 'FEB', 'MARCH', 'APRIL', 'MAY'];
+  barChartLabels: string[] = ['MARCH', 'APRIL', 'MAY','JUN','JULY'];
   barChartData: ChartConfiguration<'bar'>['data'] = {
     labels: this.barChartLabels,
     datasets: [
