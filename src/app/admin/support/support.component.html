@@ -1,1 +1,90 @@
-<p>support works!</p>
+<div class="support-wrapper">
+  <div class="support-header">
+    <h1 class="support-title">Support Center</h1>
+    <p class="support-subtitle">Review and resolve customer inquiries.</p>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <div class="summary-card">
+      <h4>Open Tickets</h4>
+      <p class="value">{{ getTicketCount('OPEN') }}</p>
+    </div>
+    <div class="summary-card">
+      <h4>Pending Tickets</h4>
+      <p class="value">{{ getTicketCount('PENDING') }}</p>
+    </div>
+    <div class="summary-card">
+      <h4>Resolved Today</h4>
+      <p class="value">{{ getTicketCount('RESOLVED_TODAY') }}</p>
+    </div>
+  </div>
+
+  <!-- Ticket Table Container -->
+  <div class="ticket-table-container">
+    <div class="table-header">
+      <div class="tabs">
+        <span [class.active]="activeTab === 'OPEN'" (click)="activeTab = 'OPEN'">Open</span>
+        <span [class.active]="activeTab === 'PENDING'" (click)="activeTab = 'PENDING'">Pending</span>
+        <span [class.active]="activeTab === 'RESOLVED'" (click)="activeTab = 'RESOLVED'">Resolved</span>
+      </div>
+      <input type="text" class="search-input" placeholder="Search by email or subject..." [(ngModel)]="searchText">
+    </div>
+
+    <!-- Tickets Table -->
+    <div class="table-responsive">
+      <table class="ticket-table">
+        <thead>
+          <tr>
+            <th>Ticket ID</th>
+            <th>Customer Email</th>
+            <th>Subject</th>
+            <th>Submitted On</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ticket of filteredTickets()">
+            <td>#{{ ticket.id }}</td>
+            <td>{{ ticket.email }}</td>
+            <td>{{ ticket.subject }}</td>
+            <td>{{ ticket.date | date: 'medium' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="'status-' + ticket.status.toLowerCase()">
+                {{ ticket.status }}
+              </span>
+            </td>
+            <td>
+              <button class="btn-view" (click)="viewTicket(ticket)">View</button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredTickets().length === 0">
+            <td colspan="6" class="no-tickets">No tickets found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Ticket Details Modal -->
+<div class="modal-overlay" *ngIf="selectedTicket">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3>Ticket #{{ selectedTicket.id }}</h3>
+      <button class="btn-close" (click)="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>From:</strong> {{ selectedTicket.email }}</p>
+      <p><strong>Submitted:</strong> {{ selectedTicket.date | date: 'full' }}</p>
+      <p><strong>Subject:</strong> {{ selectedTicket.subject }}</p>
+      <hr>
+      <p class="message-body">{{ selectedTicket.message }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeModal()">Close</button>
+      <button class="btn-resolve" *ngIf="selectedTicket.status !== 'RESOLVED'" (click)="resolveTicket(selectedTicket)">Mark as Resolved</button>
+    </div>
+  </div>
+</div>

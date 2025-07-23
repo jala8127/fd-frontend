@@ -5,7 +5,6 @@
       <div class="card">
         <div class="card-body">
           <div class="card-title">Total Active Deposits</div>
-          <!-- UPDATED: Removed decimal points -->
           <div class="card-value">₹{{ totalDeposits | number:'1.0-0' }}</div>
         </div>
       </div>
@@ -13,7 +12,6 @@
       <div class="card">
         <div class="card-body">
           <div class="card-title">This Month's Payouts</div>
-          <!-- UPDATED: Removed decimal points -->
           <div class="card-value">₹{{ monthlyPayouts | number:'1.0-0' }}</div>
         </div>
       </div>
@@ -21,7 +19,6 @@
       <div class="card">
         <div class="card-body">
           <div class="card-title">This Month's Payments</div>
-          <!-- UPDATED: Removed decimal points -->
           <div class="card-value">₹{{ monthlyReceived | number:'1.0-0' }}</div>
         </div>
       </div>
@@ -41,12 +38,15 @@
         <div class="modal-content">
           <form #customerForm="ngForm" (ngSubmit)="addCustomer(customerForm)">
             <h3 class="modal-title">Add New Customer</h3>
-            <label>Name</label>
-            <input name="name" ngModel required placeholder="Enter full name" />
-            <label>Email</label>
-            <input name="email" ngModel required type="email" placeholder="Enter email address" />
-            <label>Phone</label>
-            <input name="phone" ngModel required type="tel" placeholder="Enter phone number" />
+            <div class="form-row">
+                <div class="form-group"><label>Name</label><input name="name" ngModel required placeholder="Enter Customer name" /></div>
+                <div class="form-group"><label>Email ID</label><input name="email" ngModel required type="email" placeholder="Enter email address" /></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Phone</label><input name="phone" ngModel required type="tel" placeholder="Enter phone number" /></div>
+                <div class="form-group"><label>Dob</label><input name="dob" ngModel required type="date" placeholder="Enter date of birth" /></div>
+            </div>
+             <div class="form-group"><label>Address</label><input name="address" ngModel required placeholder="Enter customer address" /></div>
             <div class="modal-footer">
               <button type="submit" class="btn-confirm">Save</button>
               <button type="button" class="btn-cancel" (click)="toggleModal('addCustomer', false)">Cancel</button>
@@ -60,13 +60,16 @@
       <div class="modal">
         <div class="modal-content">
           <form #depositForm="ngForm" (ngSubmit)="makeManualDeposit(depositForm)">
-            <h3 class="modal-title">Manual Deposit</h3>
-            <label>Customer ID</label>
-            <input name="customerId" ngModel required placeholder="Enter customer ID" />
-            <label>Amount</label>
-            <input name="amount" ngModel required type="number" placeholder="Enter amount" />
-            <label>Date</label>
-            <input name="date" ngModel required type="date" />
+            <h3 class="modal-title">Create Deposit</h3>
+             <div class="form-row">
+               <div class="form-group"><label>Customer name</label><input name="customerName" ngModel required placeholder="Enter customer name" /></div>
+               <div class="form-group"><label>Email ID</label><input name="email" ngModel required placeholder="Enter customer mail ID" /></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Scheme ID</label><input name="schemeId" ngModel required placeholder="Enter scheme ID" /></div>
+                <div class="form-group"><label>Amount</label><input name="amount" ngModel required type="number" placeholder="Enter amount" /></div>
+            </div>
+            <div class="form-group"><label>Maturity amount</label><input name="maturityAmount" ngModel required type="number" placeholder="Enter maturity amount" /></div>
             <div class="modal-footer">
               <button type="submit" class="btn-confirm">Deposit</button>
               <button type="button" class="btn-cancel" (click)="toggleModal('manualDeposit', false)">Cancel</button>
@@ -81,12 +84,28 @@
         <div class="modal-content">
           <form #kycForm="ngForm" (ngSubmit)="verifyKYC(kycForm)">
             <h3 class="modal-title">Manual KYC Verification</h3>
-            <label>Customer ID</label>
-            <input name="customerIdKyc" ngModel required placeholder="Enter customer ID" />
-            <label>Upload Document</label>
-            <input type="file" (change)="onDocumentSelected($event)" required />
+            <div class="form-row">
+              <div class="form-group"><label>Name</label><input name="name" ngModel required placeholder="Enter customer name" /></div>
+              <div class="form-group"><label>Email ID</label><input name="customerIdKyc" ngModel required placeholder="Enter customer mail ID" /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Dob</label><input name="dob" ngModel required type="date" placeholder="Enter date of birth" /></div>
+              <div class="form-group"><label>Phone number</label><input name="phone" ngModel required placeholder="Enter phone number" /></div>
+            </div>
+            <div class="form-group"><label>Current Address</label><input name="currentAddress" ngModel required placeholder="Enter current address" /></div>
+            <div class="form-group"><label>Permanent Address</label><input name="permanentAddress" ngModel required placeholder="Enter permanent address" /></div>
+            <div class="form-row">
+              <div class="form-group"><label>Aadhaar number</label><input name="aadhaarNumber" ngModel required placeholder="Enter aadhaar number" /></div>
+              <div class="form-group"><label>Pan card number</label><input name="panNumber" ngModel required placeholder="Enter pan enter number" /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Bank name</label><input name="bankName" ngModel required placeholder="Enter bank name" /></div>
+              <div class="form-group"><label>Account number</label><input name="accountNumber" ngModel required placeholder="Enter acount number" /></div>
+            </div>
+            <div class="form-group"><label>IFSC Code</label><input name="ifscCode" ngModel required placeholder="Enter Ifsc code" /></div>
+            <div class="form-group"><label>Upload Document</label><input type="file" (change)="onDocumentSelected($event)" required /></div>
             <div class="modal-footer">
-              <button type="submit" class="btn-confirm">Verify</button>
+              <button type="submit" class="btn-confirm">Submit</button>
               <button type="button" class="btn-cancel" (click)="toggleModal('kyc', false)">Cancel</button>
             </div>
           </form>
@@ -99,14 +118,17 @@
         <div class="modal-content">
           <form #depositForm="ngForm" (ngSubmit)="closeDeposit(depositForm)">
             <h3 class="modal-title">Close Deposit</h3>
-            <label>Customer ID</label>
-            <input name="customerId" ngModel required placeholder="Enter customer ID" />
+            <label>Customer Email ID</label>
+            <input name="customeremailId" ngModel required placeholder="Enter customer email ID" />
+            <label>Customer name</label>
+            <input name="Reason" ngModel required placeholder="Enter customer name" />
+            <label>Customer phone no</label>
+            <input name="Reason" ngModel required placeholder="Enter phone number" />
+            <button type="submit" class="btn-confirm">Fetch active FD's</button>
             <label>Reason</label>
-            <input name="amount" ngModel required type="number" placeholder="Enter amount" />
-            <label>Date</label>
-            <input name="date" ngModel required type="date" />
+            <input name="Reason" ngModel required placeholder="Enter reason" />
             <div class="modal-footer">
-              <button type="submit" class="btn-confirm">Deposit</button>
+              <button type="submit" class="btn-confirm">Close Deposit</button>
               <button type="button" class="btn-cancel" (click)="toggleModal('closeDeposit', false)">Cancel</button>
             </div>
           </form>
@@ -144,7 +166,6 @@
           <tbody>
             <tr *ngFor="let txn of recentTransactions">
               <td>{{ txn.customer }}</td>
-              <!-- UPDATED: Removed decimal points -->
               <td>₹{{ txn.amount | number:'1.0-0' }}</td>
               <td>{{ txn.mode }}</td>
               <td [ngClass]="{

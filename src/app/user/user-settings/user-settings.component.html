@@ -15,7 +15,7 @@
       [class.active]="activeTab === 'security'"
       (click)="activeTab = 'security'"
     >
-      Login & Security
+      Passwords & Security
     </div>
   </div>
 
@@ -24,23 +24,17 @@
     <!-- Personal Info Section -->
     <div *ngIf="activeTab === 'personal' && personalForm" class="form-section">
       <h3>Personal Info</h3>
-
       <div class="form-row" *ngFor="let field of formFields">
         <div class="field-label-container">
           <label class="field-label">{{ field.label }}</label>
         </div>
-
-        <!-- The input field -->
         <input
           class="field-input"
           [formControl]="field.control"
           [readonly]="!isEditing[field.key]"
           [class.disabled]="field.control.disabled"
         />
-
-        <!-- Action buttons container -->
         <div class="field-actions">
-
           <button
             *ngIf="!field.control.disabled && !isEditing[field.key]"
             (click)="enableEdit(field.key)"
@@ -48,7 +42,6 @@
           >
             Edit
           </button>
-          
           <button
             *ngIf="isEditing[field.key] && field.control.dirty"
             (click)="saveField(field.key)"
@@ -67,10 +60,70 @@
       </div>
     </div>
 
-    <!-- Login & Security Section -->
-    <div *ngIf="activeTab === 'security'">
-      <h3>Login & Security</h3>
-      <p>Manage your login credentials and security settings.</p>
+    <!-- NEW: Security Section -->
+    <div *ngIf="activeTab === 'security'" class="form-section">
+      <h3>Passwords & Security</h3>
+      
+      <!-- Change MPIN Card -->
+      <div class="security-card">
+        <h4>Change MPIN</h4>
+        <p class="security-description">For your security, you will need to enter your current MPIN to set a new one.</p>
+        <form [formGroup]="changeMpinForm" (ngSubmit)="onChangeMpinSubmit()">
+          <div class="form-group">
+            <label for="currentMpin">Current MPIN</label>
+            <input id="currentMpin" type="password" formControlName="currentMpin" placeholder="Enter your 6-digit MPIN">
+          </div>
+          <div class="form-group">
+            <label for="newMpin">New MPIN</label>
+            <input id="newMpin" type="password" formControlName="newMpin" placeholder="Enter a new 6-digit MPIN">
+          </div>
+          <div class="form-group">
+            <label for="confirmNewMpin">Confirm New MPIN</label>
+            <input id="confirmNewMpin" type="password" formControlName="confirmNewMpin" placeholder="Confirm your new MPIN">
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" [disabled]="changeMpinForm.invalid">Change MPIN</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Forgot MPIN Card -->
+      <div class="security-card">
+        <h4>Forgot MPIN?</h4>
+        <p class="security-description">Reset your MPIN by verifying your email address.</p>
+        <form [formGroup]="forgotMpinForm" (ngSubmit)="onForgotMpinReset()">
+          <!-- Step 1: Enter Email -->
+          <ng-container *ngIf="forgotMpinStep === 'email'">
+            <div class="form-group">
+              <label for="resetEmail">Your Registered Email</label>
+              <input id="resetEmail" type="email" formControlName="email" placeholder="Enter your email">
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-secondary" (click)="onForgotMpinSendOtp()">Send OTP</button>
+            </div>
+          </ng-container>
+
+          <!-- Step 2: Enter OTP and New MPIN -->
+          <ng-container *ngIf="forgotMpinStep === 'otp'">
+            <div class="form-group">
+              <label for="otp">Verification Code (OTP)</label>
+              <input id="otp" type="text" formControlName="otp" placeholder="Enter the OTP sent to your email">
+            </div>
+            <div class="form-group">
+              <label for="resetNewMpin">New MPIN</label>
+              <input id="resetNewMpin" type="password" formControlName="newMpin" placeholder="Enter a new 6-digit MPIN">
+            </div>
+            <div class="form-group">
+              <label for="resetConfirmNewMpin">Confirm New MPIN</label>
+              <input id="resetConfirmNewMpin" type="password" formControlName="confirmNewMpin" placeholder="Confirm your new MPIN">
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" [disabled]="forgotMpinForm.invalid">Reset MPIN</button>
+              <button type="button" class="btn-link" (click)="forgotMpinStep = 'email'">Back</button>
+            </div>
+          </ng-container>
+        </form>
+      </div>
     </div>
   </div>
 </div>

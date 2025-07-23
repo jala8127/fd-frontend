@@ -10,11 +10,11 @@
       <div class="scheme-grid">
         <div class="scheme-card" *ngFor="let scheme of cumulativeSchemes">
           <h4>{{ scheme.schemeName }}</h4>
-          <p><strong>Interest Rate:</strong> {{ scheme.interestRate }}%</p>
+          <p><strong>Interest Rate:</strong> {{ scheme.interestRate | number:'1.2-2' }}% p.a.</p>
           <p><strong>Tenure:</strong> {{ scheme.tenureMonths }} months</p>
-          <p><strong>Min Amount:</strong> ₹{{ scheme.minAmount }}</p>
+          <p><strong>Min Amount:</strong> ₹{{ scheme.minAmount | number }}</p>
           <p><strong>Payout:</strong> {{ scheme.payout }}</p>
-          <button class="view-button" (click)="viewScheme(scheme)">View</button>
+          <button class="view-button" (click)="viewScheme(scheme)" [disabled]="isLoadingKyc">View Details</button>
         </div>
       </div>
     </div>
@@ -27,11 +27,11 @@
       <div class="scheme-grid">
         <div class="scheme-card" *ngFor="let scheme of nonCumulativeSchemes">
           <h4>{{ scheme.schemeName }}</h4>
-          <p><strong>Interest Rate:</strong> {{ scheme.interestRate }}%</p>
+          <p><strong>Interest Rate:</strong> {{ scheme.interestRate | number:'1.2-2' }}% p.a.</p>
           <p><strong>Tenure:</strong> {{ scheme.tenureMonths }} months</p>
-          <p><strong>Min Amount:</strong> ₹{{ scheme.minAmount }}</p>
+          <p><strong>Min Amount:</strong> ₹{{ scheme.minAmount | number }}</p>
           <p><strong>Payout:</strong> {{ scheme.payout }}</p>
-          <button class="view-button" (click)="viewScheme(scheme)">View</button>
+          <button class="view-button" (click)="viewScheme(scheme)" [disabled]="isLoadingKyc">View Details</button>
         </div>
       </div>
     </div>
@@ -54,34 +54,41 @@
   <div class="scheme-modal-container">
     <button type="button" class="btn-close" aria-label="Close" (click)="selectedScheme = null"></button>
     <h3>{{ selectedScheme.schemeName }}</h3>
-    <p><strong>Interest Rate:</strong> {{ selectedScheme.interestRate }}%</p>
-    <p><strong>Tenure:</strong> {{ selectedScheme.tenureMonths }} months</p>
-    <p><strong>Payout:</strong> {{ selectedScheme.payout }}</p>
+    <div class="scheme-details">
+      <p><strong>Interest Rate:</strong> {{ selectedScheme.interestRate | number:'1.2-2' }}% p.a.</p>
+      <p><strong>Tenure:</strong> {{ selectedScheme.tenureMonths }} months</p>
+      <p><strong>Payout:</strong> {{ selectedScheme.payout }}</p>
+    </div>
 
-    <label>Enter Investment Amount (₹):</label>
-    <input type="number" [(ngModel)]="investmentAmount" />
+    <label for="investmentAmount">Enter Investment Amount (₹):</label>
+    <input id="investmentAmount" type="number" [(ngModel)]="investmentAmount" />
 
     <div *ngIf="investmentAmount">
       <div class="validation-msg" *ngIf="investmentAmount < selectedScheme.minAmount">
-        Minimum investment amount is ₹{{ selectedScheme.minAmount }}
+        Minimum investment amount is ₹{{ selectedScheme.minAmount | number }}
       </div>
       <div class="validation-msg" *ngIf="investmentAmount > 500000">
-        Maximum investment allowed is ₹5,00,000
+        Maximum investment allowed is ₹500,000
       </div>
     </div>
 
-    <div *ngIf="investmentAmount >= selectedScheme.minAmount && investmentAmount <= 500000">
+    <!-- Calculation Results Section -->
+    <div class="calculation-results" *ngIf="isInvestmentValid()">
+      <!-- CUMULATIVE RESULTS -->
       <div *ngIf="selectedScheme.schemeType === 'CUMULATIVE'; else nonCumulative">
-        <p class="result">Maturity Amount: ₹{{ calculateMaturityAmount(selectedScheme) }}</p>
+        <p class="result"><strong>Total Interest:</strong> ₹{{ calculateCumulativeInterest(selectedScheme) | number:'1.0-0' }}</p>
+        <p class="result maturity"><strong>Maturity Amount:</strong> ₹{{ calculateMaturityAmount(selectedScheme) | number:'1.0-0' }}</p>
       </div>
+      <!-- NON-CUMULATIVE RESULTS -->
       <ng-template #nonCumulative>
-        <p class="result">Total Interest Earned: ₹{{ calculateNonCumulativeInterest(selectedScheme) }}</p>
+        <p class="result"><strong>Interest per Payout:</strong> ₹{{ calculateInterestPerPayout(selectedScheme) | number:'1.0-0' }}</p>
+        <p class="result"><strong>Total Interest:</strong> ₹{{ calculateTotalNonCumulativeInterest(selectedScheme) | number:'1.0-0' }}</p>
       </ng-template>
     </div>
 
     <div class="modal-actions">
       <button [disabled]="!isInvestmentValid()" (click)="createDeposit()">Create Deposit</button>
-       <button class="close" (click)="selectedScheme = null">Close</button>
+      <button class="close" (click)="selectedScheme = null">Close</button>
     </div>
   </div>
 </div>

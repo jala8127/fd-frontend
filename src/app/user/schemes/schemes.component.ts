@@ -22,7 +22,6 @@ export class SchemesComponent implements OnInit {
   selectedScheme: any = null;
   investmentAmount: number = 0;
   showKycModal: boolean = false;
-  userKycVerified: boolean = false;
   kycStatus: string = ''; 
   
   isLoadingKyc: boolean = true;
@@ -42,7 +41,6 @@ export class SchemesComponent implements OnInit {
         this.toastr.error("Could not find user email. Please log in again.");
         this.isLoadingKyc = false; 
     }
-
     this.loadSchemes();
   }
 
@@ -66,9 +64,6 @@ export class SchemesComponent implements OnInit {
         next: (response) => {
           if (response && response.status) {
             this.kycStatus = response.status;
-            console.log('Parsed KYC Status:', this.kycStatus);
-          } else {
-            console.warn('KYC status response was not in the expected format:', response);
           }
           this.isLoadingKyc = false; 
         },
@@ -125,17 +120,51 @@ export class SchemesComponent implements OnInit {
 
   calculateMaturityAmount(scheme: any): number {
     const principal = this.investmentAmount;
-    const rate = scheme.interestRate;
-    const time = scheme.tenureMonths / 12;
-    const amount = principal * Math.pow((1 + rate / 100), time);
+    const annualRate = scheme.interestRate / 100;
+    const monthlyRate = annualRate / 12;
+    const tenureMonths = scheme.tenureMonths;
+    
+    const amount = principal * Math.pow(1 + monthlyRate, tenureMonths);
     return Math.round(amount);
   }
 
-  calculateNonCumulativeInterest(scheme: any): number {
+  calculateCumulativeInterest(scheme: any): number {
+    const maturityAmount = this.calculateMaturityAmount(scheme);
+    return maturityAmount - this.investmentAmount;
+  }
+
+  calculateTotalNonCumulativeInterest(scheme: any): number {
     const principal = this.investmentAmount;
-    const rate = scheme.interestRate;
-    const time = scheme.tenureMonths / 12;
-    const interest = principal * rate * time / 100;
-    return Math.round(interest);
+    const annualRate = scheme.interestRate / 100;
+    const tenureInYears = scheme.tenureMonths / 12;
+    const totalInterest = principal * annualRate * tenureInYears;
+    return Math.round(totalInterest);
+  }
+
+  calculateInterestPerPayout(scheme: any): number {
+    const principal = this.investmentAmount;
+    const annualRate = scheme.interestRate / 100;
+    let interestPerPayout = 0;
+
+    const payoutType = scheme.payout.toUpperCase().replace(/[\s_]/g, '-');
+
+    switch (payoutType) {
+      case 'MONTHLY':
+        interestPerPayout = (principal * annualRate) / 12;
+        break;
+      case 'QUARTERLY':
+        interestPerPayout = (principal * annualRate) / 4;
+        break;
+      case 'HALF-YEARLY':
+        interestPerPayout = (principal * annualRate) / 2;
+        break;
+      case 'ANNUALLY':
+        interestPerPayout = principal * annualRate;
+        break;
+      default:
+        interestPerPayout = 0; 
+        break;
+    }
+    return Math.round(interestPerPayout);
   }
 }

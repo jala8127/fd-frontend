@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, FormControl, Validators } from '@angular/forms'; // Import Validators
 import { CommonModule } from '@angular/common';
 import { Customer, CustomerService } from '../../service/customer.service';
 import { ToastrService } from 'ngx-toastr'; 
@@ -16,8 +16,11 @@ export class UserSettingsComponent implements OnInit {
   personalForm!: FormGroup;
   isEditing: { [key: string]: boolean } = {};
   formFields: any[] = [];
-  
   private originalUserData: any = {};
+
+  changeMpinForm!: FormGroup;
+  forgotMpinForm!: FormGroup;
+  forgotMpinStep: 'email' | 'otp' = 'email'; 
 
   constructor(
     private fb: FormBuilder,
@@ -27,6 +30,19 @@ export class UserSettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUserData();
+
+    this.changeMpinForm = this.fb.group({
+      currentMpin: ['', [Validators.required, Validators.pattern('^[0-9]{6}$')]],
+      newMpin: ['', [Validators.required, Validators.pattern('^[0-9]{6}$')]],
+      confirmNewMpin: ['', [Validators.required]]
+    });
+
+    this.forgotMpinForm = this.fb.group({
+      email: [{ value: '', disabled: true }], 
+      otp: ['', [Validators.required, Validators.pattern('^[0-9]{6}$')]],
+      newMpin: ['', [Validators.required, Validators.pattern('^[0-9]{6}$')]],
+      confirmNewMpin: ['', [Validators.required]]
+    });
   }
 
   loadUserData() {
@@ -52,6 +68,8 @@ export class UserSettingsComponent implements OnInit {
 
         this.originalUserData = this.personalForm.getRawValue();
         this.setupFormFields();
+
+        this.forgotMpinForm.patchValue({ email: user.email });
 
         Object.keys(this.personalForm.controls).forEach(key => {
           this.isEditing[key] = false;
@@ -97,17 +115,13 @@ export class UserSettingsComponent implements OnInit {
     this.isEditing[fieldKey] = false;
   }
 
-
   saveField(fieldKey: string) {
     const control = this.personalForm.get(fieldKey);
-    
     if (!control || !control.dirty || control.invalid) {
       this.isEditing[fieldKey] = false;
       return;
     }
-
     const updatedValue = control.value;
-
     this.customerService.updateUserField(fieldKey, updatedValue).subscribe({
       next: () => {
         this.toastr.success(`'${fieldKey}' updated successfully!`);
@@ -121,5 +135,25 @@ export class UserSettingsComponent implements OnInit {
         this.cancelEdit(fieldKey);
       }
     });
+  }
+
+  onChangeMpinSubmit() {
+    if (this.changeMpinForm.valid) {
+      console.log("Change MPIN form submitted:", this.changeMpinForm.value);
+      this.toastr.info("Backend for changing MPIN is not yet implemented.");
+    }
+  }
+
+  onForgotMpinSendOtp() {
+    console.log("Sending OTP to:", this.forgotMpinForm.get('email')?.value);
+    this.toastr.info("Backend for sending OTP is not yet implemented.");
+    this.forgotMpinStep = 'otp';
+  }
+
+  onForgotMpinReset() {
+    if (this.forgotMpinForm.valid) {
+      console.log("Forgot MPIN form submitted:", this.forgotMpinForm.value);
+      this.toastr.info("Backend for resetting MPIN is not yet implemented.");
+    }
   }
 }
