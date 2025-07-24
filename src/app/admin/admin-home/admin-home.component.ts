@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { interval, Subscription } from 'rxjs';
 import { NgChartsModule } from 'ng2-charts';
-import { ChartConfiguration, ChartType } from 'chart.js';
+import { ChartConfiguration } from 'chart.js';
 import { EmployeeService } from '../../service/employee.service'; 
 import { ToastrService } from 'ngx-toastr'; 
 
@@ -26,11 +26,9 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
   selectedDocument: File | null = null;
   recentTransactions: any[] = [];
   refreshSubscription!: Subscription;
-
-  barChartType: ChartType = 'bar';
-  barChartLabels: string[] = ['MARCH', 'APRIL', 'MAY','JUN','JULY'];
+  
   barChartData: ChartConfiguration<'bar'>['data'] = {
-    labels: this.barChartLabels,
+    labels: ['MARCH', 'APRIL', 'MAY','JUN','JULY'],
     datasets: [
       { data: [90000, 160000, 120000, 200000, 210000], label: 'Payouts by Bank', backgroundColor: '#e55bff' },
       { data: [140000, 220000, 180000, 250000, 300000], label: 'Customer payments', backgroundColor: '#a205ea' }
@@ -40,6 +38,7 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
     responsive: true,
     plugins: {
       legend: {
+        display: true,
         position: 'bottom',
         labels: {
           color: '#444'
@@ -109,33 +108,92 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
   }
 
   addCustomer(form: NgForm): void {
-    if (form.valid) {
-      this.employeeService.addCustomer(form.value).subscribe(() => {
+    // Mark all fields as touched to display validation errors when user tries to submit
+    form.control.markAllAsTouched();
+
+    // --- Custom Validation Logic ---
+    let isAgeValid = true;
+    let isMpinValid = true;
+
+    // 1. Age Validation
+    if (form.value.dob) {
+      const eighteenYearsAgo = new Date();
+      eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+      if (new Date(form.value.dob) > eighteenYearsAgo) {
+        form.controls['dob'].setErrors({'invalidAge': true});
+        isAgeValid = false;
+      }
+    }
+
+    // 2. MPIN Consecutive Digits Validation
+    const mpinControl = form.controls['mpin'];
+    if (mpinControl && mpinControl.valid && mpinControl.value) {
+        // This regex checks for any digit (\d) that is repeated 3 or more times after itself ({3,}), meaning 4+ times in a row.
+        const consecutiveRegex = /(\d)\1{3,}/;
+        if (consecutiveRegex.test(mpinControl.value)) {
+            // Set a custom error on the mpin form control
+            mpinControl.setErrors({'consecutive': true});
+            isMpinValid = false;
+        }
+    }
+
+    // --- Final Form Validity Check ---
+    if (form.invalid || !isAgeValid || !isMpinValid) {
+      this.toastr.error('Please correct the errors before submitting.');
+      return;
+    }
+
+    // If form is fully valid, proceed to add customer
+    // The form.value will now contain 'mpin' and not 'address'
+    this.employeeService.addCustomer(form.value).subscribe({
+      next: () => {
         this.toastr.success('Customer added successfully!');
         form.resetForm();
         this.toggleModal('addCustomer', false);
-      });
-    }
+      },
+      error: (err) => {
+        // This block handles errors from the backend, including the check for existing email/phone
+        if (err.status === 409) { // 409 Conflict
+          const errorMessage = err.error?.message || 'A customer with these details already exists.';
+          this.toastr.error(errorMessage);
+          // Set inline errors on the specific fields based on backend response
+          if (errorMessage.toLowerCase().includes('email')) {
+            form.controls['email'].setErrors({'exists': true});
+          }
+          if (errorMessage.toLowerCase().includes('phone')) {
+            form.controls['phone'].setErrors({'exists': true});
+          }
+        } else {
+          this.toastr.error('An unexpected error occurred. Please try again.');
+        }
+      }
+    });
   }
 
   makeManualDeposit(form: NgForm): void {
     if (form.valid) {
-      this.employeeService.makeManualDeposit(form.value).subscribe(() => {
-        this.toastr.success('Deposit made successfully!');
-        form.resetForm();
-        this.fetchDashboardData();
-        this.toggleModal('manualDeposit', false);
+      this.employeeService.makeManualDeposit(form.value).subscribe({
+        next: () => {
+          this.toastr.success('Deposit made successfully!');
+          form.resetForm();
+          this.fetchDashboardData();
+          this.toggleModal('manualDeposit', false);
+        },
+        error: (err) => this.toastr.error(err.error?.message || 'Failed to make deposit.')
       });
     }
   }
 
   closeDeposit(form: NgForm): void {
     if (form.valid) {
-      this.employeeService.closeDeposit(form.value).subscribe(() => {
-        this.toastr.success('Deposit closed successfully!');
-        form.resetForm();
-        this.fetchDashboardData();
-        this.toggleModal('closeDeposit', false);
+      this.employeeService.closeDeposit(form.value).subscribe({
+        next: () => {
+          this.toastr.success('Deposit closed successfully!');
+          form.resetForm();
+          this.fetchDashboardData();
+          this.toggleModal('closeDeposit', false);
+        },
+        error: (err) => this.toastr.error(err.error?.message || 'Failed to close deposit.')
       });
     }
   }
@@ -148,18 +206,28 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
   }
 
   verifyKYC(form: NgForm): void {
-    if (form.valid && this.selectedDocument) {
-      const kycData = form.value;
-      const formData = new FormData();
-      formData.append('customerId', kycData.customerIdKyc);
-      formData.append('document', this.selectedDocument);
+    if (form.invalid) {
+      this.toastr.error('Please fill all the required fields.');
+      return;
+    }
+    if (!this.selectedDocument) {
+      this.toastr.error('Please upload the required document.');
+      return;
+    }
 
-      this.employeeService.verifyKyc(formData).subscribe(() => {
+    const kycData = form.value;
+    const formData = new FormData();
+    formData.append('customerId', kycData.customerIdKyc);
+    formData.append('document', this.selectedDocument);
+
+    this.employeeService.verifyKyc(formData).subscribe({
+      next: () => {
         this.toastr.success('KYC verified successfully!');
         form.resetForm();
         this.selectedDocument = null;
         this.toggleModal('kyc', false);
-      });
-    }
+      },
+      error: (err) => this.toastr.error(err.error?.message || 'Failed to verify KYC.')
+    });
   }
 }

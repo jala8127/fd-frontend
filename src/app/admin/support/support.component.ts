@@ -1,34 +1,46 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
+import { Ticket, TicketService } from '../../service/ticket.service';
 
 @Component({
   selector: 'app-support',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './support.component.html',
-  styleUrl: './support.component.css'
+  styleUrls: ['./support.component.css']
 })
-export class SupportComponent implements OnInit{
+export class SupportComponent implements OnInit, OnDestroy {
   
-  allTickets: any[] = [];
-  selectedTicket: any = null;
+  allTickets: Ticket[] = [];
+  private ticketSubscription!: Subscription;
+
+  selectedTicket: Ticket | null = null;
   activeTab: 'OPEN' | 'PENDING' | 'RESOLVED' = 'OPEN';
   searchText: string = '';
 
-  constructor(private toastr: ToastrService) {}
+  constructor(
+    private ticketService: TicketService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
-    this.allTickets = [
-      { id: 1024, email: 'harisri@gmail.com', subject: 'Problem with my deposit', date: new Date(), status: 'OPEN', message: 'I tried to create a new fixed deposit but the transaction failed. Can you please look into it?' },
-      { id: 1023, email: 'gopika@gmail.com', subject: 'Question about interest rates', date: new Date(Date.now() - 86400000), status: 'PENDING', message: 'I saw the new interest rates for senior citizens. Do I qualify? My date of birth is 1960-05-15.' },
-      { id: 1022, email: 'gaurav@gmail.com', subject: 'KYC Verification Status', date: new Date(Date.now() - 172800000), status: 'OPEN', message: 'Hi, I submitted my KYC documents two days ago and wanted to check on the status. Thank you.' },
-      { id: 1021, email: 'abbynayashri@gmail.com', subject: 'Login Issue', date: new Date(Date.now() - 259200000), status: 'RESOLVED', message: 'I was unable to log in but the forgot password feature worked. You can close this ticket.' },
-    ];
+    // Subscribe to the ticket service to get live updates
+    this.ticketSubscription = this.ticketService.getTickets().subscribe(tickets => {
+      this.allTickets = tickets;
+    });
   }
 
-  filteredTickets(): any[] {
+  ngOnDestroy(): void {
+    // Unsubscribe to prevent memory leaks
+    if (this.ticketSubscription) {
+      this.ticketSubscription.unsubscribe();
+    }
+  }
+
+  filteredTickets(): Ticket[] {
     let tickets = this.allTickets.filter(t => t.status === this.activeTab);
     
     if (this.searchText) {
@@ -44,12 +56,19 @@ export class SupportComponent implements OnInit{
 
   getTicketCount(status: 'OPEN' | 'PENDING' | 'RESOLVED_TODAY'): number {
     if (status === 'RESOLVED_TODAY') {
-      return 1; 
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Set to start of today
+
+      return this.allTickets.filter(t => {
+        const ticketDate = new Date(t.date);
+        ticketDate.setHours(0, 0, 0, 0); // Set ticket date to start of its day
+        return t.status === 'RESOLVED' && ticketDate.getTime() === today.getTime();
+      }).length;
     }
     return this.allTickets.filter(t => t.status === status).length;
   }
 
-  viewTicket(ticket: any): void {
+  viewTicket(ticket: Ticket): void {
     this.selectedTicket = ticket;
   }
 
@@ -57,8 +76,9 @@ export class SupportComponent implements OnInit{
     this.selectedTicket = null;
   }
 
-  resolveTicket(ticket: any): void {
-    ticket.status = 'RESOLVED';
+  resolveTicket(ticket: Ticket): void {
+    // Call the service to resolve the ticket
+    this.ticketService.resolveTicket(ticket.id);
     this.toastr.success(`Ticket #${ticket.id} has been marked as resolved.`);
     this.closeModal();
   }

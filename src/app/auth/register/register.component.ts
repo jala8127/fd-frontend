@@ -93,13 +93,12 @@ export class RegisterComponent {
     this.isSendingOtp = true;
 
     this.http
-      .post('http://localhost:8080/api/auth/send-otp', null, {
-        params: { email: this.email },
-        responseType: 'text'
+      .post<{ otp: string, message: string }>('http://localhost:8080/api/auth/send-otp', null, {
+        params: { email: this.email }
       })
       .subscribe({
-        next: (otp) => {
-          this.generatedOtp = otp;
+        next: (response) => {
+          this.generatedOtp = response.otp;
           this.otpSent = true;
           this.toastr.success('OTP Sent successfully!');
           this.isSendingOtp = false;
@@ -137,12 +136,12 @@ export class RegisterComponent {
     if (this.nameError || this.phoneError || this.dobError) return;
 
     this.http
-      .get<boolean>('http://localhost:8080/api/auth/check-phone', {
+      .get<{ exists: boolean }>('http://localhost:8080/api/auth/check-phone', {
         params: { phone: this.phone }
       })
       .subscribe({
-        next: (exists) => {
-          if (exists) {
+        next: (response) => {
+          if (response.exists) {
             this.phoneError = 'Phone number already exists';
           } else {
             this.userDetailsFilled = true;
@@ -202,16 +201,34 @@ export class RegisterComponent {
       })
       .subscribe({
         next: (responseText) => {
-          if (responseText === 'Email already exists') {
-            this.emailError = 'Email already exists';
-          } else {
-            this.toastr.success(responseText);
-            this.router.navigate(['login']);
-          }
+            try {
+                const response = JSON.parse(responseText);
+                this.toastr.success(response.message || 'Account created successfully');
+                this.router.navigate(['login']);
+            } catch (e) {
+                if (responseText === 'Email already exists') {
+                    this.emailError = 'Email already exists';
+                } else {
+                    this.toastr.success(responseText);
+                    this.router.navigate(['login']);
+                }
+            }
         },
         error: (err) => {
           console.error(err);
-          this.toastr.error('Error creating account. Please try again.');
+          try {
+            const errorResponse = JSON.parse(err.error);
+            if (errorResponse.message) {
+                this.toastr.error(errorResponse.message);
+                if (errorResponse.error === 'EMAIL_EXISTS') {
+                    this.emailError = errorResponse.message;
+                }
+            } else {
+                this.toastr.error('Error creating account. Please try again.');
+            }
+          } catch(e) {
+            this.toastr.error('Error creating account. Please try again.');
+          }
         }
       });
   }

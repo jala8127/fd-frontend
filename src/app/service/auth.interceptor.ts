@@ -3,26 +3,37 @@ import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
-  HttpInterceptor
+  HttpInterceptor,
+  HttpErrorResponse
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { AuthService } from './auth.service'; 
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor() {}
+  constructor(private authService: AuthService) {}
+
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     
-    const authToken = sessionStorage.getItem('authToken');
+    const authToken = localStorage.getItem('authToken');
 
     if (authToken) {
-      const authReq = request.clone({
+      request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${authToken}`
         }
       });
-      return next.handle(authReq);
     }
-    return next.handle(request);
+
+    return next.handle(request).pipe(
+      catchError((error: any) => {
+        if (error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403)) {
+          this.authService.logout();
+        }
+        return throwError(() => error);
+      })
+    );
   }
 }

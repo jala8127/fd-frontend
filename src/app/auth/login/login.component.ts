@@ -51,11 +51,10 @@ export class LoginComponent {
           this.toastr.success("User Login successful");
 
           if (res && res.token) {
-
-            sessionStorage.setItem('authToken', res.token); 
-            sessionStorage.setItem('user', JSON.stringify(res));
-            sessionStorage.setItem('email', res.email);  
-            this.router.navigate(['/user/user-home']);
+            localStorage.setItem('authToken', res.token); 
+            localStorage.setItem('user', JSON.stringify(res));
+            localStorage.setItem('email', res.email);  
+            this.router.navigate(['/user/user-home'],);
           } else {
             this.toastr.error("Login successful, but no token was received from the server.");
           }
@@ -64,7 +63,6 @@ export class LoginComponent {
           if (err.status === 404 || err.status === 401) {
             this.tryEmployeeLogin(email, password);
           } else {
-
             this.toastr.error("Invalid login credentials.");
           }
         }
@@ -74,25 +72,27 @@ export class LoginComponent {
     }
   }
 
-  private tryEmployeeLogin(email: string, password: string) {
-    this.employeeService.loginEmployee(email, password).subscribe({
+   private tryEmployeeLogin(email: string, password: string) {
+    this.authService.loginEmployee(email, password).subscribe({
       next: (res: any) => {
         this.toastr.success("Employee Login successful");
 
         if (res && res.token) {
-            sessionStorage.setItem('authToken', res.token);
-            sessionStorage.setItem('employee', JSON.stringify(res));
+            localStorage.setItem('authToken', res.token);
+            localStorage.setItem('employee', JSON.stringify(res));
+            localStorage.setItem('email', res.email); 
             this.router.navigate(['/admin/admin-home']);  
         } else {
-            this.toastr.error("Login successful, but no token was received from the server.");
+            this.toastr.error("Login successful, but no token was received.");
         }
       },
       error: () => {
-        this.toastr.error("Invalid login credentials.");
+        this.toastr.error("Invalid login credentials for employee.");
       }
     });
   }
   
+
   togglePassword() {
     this.showPassword = !this.showPassword;
   }

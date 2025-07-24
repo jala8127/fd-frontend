@@ -249,3 +249,17 @@
     flex-direction: column;
   }
 }
+  .form-group {
+    position: relative;
+    margin-bottom: 1.25rem; 
+  }
+  .error-text {
+    color: #dc3545; 
+    font-size: 0.8rem;
+    position: absolute;
+    bottom: -1.2rem;
+    left: 0;
+  }
+  .ng-invalid.ng-touched:not(form) {
+      border-color: #dc3545;
+  }

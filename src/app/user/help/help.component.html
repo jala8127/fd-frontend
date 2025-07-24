@@ -25,6 +25,33 @@
 
   <div class="contact-us-box">
     <p>Can’t find what you’re looking for?</p>
-    <button>Contact Support</button>
+    <button (click)="openContactModal()">Contact Support</button>
+  </div>
+</div>
+
+<!-- Contact Support Modal -->
+<div class="modal-overlay" *ngIf="showContactModal">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3>Submit a Support Ticket</h3>
+      <button class="btn-close" (click)="closeContactModal()">×</button>
+    </div>
+    <!-- Form for submitting a new ticket -->
+    <form (ngSubmit)="submitTicket()">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <input id="subject" type="text" [(ngModel)]="ticketSubject" name="subject" required placeholder="e.g., Issue with KYC">
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" rows="5" [(ngModel)]="ticketMessage" name="message" required placeholder="Please describe your issue in detail..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closeContactModal()">Cancel</button>
+        <button type="submit" class="btn-submit">Submit Ticket</button>
+      </div>
+    </form>
   </div>
 </div>
