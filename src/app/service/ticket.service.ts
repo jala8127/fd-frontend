@@ -1,47 +1,41 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 export interface Ticket {
   id: number;
-  email: string;
+  customerEmail: string;
   subject: string;
-  date: Date;
+  description: string;
+  priority: string;
   status: 'OPEN' | 'PENDING' | 'RESOLVED';
-  message: string;
+  createdAt: string;
+}
+
+export interface NewTicketPayload {
+  customerEmail: string;
+  subject: string;
+  description: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH';
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class TicketService {
+  private apiUrl = 'http://localhost:8080/api/support';
 
-  private tickets$ = new BehaviorSubject<Ticket[]>([]);
+  constructor(private http: HttpClient) {}
 
-  constructor() { }
-
-  getTickets(): Observable<Ticket[]> {
-    return this.tickets$.asObservable();
+  getOpenTickets(): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.apiUrl}/open`);
   }
 
-  addTicket(newTicket: Omit<Ticket, 'id' | 'date' | 'status'> & { email: string }): void {
-    const currentTickets = this.tickets$.getValue();
-    const ticketToAdd: Ticket = {
-      ...newTicket,
-      id: Date.now(), 
-      date: new Date(),
-      status: 'OPEN'
-    };
-    this.tickets$.next([ticketToAdd, ...currentTickets]);
+  addTicket(newTicket: NewTicketPayload): Observable<any> {
+    return this.http.post(`${this.apiUrl}/create`, newTicket);
   }
 
-  resolveTicket(ticketId: number): void {
-    const currentTickets = this.tickets$.getValue();
-    const updatedTickets = currentTickets.map(ticket => {
-      if (ticket.id === ticketId) {
-        return { ...ticket, status: 'RESOLVED' as const };
-      }
-      return ticket;
-    });
-    this.tickets$.next(updatedTickets);
+  resolveTicket(ticketId: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${ticketId}/resolve`, {});
   }
 }

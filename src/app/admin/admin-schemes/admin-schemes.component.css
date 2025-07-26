@@ -1,6 +1,6 @@
 .fd-schemes-container {
   height: 83vh;
-  width: 150vh;
+  width: 79vw;
   overflow-y: auto;
   padding: 24px;
   background-color: #ffffff;
@@ -60,7 +60,7 @@
 }
 
 .scheme-table {
-  width: 137vh;
+  width: 72.5vw;
   border-collapse: collapse;
   font-size: 14px;
 }

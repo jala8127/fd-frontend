@@ -29,8 +29,8 @@
       <button class="action-btn" (click)="toggleModal('addCustomer', true)">Add Customer</button>
       <button class="action-btn" (click)="toggleModal('kyc', true)">Verify Kyc</button>
       <button class="action-btn" (click)="toggleModal('manualDeposit', true)">Create Deposit</button>
-      <button class="action-btn" (click)="toggleModal('closeDeposit', true)">Close Deposit</button>
-    </div>
+      <button class="action-btn" (click)="toggleModal('raiseTicket', true)">Raise Ticket</button>
+</div>
 
     <!-- Modals -->
     <ng-container *ngIf="showAddCustomerModal">
@@ -98,30 +98,6 @@
       </div>
     </ng-container>
 
-    <!-- Other modals remain unchanged -->
-    <ng-container *ngIf="showManualDepositModal">
-      <div class="modal">
-        <div class="modal-content">
-          <form #depositForm="ngForm" (ngSubmit)="makeManualDeposit(depositForm)">
-            <h3 class="modal-title">Create Deposit</h3>
-             <div class="form-row">
-               <div class="form-group"><label>Customer name</label><input name="customerName" ngModel required placeholder="Enter customer name" /></div>
-               <div class="form-group"><label>Email ID</label><input name="email" ngModel required placeholder="Enter customer mail ID" /></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label>Scheme ID</label><input name="schemeId" ngModel required placeholder="Enter scheme ID" /></div>
-                <div class="form-group"><label>Amount</label><input name="amount" ngModel required type="number" placeholder="Enter amount" /></div>
-            </div>
-            <div class="form-group"><label>Maturity amount</label><input name="maturityAmount" ngModel required type="number" placeholder="Enter maturity amount" /></div>
-            <div class="modal-footer">
-              <button type="submit" class="btn-confirm">Deposit</button>
-              <button type="button" class="btn-cancel" (click)="toggleModal('manualDeposit', false)">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </ng-container>
-
     <ng-container *ngIf="showKycModal">
       <div class="modal">
         <div class="modal-content">
@@ -156,25 +132,185 @@
       </div>
     </ng-container>
 
-     <ng-container *ngIf="showCloseDepositModal">
+     <ng-container *ngIf="showRaiseTicketModal">
+  <div class="modal">
+    <div class="modal-content">
+      <form #ticketForm="ngForm" (ngSubmit)="raiseTicket(ticketForm)">
+        <h3 class="modal-title">Raise a Support Ticket</h3>
+        
+        <div class="form-group">
+            <label>Customer Email</label>
+            <input name="customerEmail" ngModel required email placeholder="Enter customer's email address" />
+        </div>
+        
+        <div class="form-group">
+            <label>Subject</label>
+            <input name="subject" ngModel required placeholder="Enter a brief subject" />
+        </div>
+
+        <div class="form-group">
+            <label>Priority</label>
+            <select name="priority" ngModel required>
+                <option value="LOW">Low</option>
+                <option value="MEDIUM" selected>Medium</option>
+                <option value="HIGH">High</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="description" ngModel required rows="4" placeholder="Describe the issue in detail..."></textarea>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="submit" class="btn-confirm" [disabled]="ticketForm.invalid">Submit Ticket</button>
+          <button type="button" class="btn-cancel" (click)="toggleModal('raiseTicket', false)">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-container>
+
+    <ng-container *ngIf="showManualDepositModal && !showPaymentConfirmationModal">
       <div class="modal">
         <div class="modal-content">
-          <form #depositForm="ngForm" (ngSubmit)="closeDeposit(depositForm)">
-            <h3 class="modal-title">Close Deposit</h3>
-            <label>Customer Email ID</label>
-            <input name="customeremailId" ngModel required placeholder="Enter customer email ID" />
-            <label>Customer name</label>
-            <input name="Reason" ngModel required placeholder="Enter customer name" />
-            <label>Customer phone no</label>
-            <input name="Reason" ngModel required placeholder="Enter phone number" />
-            <button type="submit" class="btn-confirm">Fetch active FD's</button>
-            <label>Reason</label>
-            <input name="Reason" ngModel required placeholder="Enter reason" />
+          <form #depositForm="ngForm" (ngSubmit)="handleCreateDeposit(depositForm)">
+            <h3 class="modal-title">Create Manual Deposit</h3>
+
+            <!-- Customer Email Validation -->
+            <div class="form-group">
+              <label>Customer Email ID</label>
+              <input name="email"
+                     ngModel
+                     required
+                     email
+                     placeholder="Enter customer's email ID"
+                     (blur)="validateCustomerExists(depositForm.value.email)" />
+              <div *ngIf="depositValidationError" class="error-text">
+                {{ depositValidationError }}
+              </div>
+            </div>
+
+            <!-- Scheme Selection Dropdown -->
+            <div class="form-group">
+              <label>Select Scheme</label>
+              <!-- FIX: Use [ngValue] to bind the whole object and (ngModelChange) to pass it -->
+              <select name="scheme"
+                      [ngModel]="selectedSchemeForDeposit"
+                      (ngModelChange)="onSchemeChange($event)"
+                      required>
+                <option [ngValue]="null" disabled>-- Choose a scheme --</option>
+                <option *ngFor="let scheme of allSchemes" [ngValue]="scheme">
+                  {{ scheme.schemeName }} ({{ scheme.interestRate }}% for {{ scheme.tenureMonths }} months)
+                </option>
+              </select>
+            </div>
+            
+            <!-- Scheme details and amount input appear after selection -->
+            <ng-container *ngIf="selectedSchemeForDeposit">
+              <!-- Scheme Details Display -->
+              <div class="scheme-details-summary">
+                  <p><strong>Interest Rate:</strong> {{ selectedSchemeForDeposit.interestRate | number:'1.2-2' }}% p.a.</p>
+                  <p><strong>Tenure:</strong> {{ selectedSchemeForDeposit.tenureMonths }} months</p>
+                  <p><strong>Payout:</strong> {{ selectedSchemeForDeposit.payout }}</p>
+              </div>
+
+              <!-- Amount Input with Validation -->
+              <div class="form-group">
+                  <label>Investment Amount (Min: ₹{{selectedSchemeForDeposit.minAmount | number}})</label>
+                  <input name="amount"
+                         type="number"
+                         [ngModel]="investmentAmount"
+                         (ngModelChange)="investmentAmount = $event"
+                         required
+                         [min]="selectedSchemeForDeposit.minAmount"
+                         placeholder="Enter amount" />
+                  <div *ngIf="depositForm.controls['amount']?.errors?.['min']" class="error-text">
+                    Amount must be at least ₹{{ selectedSchemeForDeposit.minAmount | number }}.
+                  </div>
+              </div>
+
+              <!-- Real-time Calculation Display -->
+              <div class="calculation-results" *ngIf="isInvestmentValid()">
+                <p class="result maturity">
+                  <strong>Maturity Amount:</strong> ₹{{ calculateMaturityAmount(selectedSchemeForDeposit) | number:'1.0-0' }}
+                </p>
+              </div>
+            </ng-container>
+
             <div class="modal-footer">
-              <button type="submit" class="btn-confirm">Close Deposit</button>
-              <button type="button" class="btn-cancel" (click)="toggleModal('closeDeposit', false)">Cancel</button>
+              <button type="submit" class="btn-confirm" [disabled]="!isInvestmentValid() || depositForm.invalid || depositValidationError">
+                Proceed to Payment
+              </button>
+              <button type="button" class="btn-cancel" (click)="toggleModal('manualDeposit', false)">Cancel</button>
             </div>
           </form>
+        </div>
+      </div>
+    </ng-container>
+
+
+    <!-- ======================================================== -->
+    <!-- 2. NEW: Admin Payment Confirmation Modal -->
+    <!-- ======================================================== -->
+    <ng-container *ngIf="showPaymentConfirmationModal">
+      <div class="modal">
+        <div class="modal-content payment-modal">
+          <!-- State 1: Show payment options -->
+          <ng-container *ngIf="!paymentResult">
+            <h2>Confirm Deposit Payment</h2>
+            <div class="payment-summary">
+              <p><strong>Customer:</strong> {{ depositPayload.email }}</p>
+              <p><strong>Scheme:</strong> {{ selectedSchemeForDeposit.schemeName }}</p>
+              <p><strong>Amount:</strong> ₹{{ depositPayload.amount | number }}</p>
+            </div>
+            <!-- Payment Mode Selection -->
+            <div class="form-group">
+              <label>Select Payment Mode:</label>
+              <select name="paymentMode" [(ngModel)]="depositPayload.paymentMode" (ngModelChange)="depositPayload.paymentDetails = ''">
+                <option value="Cash" selected>Cash</option>
+                <option value="UPI">UPI</option>
+                <option value="Card">Card</option>
+              </select>
+            </div>
+
+            <div [ngSwitch]="depositPayload.paymentMode">
+              <div *ngSwitchCase="'Cash'" class="form-group">
+                <label>Receiver Employee Mail ID</label>
+                <input name="paymentDetailsCash" [(ngModel)]="depositPayload.paymentDetails" placeholder="Enter your employee email" required email />
+              </div>
+              <div *ngSwitchCase="'UPI'" class="form-group">
+                <label>Enter UPI ID</label>
+                <input name="paymentDetailsUPI" [(ngModel)]="depositPayload.paymentDetails" placeholder="example@upi" required />
+              </div>
+              <div *ngSwitchCase="'Card'" class="form-group">
+                <label>Enter Card Number</label>
+                <input name="paymentDetailsCard" [(ngModel)]="depositPayload.paymentDetails" placeholder="16-digit card number" required />
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button class="btn-confirm" (click)="confirmAdminPayment()" [disabled]="isProcessing || !isPaymentDetailValid()">
+                {{ isProcessing ? 'Processing...' : 'Confirm & Create Deposit' }}
+              </button>
+              <button class="btn-cancel" (click)="showPaymentConfirmationModal = false">Cancel</button>
+            </div>
+          </ng-container>
+
+          <!-- State 2: Show loading spinner -->
+          <div class="payment-feedback" *ngIf="showLoader">
+            <div class="spinner"></div>
+          </div>
+
+          <!-- State 3: Show success result -->
+          <div class="payment-feedback" *ngIf="!showLoader && paymentResult === 'SUCCESS'">
+            <div class="result-circle success">
+              <div class="icon-wrapper">✔</div>
+            </div>
+            <h2 class="result-title text-success">Payment Successful!</h2>
+            <p class="feedback-msg">The deposit has been created successfully.</p>
+            <button (click)="closeAllModals()" class="btn-done">Done</button>
+          </div>
         </div>
       </div>
     </ng-container>

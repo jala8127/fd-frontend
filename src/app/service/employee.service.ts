@@ -2,6 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface ChartData {
+  month: string;
+  totalPayments: number;
+  totalPayouts: number;
+}
+
 export interface Employee {
   id?: number;
   name: string;
@@ -11,13 +17,19 @@ export interface Employee {
   role: string;
   photoUrl?: string;
 }
+export interface SupportTicketPayload {
+  customerEmail: string;
+  subject: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH';
+  description: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class EmployeeService {
   private apiUrl = 'http://localhost:8080/api/employees'; 
-  private adminApiUrl = 'http://localhost:8080/api/admin';
+  private supportApiUrl = 'http://localhost:8080/api/support';
 
   constructor(private http: HttpClient) {}
 
@@ -46,7 +58,7 @@ export class EmployeeService {
     return this.http.post('http://localhost:8080/api/auth/employees/login', { email, password });
   }
 
-  getTotalDeposits(): Observable<{ total: number }> {
+ getTotalDeposits(): Observable<{ total: number }> {
     return this.http.get<{ total: number }>(`${this.apiUrl}/admin/total-deposits`);
   }
 
@@ -64,21 +76,27 @@ export class EmployeeService {
 
 
   addCustomer(customerData: any): Observable<any> {
-    return this.http.post(`${this.adminApiUrl}/add-customer`, customerData);
+    return this.http.post(`${this.apiUrl}/add-customer`, customerData);
   }
 
   makeManualDeposit(depositData: any): Observable<any> {
-    return this.http.post(`${this.adminApiUrl}/manual-deposit`, depositData);
+    return this.http.post(`${this.apiUrl}/manual-deposit`, depositData);
   }
 
   closeDeposit(depositData: any): Observable<any> {
-    return this.http.post(`${this.adminApiUrl}/close-deposit`, depositData);
+    return this.http.post(`${this.apiUrl}/close-deposit`, depositData);
   }
 
   verifyKyc(formData: FormData): Observable<any> {
-    return this.http.post(`${this.adminApiUrl}/verify-kyc`, formData);
+    return this.http.post(`${this.apiUrl}/verify-kyc`, formData);
   }
   getLoggedInEmployeeProfile(): Observable<Employee> {
     return this.http.get<Employee>(`${this.apiUrl}/profile`);
+  }
+  raiseTicket(ticketData: SupportTicketPayload): Observable<any> {
+    return this.http.post(`${this.supportApiUrl}/create`, ticketData);
+  }
+   getMonthlyChartData(): Observable<ChartData[]> {
+    return this.http.get<ChartData[]>(`${this.apiUrl}/admin/chart-data`);
   }
 }

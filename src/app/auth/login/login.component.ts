@@ -123,8 +123,8 @@ export class LoginComponent {
     this.invalidEmail = false;
 
     this.authService.checkEmailExists(emailToCheck).subscribe({
-      next: (exists: boolean) => {
-        if (exists) {
+      next: (response: { exists: boolean }) => {
+         if (response.exists) {
           this.toastr.warning("This email is already registered. Please login instead.");
         } else {
           this.router.navigate(['/register']);

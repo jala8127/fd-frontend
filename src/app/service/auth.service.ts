@@ -26,8 +26,8 @@ export class AuthService {
     return localStorage.getItem('email') || '';
   }
 
-  checkEmailExists(email: string): Observable<boolean> {
-    return this.http.get<boolean>(`${this.baseUrl}/check-email/${email}`);
+  checkEmailExists(email: string): Observable<{exists: boolean}> {
+    return this.http.get<{exists: boolean}>(`${this.baseUrl}/check-email/${email}`);
   }
 
    logout(): void {
@@ -39,8 +39,7 @@ export class AuthService {
     localStorage.removeItem('email');
     
     if (wasLoggedIn) {
-      this.toastr.info('Your session has ended. Please log in again.');
-      
+     this.toastr.success('You have been logged out.');
       window.location.href = '/login';
     }
   }

@@ -6,6 +6,8 @@ import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
 import { EmployeeService } from '../../service/employee.service'; 
 import { ToastrService } from 'ngx-toastr'; 
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '../../service/auth.service'; 
 
 @Component({
   selector: 'app-admin-home',
@@ -18,22 +20,35 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
   totalDeposits = 0;
   monthlyPayouts = 0;
   monthlyReceived = 0;
-
-  showAddCustomerModal = false;
-  showManualDepositModal = false;
-  showCloseDepositModal = false;
-  showKycModal = false;
-  selectedDocument: File | null = null;
   recentTransactions: any[] = [];
   refreshSubscription!: Subscription;
+
+  showAddCustomerModal = false;
+  showKycModal = false;
+  showRaiseTicketModal = false;
+  showManualDepositModal = false;
+  showPaymentConfirmationModal = false;
+
+  selectedDocument: File | null = null;
+  depositValidationError: string | null = null;
+  allSchemes: any[] = [];
+  selectedSchemeForDeposit: any = null;
+  investmentAmount: number = 0;
+  
+  isProcessing = false;
+  showLoader = false;
+  paymentResult: 'SUCCESS' | null = null;
+  depositPayload: any = null;
+  
   
   barChartData: ChartConfiguration<'bar'>['data'] = {
-    labels: ['MARCH', 'APRIL', 'MAY','JUN','JULY'],
+    labels: [],
     datasets: [
-      { data: [90000, 160000, 120000, 200000, 210000], label: 'Payouts by Bank', backgroundColor: '#e55bff' },
-      { data: [140000, 220000, 180000, 250000, 300000], label: 'Customer payments', backgroundColor: '#a205ea' }
+      { data: [], label: 'Payouts', backgroundColor: '#e55bff' },
+      { data: [], label: 'Payments', backgroundColor: '#a205ea' }
     ]
   };
+
   barChartOptions: ChartConfiguration<'bar'>['options'] = {
     responsive: true,
     plugins: {
@@ -57,16 +72,21 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
   };
 
   constructor(
-    private employeeService: EmployeeService, 
-    private toastr: ToastrService
-  ) {}
+  private employeeService: EmployeeService, 
+  private toastr: ToastrService,
+  private http: HttpClient, 
+  private authService: AuthService
+) {}
 
-  ngOnInit(): void {
+
+ngOnInit(): void {
     this.fetchDashboardData();
     this.fetchRecentTransactions();
-
-    this.refreshSubscription = interval(30000).subscribe(() => {
-      this.fetchDashboardData();
+    this.loadAllSchemes(); 
+    this.fetchChartData(); 
+    this.refreshSubscription = interval(60000).subscribe(() => {
+        this.fetchDashboardData();
+        this.fetchChartData(); 
     });
   }
 
@@ -76,11 +96,39 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleModal(modal: 'addCustomer' | 'manualDeposit' | 'kyc'| 'closeDeposit', show: boolean): void {
+  fetchChartData(): void {
+    this.employeeService.getMonthlyChartData().subscribe({
+      next: (data) => {
+        const labels = data.map(d => d.month);
+        const paymentsData = data.map(d => d.totalPayments);
+        const payoutsData = data.map(d => d.totalPayouts);
+
+        this.barChartData = {
+          labels: labels,
+          datasets: [
+            { data: payoutsData, label: 'Payouts', backgroundColor: '#e55bff' },
+            { data: paymentsData, label: 'Payments', backgroundColor: '#a205ea' }
+          ]
+        };
+      },
+      error: (err) => {
+        this.toastr.error('Could not load chart data.');
+        console.error(err);
+      }
+    });
+  }
+
+  toggleModal(modal: 'addCustomer' | 'manualDeposit' | 'kyc'| 'raiseTicket', show: boolean): void {
     this.showAddCustomerModal = modal === 'addCustomer' && show;
-    this.showManualDepositModal = modal === 'manualDeposit' && show;
-    this.showCloseDepositModal = modal === 'closeDeposit' && show;
     this.showKycModal = modal === 'kyc' && show;
+    this.showManualDepositModal = modal === 'manualDeposit' && show;
+    this.showRaiseTicketModal = modal === 'raiseTicket' && show; 
+
+    if (modal === 'manualDeposit' && show) {
+        this.depositValidationError = null; 
+        this.selectedSchemeForDeposit = null;
+        this.investmentAmount = 0;
+    }
   }
 
   fetchDashboardData(): void {
@@ -102,20 +150,24 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
 
   fetchRecentTransactions(): void {
     this.employeeService.getRecentTransactions().subscribe({
-      next: data => this.recentTransactions = data.slice(0, 4),
+      next: data => this.recentTransactions = data.slice(0, 5),
       error: err => console.error('Failed to load recent transactions', err)
     });
   }
 
+  loadAllSchemes(): void {
+    this.http.get<any[]>("http://localhost:8080/api/schemes/all").subscribe({
+      next: (data) => this.allSchemes = data,
+      error: (err) => this.toastr.error("Could not load investment schemes.")
+    });
+  }
+
   addCustomer(form: NgForm): void {
-    // Mark all fields as touched to display validation errors when user tries to submit
     form.control.markAllAsTouched();
 
-    // --- Custom Validation Logic ---
     let isAgeValid = true;
     let isMpinValid = true;
 
-    // 1. Age Validation
     if (form.value.dob) {
       const eighteenYearsAgo = new Date();
       eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
@@ -125,38 +177,33 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
       }
     }
 
-    // 2. MPIN Consecutive Digits Validation
     const mpinControl = form.controls['mpin'];
     if (mpinControl && mpinControl.valid && mpinControl.value) {
-        // This regex checks for any digit (\d) that is repeated 3 or more times after itself ({3,}), meaning 4+ times in a row.
         const consecutiveRegex = /(\d)\1{3,}/;
         if (consecutiveRegex.test(mpinControl.value)) {
-            // Set a custom error on the mpin form control
             mpinControl.setErrors({'consecutive': true});
             isMpinValid = false;
         }
     }
 
-    // --- Final Form Validity Check ---
     if (form.invalid || !isAgeValid || !isMpinValid) {
       this.toastr.error('Please correct the errors before submitting.');
       return;
     }
 
-    // If form is fully valid, proceed to add customer
-    // The form.value will now contain 'mpin' and not 'address'
-    this.employeeService.addCustomer(form.value).subscribe({
+this.employeeService.addCustomer(form.value).subscribe({
       next: () => {
         this.toastr.success('Customer added successfully!');
         form.resetForm();
         this.toggleModal('addCustomer', false);
       },
       error: (err) => {
-        // This block handles errors from the backend, including the check for existing email/phone
-        if (err.status === 409) { // 409 Conflict
+
+        if (err.status === 409) { 
           const errorMessage = err.error?.message || 'A customer with these details already exists.';
+          
           this.toastr.error(errorMessage);
-          // Set inline errors on the specific fields based on backend response
+
           if (errorMessage.toLowerCase().includes('email')) {
             form.controls['email'].setErrors({'exists': true});
           }
@@ -170,32 +217,147 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  makeManualDeposit(form: NgForm): void {
-    if (form.valid) {
-      this.employeeService.makeManualDeposit(form.value).subscribe({
-        next: () => {
-          this.toastr.success('Deposit made successfully!');
-          form.resetForm();
-          this.fetchDashboardData();
-          this.toggleModal('manualDeposit', false);
-        },
-        error: (err) => this.toastr.error(err.error?.message || 'Failed to make deposit.')
-      });
+   validateCustomerExists(email: string): void {
+    if (!email || email.trim() === '') {
+      this.depositValidationError = null;
+      return;
+    }
+    this.authService.checkEmailExists(email).subscribe({
+      next: (response) => {
+        if (!response.exists) {
+          this.depositValidationError = 'No user found with this email. Please add the customer first.';
+        } else {
+          this.depositValidationError = null; 
+        } 
+      },
+      error: () => {
+        this.depositValidationError = 'Could not validate email at this time.';
+      }
+    });
+  }
+
+  onSchemeChange(scheme: any): void {
+    this.selectedSchemeForDeposit = scheme;
+    if (this.selectedSchemeForDeposit) {
+      this.investmentAmount = this.selectedSchemeForDeposit.minAmount;
     }
   }
 
-  closeDeposit(form: NgForm): void {
-    if (form.valid) {
-      this.employeeService.closeDeposit(form.value).subscribe({
-        next: () => {
-          this.toastr.success('Deposit closed successfully!');
-          form.resetForm();
-          this.fetchDashboardData();
-          this.toggleModal('closeDeposit', false);
-        },
-        error: (err) => this.toastr.error(err.error?.message || 'Failed to close deposit.')
-      });
+
+  isInvestmentValid(): boolean {
+    if (!this.selectedSchemeForDeposit) return false;
+    return this.investmentAmount >= this.selectedSchemeForDeposit.minAmount;
+  }
+
+  calculateMaturityAmount(scheme: any): number {
+    if (!scheme || !this.investmentAmount) return 0;
+    const principal = this.investmentAmount;
+    const annualRate = scheme.interestRate / 100;
+    const monthlyRate = annualRate / 12;
+    const tenureMonths = scheme.tenureMonths;
+    const amount = principal * Math.pow(1 + monthlyRate, tenureMonths);
+    return Math.round(amount);
+  }
+
+  handleCreateDeposit(form: NgForm): void {
+    if (!this.selectedSchemeForDeposit) {
+      this.toastr.error("Please select a scheme before proceeding.");
+      return;
     }
+
+    if (form.invalid || this.depositValidationError) {
+      this.toastr.error("Please correct the errors before proceeding.");
+      return;
+    }
+
+    this.depositPayload = {
+      userEmail: form.value.email,
+      schemeId: this.selectedSchemeForDeposit.id,
+      schemeName: this.selectedSchemeForDeposit.schemeName,
+      status: 'SUCCESS',
+      amount: this.investmentAmount,
+      paymentMode: 'Cash', 
+      receiverEmployeemailId: '' ,
+      paymentDetails: ''
+    };
+    this.showManualDepositModal = false;
+    this.showPaymentConfirmationModal = true;
+  }
+
+    isPaymentDetailValid(): boolean {
+    const details = this.depositPayload.paymentDetails;
+    if (!details) return false;
+
+    switch (this.depositPayload.paymentMode) {
+      case 'Cash':
+        return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(details);
+      case 'UPI':
+        return /^[\w.-]+@[\w]+$/.test(details);
+      case 'Card':
+        return /^\d{16}$/.test(details.replace(/\s|-/g, ''));
+      default:
+        return false;
+    }
+  }
+
+  confirmAdminPayment(): void {
+    this.isProcessing = true;
+    this.showLoader = true;
+    this.paymentResult = null;
+
+    setTimeout(() => {
+      this.employeeService.makeManualDeposit(this.depositPayload).subscribe({
+        next: () => {
+          this.paymentResult = 'SUCCESS';
+          this.playSound('success');
+          this.fetchDashboardData(); 
+          this.fetchRecentTransactions(); 
+        },
+        error: (err) => {
+          this.toastr.error(err.error?.message || 'An unexpected error occurred.');
+          this.playSound('fail');
+          this.showLoader = false;
+          this.isProcessing = false;
+          this.showPaymentConfirmationModal = false; 
+        },
+        complete: () => {
+          this.showLoader = false;
+          this.isProcessing = false;
+        }
+      });
+    }, 1500); 
+  }
+
+  closeAllModals(): void {
+    this.showManualDepositModal = false;
+    this.showPaymentConfirmationModal = false;
+    this.paymentResult = null;
+    this.depositPayload = null;
+  }
+
+  playSound(type: 'success' | 'fail') {
+    const audio = new Audio();
+    audio.src = type === 'success'
+      ? 'assets/success.mp3'
+      : 'assets/fail.mp3';
+
+    audio.play().catch(err => {
+      console.warn(`Error playing sound: ${type}`, err);
+    });
+  }
+   raiseTicket(form: NgForm): void {
+    if (form.invalid) {
+      this.toastr.error('Please fill all required fields to raise a ticket.');
+      return;
+    }
+    this.employeeService.raiseTicket(form.value).subscribe({
+      next: () => {
+        this.toastr.success('Support ticket raised successfully!');
+        form.resetForm();
+        this.toggleModal('raiseTicket', false); 
+      },
+      error: (err: HttpErrorResponse) => this.toastr.error(err.error?.message || 'Failed to raise ticket.')
+    });
   }
 
   onDocumentSelected(event: Event): void {
@@ -206,28 +368,49 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
   }
 
   verifyKYC(form: NgForm): void {
-    if (form.invalid) {
-      this.toastr.error('Please fill all the required fields.');
-      return;
-    }
-    if (!this.selectedDocument) {
-      this.toastr.error('Please upload the required document.');
-      return;
-    }
-
-    const kycData = form.value;
-    const formData = new FormData();
-    formData.append('customerId', kycData.customerIdKyc);
-    formData.append('document', this.selectedDocument);
-
-    this.employeeService.verifyKyc(formData).subscribe({
-      next: () => {
-        this.toastr.success('KYC verified successfully!');
-        form.resetForm();
-        this.selectedDocument = null;
-        this.toggleModal('kyc', false);
-      },
-      error: (err) => this.toastr.error(err.error?.message || 'Failed to verify KYC.')
-    });
+  if (form.invalid) {
+    this.toastr.error('Please fill all the required fields.');
+    return;
   }
+  if (!this.selectedDocument) {
+    this.toastr.error('Please upload the required document.');
+    return;
+  }
+
+  const formValue = form.value;
+  const kycPayload = {
+
+    email: formValue.customerIdKyc, 
+    fullName: formValue.name,
+    phone: formValue.phone,
+    dob: formValue.dob,
+    currentAddress: formValue.currentAddress,
+    permanentAddress: formValue.permanentAddress,
+    aadhaarNumber: formValue.aadhaarNumber,
+    panNumber: formValue.panNumber,
+    bankName: formValue.bankName,
+    accountNumber: formValue.accountNumber,
+    ifscCode: formValue.ifscCode
+  };
+
+  const formData = new FormData();
+  
+  formData.append('kycData', new Blob([JSON.stringify(kycPayload)], { 
+    type: 'application/json' 
+  }));
+  
+  formData.append('kycDocument', this.selectedDocument, this.selectedDocument.name);
+  this.http.post('http://localhost:8080/api/kyc/admin-submit', formData).subscribe({
+    next: () => {
+      this.toastr.success('Manual KYC submitted for verification!');
+      form.resetForm();
+      this.selectedDocument = null;
+      this.toggleModal('kyc', false);
+    },
+    error: (err) => {
+      this.toastr.error(err.error?.message || 'Failed to submit KYC.');
+      console.error('Manual KYC submission failed:', err);
+    }
+  });
+ }
 }

@@ -142,7 +142,7 @@ export class PaymentsComponent implements OnInit {
     this.paymentResult = null;
 
     const body = {
-      email: this.userEmail,
+      userEmail: this.userEmail,
       schemeId: this.scheme.id,
       schemeName: this.scheme.schemeName,
       amount: this.investmentAmount,
@@ -175,13 +175,10 @@ export class PaymentsComponent implements OnInit {
 
   playSound(type: 'success' | 'fail') {
     const audio = new Audio();
-    audio.src = type === 'success'
-      ? 'assets/success.mp3'
-      : 'assets/fail.mp3';
-
-    audio.play().catch(err => {
-      console.warn(`Error playing sound: ${type}`, err);
-    });
+    audio.src = type === 'success' ? 'assets/success.mp3' : 'assets/fail.mp3';
+    audio.play()
+      .then(() => console.log(`${type} sound played`))
+      .catch(err => console.error("Sound play error", err));
   }
 
   goToSchemes() {

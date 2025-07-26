@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { EmployeeService, Employee } from '../../service/employee.service'; 
 import { InactivityService } from '../../service/inactivity.service'; 
 import { Subscription } from 'rxjs'; 
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-admin-dashboard', 
@@ -36,7 +37,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     private router: Router,
     private toastr: ToastrService,
     private employeeService: EmployeeService,
-    private inactivityService: InactivityService 
+    private inactivityService: InactivityService ,
+    private authService: AuthService 
   ) {}
 
   ngOnInit(): void {
@@ -70,10 +72,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
   
   logout(): void {
-    sessionStorage.removeItem('authToken');
-    sessionStorage.removeItem('employee');
-    this.toastr.success("Logout successful");
-    this.router.navigate(['/login']);
+    this.authService.logout();
   }
 
   onProfileClick(): void {

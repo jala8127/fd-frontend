@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms'; // Import NgForm
 import { ToastrService } from 'ngx-toastr';
 import { CustomerService, Customer } from '../../service/customer.service';
 
@@ -82,7 +82,13 @@ export class KycComponent implements OnInit {
     }
   }
 
-  submitKyc() {
+  submitKyc(kycForm: NgForm) {
+    if (kycForm.invalid) {
+      kycForm.control.markAllAsTouched();
+      this.toastr.error('Please fill out all required fields correctly.', 'Validation Error');
+      return;
+    }
+
     if (!this.userId) {
         this.toastr.error('User ID is missing. Cannot submit KYC.');
         return;
@@ -117,10 +123,9 @@ export class KycComponent implements OnInit {
   }
 
   checkKycStatus() {
-    // FIXED: Call the new, secure endpoint for the logged-in user
     this.http.get<any>('http://localhost:8080/api/kyc/my-status').subscribe({
       next: (userKyc) => {
-        if (userKyc && userKyc.status !== 'NOT_SUBMITTED') {
+        if (userKyc && userKyc.status && userKyc.status !== 'NOT_SUBMITTED') {
           this.isSubmitted = true;
           this.status = userKyc.status;
           const rawReason = userKyc.rejectionReason;
@@ -145,7 +150,6 @@ export class KycComponent implements OnInit {
     this.status = '';
     this.reason = '';
     this.selectedFile = null;
-    this.ngOnInit();
   }
 
   goToSchemes() {

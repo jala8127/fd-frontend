@@ -4,8 +4,8 @@
       <div class="scheme-modal-container"></div>
       <h2>KYC Verification</h2>
 
-      <!-- KYC Form: Only shows if KYC has not been submitted yet -->
-      <form (ngSubmit)="submitKyc()" #kycForm="ngForm" *ngIf="!isSubmitted" novalidate>
+
+      <form (ngSubmit)="submitKyc(kycForm)" #kycForm="ngForm" *ngIf="!isSubmitted" novalidate>
         <!-- PERSONAL INFO -->
         <div class="form-row">
           <div class="form-group">

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { TicketService } from '../../service/ticket.service';
+import { TicketService, NewTicketPayload } from '../../service/ticket.service';
 import { AuthService } from '../../service/auth.service';
 
 @Component({
@@ -16,6 +16,7 @@ export class HelpComponent {
   showContactModal = false;
   ticketSubject = '';
   ticketMessage = '';
+  ticketPriority: 'LOW' | 'MEDIUM' | 'HIGH' = 'MEDIUM';
 
   constructor(
     private ticketService: TicketService,
@@ -31,6 +32,7 @@ export class HelpComponent {
     this.showContactModal = false;
     this.ticketSubject = '';
     this.ticketMessage = '';
+    this.ticketPriority = 'MEDIUM';
   }
 
   submitTicket(): void {
@@ -45,13 +47,22 @@ export class HelpComponent {
       return;
     }
 
-    this.ticketService.addTicket({
-      email: userEmail,
+    const payload: NewTicketPayload = {
+      customerEmail: userEmail,
       subject: this.ticketSubject,
-      message: this.ticketMessage
-    });
+      description: this.ticketMessage,
+      priority: this.ticketPriority
+    };
 
-    this.toastr.success('Your support ticket has been submitted!');
-    this.closeContactModal();
+    this.ticketService.addTicket(payload).subscribe({
+      next: () => {
+        this.toastr.success('Your support ticket has been submitted successfully!');
+        this.closeContactModal();
+      },
+      error: (err) => {
+        this.toastr.error('Failed to submit ticket. Please try again later.');
+        console.error(err);
+      }
+    });
   }
 }

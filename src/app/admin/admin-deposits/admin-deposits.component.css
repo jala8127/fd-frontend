@@ -109,79 +109,7 @@ tr:hover {
   height: 30px;
 }
 
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
 
-.modal-box {
-  background-color: #eee;
-  padding: 30px;
-  border-radius: 12px;
-  width: 400px;
-  max-width: 90%;
-  text-align: left;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-.modal-box h3 {
-  font-size: 22px;
-  color: #7c00a1;
-  margin-bottom: 15px;
-}
-
-.modal-box p {
-  font-size: 14px;
-  color: #444;
-  margin-bottom: 20px;
-  line-height: 1.5;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.modal-actions button {
-  flex: 1;
-  padding: 10px 16px;
-  font-size: 15px;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  transition: background-color 0.3s ease;
-  background-color: #ce2d3d;
-}
-
-.modal-actions .confirm-btn {
-  background-color: #28a745;
-  color: rgb(255, 255, 255);
-}
-
-.modal-actions .confirm-btn:hover {
-  background-color: #218838;
-}
-
-.modal-actions .cancel-btn {
-  background-color: #c82d3d;
-  color: white;
-}
-
-.modal-actions .cancel-btn:hover {
-  background-color: #c82333;
-}
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
@@ -202,12 +130,6 @@ tr:hover {
   border: 1px solid #ccc;
 }
 
-.modal-box {
-  max-width: 400px;
-  background: white;
-  padding: 1rem;
-  border-radius: 8px;
-}
 .searchbar {
   margin-bottom: 1rem;
 }
@@ -225,13 +147,219 @@ tr:hover {
 .searchbar input[type="text"]:focus {
   border-color: #7e57c2;
 }
+  .view-btn {
+    background-color: #ad4fd9;
+    color: white;
+    border: none;
+    padding: 6px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
 
-.modal-backdrop .cancel-btn{
-  background-color: rgb(208, 55, 55);
-  color: rgb(255, 255, 255);
-  border-style: none;
-  border-radius: 5px;
-  font-size: 18px;
-  height:45px;
-  width:70px;
-}
+  .view-btn:hover {
+    background-color: #8c02c6;
+  }
+
+  .status-active {
+    color: #28a745;
+    font-weight: 600;
+  }
+
+  .status-closed {
+    color: #dc3545;
+    font-weight: 600;
+  }
+
+
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .modal-box {
+    background-color: #fff;
+    padding: 24px 30px;
+    border-radius: 12px;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.3s ease;
+    text-align: center;
+  }
+
+  .modal-box h3 {
+    font-size: 22px;
+    color: #7c00a1;
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+
+  .modal-box p {
+    font-size: 15px;
+    color: #444;
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+
+  .modal-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .modal-actions button {
+    flex: 1;
+    padding: 10px 16px;
+    font-size: 15px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+    max-width: 180px;
+  }
+
+  .modal-actions .confirm-btn, .btn-confirm {
+    background-color: #28a745;
+    color: white;
+  }
+  .modal-actions .confirm-btn:hover, .btn-confirm:hover {
+    background-color: #218838;
+  }
+
+  .modal-actions .cancel-btn {
+    background-color: #dc3545;
+    color: white;
+  }
+  .modal-actions .cancel-btn:hover {
+    background-color: #c82333;
+  }
+
+  .fd-details-modal .details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 20px;
+    text-align: left;
+    margin-top: 20px;
+  }
+  .fd-details-modal p {
+    margin: 5px 0;
+    font-size: 14px;
+  }
+
+  .btn-withdraw {
+    background-color: #d9534f;
+    color: white;
+  }
+  .btn-withdraw:hover {
+    background-color: #c9302c;
+  }
+
+  .confirm-box hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 15px 0;
+  }
+  .confirm-box .text-fail {
+    color: #dc3545;
+  }
+  .confirm-box .text-success {
+    color: #28a745;
+    font-weight: 600;
+    font-size: 1.1em;
+  }
+
+  .spinner {
+    width: 45px;
+    height: 45px;
+    border: 5px solid #ddd;
+    border-top: 5px solid #a205ea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+  }
+
+  .feedback-box .result-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 16px;
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+  }
+
+  .feedback-box .icon-wrapper {
+    animation: popIn 0.5s ease-out;
+  }
+
+  .feedback-box .result-circle.success {
+    background-color: #28a745;
+  }
+
+  .feedback-box .result-circle.failure {
+    background-color: #e74c3c;
+  }
+
+  .feedback-box .result-title {
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .feedback-box .text-success {
+    color: #28a745;
+  }
+
+  .feedback-box .text-fail {
+    color: #dc3545;
+  }
+
+  .feedback-box .feedback-msg {
+    font-size: 15px;
+    color: #555;
+    margin: 10px 0 20px;
+  }
+
+  .feedback-box .btn-done {
+    background-color: #28a745;
+    color: white;
+  }
+  .feedback-box .btn-done:hover {
+    background-color: #218838;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }

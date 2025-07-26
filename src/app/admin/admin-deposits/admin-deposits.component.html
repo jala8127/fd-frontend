@@ -5,7 +5,7 @@
   </div>
 
   <div class="searchbar">
-    <input type="text" [(ngModel)]="searchText" placeholder="Search by user name or ID or Amount..." />
+    <input type="text" [(ngModel)]="searchText" placeholder="Search by User Name, ID, FD ID, or Amount..." />
   </div>
 
   <div class="table-scroll-wrapper">
@@ -25,9 +25,9 @@
           <td>{{ fd.id }}</td>
           <td>{{ fd.userName }}</td>
           <td>{{ fd.userId }}</td>
-          <td>₹{{ fd.amount }}</td>
-          <td>{{ fd.status }}</td>
-          <td><button (click)="viewDetails(fd)">View</button></td>
+          <td>₹{{ fd.amount | number }}</td>
+          <td [ngClass]="{'status-active': fd.status === 'ACTIVE', 'status-closed': fd.status === 'CLOSED'}">{{ fd.status }}</td>
+          <td><button class="view-btn" (click)="viewDetails(fd)">View</button></td>
         </tr>
       </tbody>
     </table>
@@ -38,32 +38,79 @@
   </div>
 </div>
 
-<!-- Confirm Download Modal -->
+<!-- 1. Confirm Download Modal -->
 <div class="modal-backdrop" *ngIf="showDownloadModal">
   <div class="modal-box">
     <h3>Confirm Download</h3>
     <p>All details of active Fixed Deposits will be downloaded as a PDF.</p>
-
     <div class="modal-actions">
-      <button class="confirm-btn"(click)="downloadActiveDepositsPdf()">Confirm Download</button>
+      <button class="confirm-btn" (click)="downloadActiveDepositsPdf()">Confirm Download</button>
       <button class="cancel-btn" (click)="showDownloadModal = false">Cancel</button>
     </div>
   </div>
 </div>
 
-<!-- FD Detail Modal -->
-<div class="modal-backdrop" *ngIf="selectedFd">
-  <div class="modal-box">
+<!-- 2. FD Detail Modal -->
+<div class="modal-backdrop" *ngIf="selectedFd && !showConfirmCloseModal && !showLoader && !paymentResult">
+  <div class="modal-box fd-details-modal">
     <h3>FD Details</h3>
-    <p><strong>FD ID:</strong> {{ selectedFd.id }}</p>
-    <p><strong>User ID:</strong> {{ selectedFd.userId }}</p>
-    <p><strong>User Name:</strong> {{ selectedFd.userName }}</p>
-    <p><strong>Amount:</strong> ₹{{ selectedFd.amount }}</p>
-    <p><strong>Tenure:</strong> {{ selectedFd.tenureMonths }} months</p>
-    <p><strong>Interest Rate:</strong> {{ selectedFd.interestRate }}%</p>
-    <p><strong>Maturity Date:</strong> {{ selectedFd.maturityDate | date:'mediumDate' }}</p>
-    <p><strong>Payout Type:</strong> {{ selectedFd.payoutType }}</p>
-    <p><strong>Status:</strong> {{ selectedFd.status }}</p>
-    <button class="cancel-btn" (click)="selectedFd = null">Close</button>
+    <div class="details-grid">
+      <p><strong>FD ID:</strong> {{ selectedFd.id }}</p>
+      <p><strong>User ID:</strong> {{ selectedFd.userId }}</p>
+      <p><strong>User Name:</strong> {{ selectedFd.userName }}</p>
+      <p><strong>Amount:</strong> ₹{{ selectedFd.amount | number }}</p>
+      <p><strong>Tenure:</strong> {{ selectedFd.tenureMonths }} months</p>
+      <p><strong>Interest Rate:</strong> {{ selectedFd.interestRate }}%</p>
+      <p><strong>Maturity Date:</strong> {{ selectedFd.maturityDate | date:'mediumDate' }}</p>
+      <p><strong>Payout Type:</strong> {{ selectedFd.payoutType }}</p>
+      <p><strong>Status:</strong> <span [ngClass]="{'status-active': selectedFd.status === 'ACTIVE', 'status-closed': selectedFd.status === 'CLOSED'}">{{ selectedFd.status }}</span></p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-withdraw" *ngIf="selectedFd.status === 'ACTIVE'" (click)="prepareToCloseFd(selectedFd)">Close FD</button>
+      <button class="cancel-btn" (click)="closeAllModals()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- 3. NEW: Confirm FD Closure Modal -->
+<div class="modal-backdrop" *ngIf="showConfirmCloseModal && selectedFd">
+  <div class="modal-box confirm-box">
+    <h3>Confirm FD Closure</h3>
+    <p><strong>Scheme Name:</strong> {{ selectedFd.schemeName || 'N/A' }}</p>
+    <p><strong>Deposited Amount:</strong> ₹{{ selectedFd.amount | number }}</p>
+    <p><strong>Interest Earned So Far:</strong> ₹{{ selectedFd.interestEarned | number:'1.2-2' }}</p>
+    <p><strong>Penalty Amount:</strong> <span class="text-fail">- ₹{{ selectedFd.penality | number:'1.2-2' }}</span></p>
+    <hr>
+    <p><strong>Final Payout Amount:</strong>
+      <span class="text-success">₹{{ finalPayout | number:'1.2-2' }}</span>
+    </p>
+    <div class="modal-actions">
+      <button class="btn-confirm" (click)="confirmFdClosure()">Confirm Closure</button>
+      <button class="cancel-btn" (click)="closeAllModals()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- 4. NEW: Loader Modal -->
+<div class="modal-backdrop" *ngIf="showLoader">
+  <div class="modal-box loading-box">
+    <div class="spinner"></div>
+    <p>Processing FD Closure...</p>
+  </div>
+</div>
+
+<!-- 5. NEW: Payment Result Feedback Modal -->
+<div class="modal-backdrop" *ngIf="paymentResult">
+  <div class="modal-box feedback-box">
+    <div class="result-circle" [ngClass]="paymentResult === 'SUCCESS' ? 'success' : 'failure'">
+      <div class="icon-wrapper">{{ paymentResult === 'SUCCESS' ? '✔' : '✖' }}</div>
+    </div>
+    <h2 class="result-title" [ngClass]="paymentResult === 'SUCCESS' ? 'text-success' : 'text-fail'">
+      {{ paymentResult === 'SUCCESS' ? 'Closure Successful!' : 'Closure Failed!' }}
+    </h2>
+    <p class="feedback-msg">
+      {{ paymentResult === 'SUCCESS' ? 'The payout has been initiated successfully.' : 'An error occurred. Please check the logs.' }}
+    </p>
+    <button (click)="closeAllModals()" class="btn-done">Done</button>
   </div>
 </div>
