@@ -1,11 +1,9 @@
 <div class="container mt-4">
-  <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>Employee Management</h3>
     <button class="btn btn-primary" (click)="openAddModal()">Add Employee</button>
   </div>
 
-  <!-- Search Bar -->
   <div class="mb-3">
     <input
       type="text"
@@ -15,7 +13,6 @@
       (input)="filterEmployees()" />
   </div>
 
-  <!-- Employee Table -->
   <div class="table-responsive table-container">
     <table class="colored-border-table">
       <thead class="table-primary sticky-header">
@@ -39,14 +36,21 @@
           <td>{{ emp.role }}</td>
           <td>
             <button class="btn btn-sm btn-warning me-2" (click)="openEditModal(emp)">Edit</button>
-            <button class="btn btn-sm btn-danger" (click)="confirmDelete(emp.id!)">Delete</button>
+            
+            <button 
+                class="btn btn-sm btn-danger" 
+                (click)="confirmDelete(emp.emp_Id!)"
+                [disabled]="emp.emp_Id === loggedInEmployeeId"
+                title="{{ emp.emp_Id === loggedInEmployeeId ? 'You cannot delete your own account' : 'Delete Employee' }}">
+                Delete
+            </button>
+            
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Add/Edit Modals (Reused for both Add & Edit) -->
   <div class="modal fade" id="employeeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content bg-light text-dark">
@@ -107,7 +111,6 @@
     </div>
   </div>
 
-  <!-- Delete Confirmation Modal -->
   <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content text-dark">

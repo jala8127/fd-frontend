@@ -1,0 +1,92 @@
+<div class="auth-page-wrapper">
+    <div class="container" [class.right-panel-active]="isSignUp">
+
+        <!-- Register Form Panel -->
+        <div class="form-container sign-up-container">
+            <form *ngIf="!otpVerified" (ngSubmit)="otpSent ? verifyOtp() : sendOtp()">
+                <h1>Create Account</h1>
+                <span>Verify your Email-ID to continue... </span>
+                <div class="input-group">
+                    <input id="reg-email" type="email" [(ngModel)]="email" name="email" placeholder="Email" (ngModelChange)="onEmailChange()" required [readonly]="otpSent" />
+                    <div class="error-text" *ngIf="emailError">{{ emailError }}</div>
+                </div>
+                <div class="input-group" *ngIf="otpSent">
+                    <input id="reg-otp" type="text" [(ngModel)]="otp" name="otp" placeholder="Enter OTP" required />
+                </div>
+                <button type="submit" [disabled]="isSendingOtp">
+                    <span *ngIf="isSendingOtp" class="spinner"></span>
+                    <span>{{ otpSent ? 'Verify OTP' : (isSendingOtp ? 'Sending...' : 'Send OTP') }}</span>
+                </button>
+            </form>
+            
+            <form *ngIf="otpVerified && !userDetailsFilled" (ngSubmit)="proceedUserDetails()">
+                 <h1>Personal Details</h1>
+                 <div class="input-group">
+                    <input id="reg-name" type="text" [(ngModel)]="name" name="name" placeholder="Full Name" (ngModelChange)="onNameChange()" required />
+                    <div class="error-text" *ngIf="nameError">{{ nameError }}</div>
+                </div>
+                <div class="input-group">
+                    <input id="reg-phone" type="tel" [(ngModel)]="phone" name="phone" placeholder="Phone Number" (ngModelChange)="onPhoneChange()" required />
+                    <div class="error-text" *ngIf="phoneError">{{ phoneError }}</div>
+                </div>
+                <div class="input-group">
+                    <input id="reg-dob" type="date" [(ngModel)]="dob" name="dob" placeholder="Date of Birth" (ngModelChange)="onDobChange()" required />
+                    <div class="error-text" *ngIf="dobError">{{ dobError }}</div>
+                </div>
+                <button type="submit">Next</button>
+            </form>
+
+            <form *ngIf="userDetailsFilled && !mpinSet" (ngSubmit)="setMpin()">
+                <h1>Create Security PIN</h1>
+                <div class="input-group">
+                    <input id="reg-mpin" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="mpin" name="mpin" placeholder="Create a 6-digit MPIN" required />
+                    <div class="error-text" *ngIf="mpinError">{{ mpinError }}</div>
+                </div>
+                <div class="input-group">
+                    <input id="reg-confirmMpin" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="confirmMpin" name="confirmMpin" placeholder="Confirm MPIN" required />
+                     <div class="error-text" *ngIf="confirmMpinError">{{ confirmMpinError }}</div>
+                </div>
+                <button type="submit">Set MPIN</button>
+            </form>
+
+             <form *ngIf="mpinSet" (ngSubmit)="submitAccount()">
+                <h1>All Set!</h1>
+                <p>Click below to finalize your account creation.</p>
+                <button type="submit">Create Account</button>
+            </form>
+        </div>
+
+        <!-- Login Form Panel -->
+        <div class="form-container sign-in-container">
+            <form (ngSubmit)="onLoginClick()">
+                <h1>Sign In</h1>
+                <span>Welcome back, It's good to have you here..!!</span>
+                <div class="input-group">
+                    <input type="email" placeholder="Email" name="loginEmail" [(ngModel)]="email" (ngModelChange)="onEmailChange()" required />
+                    <div *ngIf="invalidEmail" class="error-text">Invalid email format</div>
+                </div>
+                <div class="input-group">
+                    <input [type]="showPassword ? 'text' : 'password'" placeholder="MPIN / Password" name="password" [(ngModel)]="password" required />
+                </div>
+                <!-- <a href="#">Forgot your password?</a> -->
+                <button type="submit" [disabled]="invalidEmail">Sign In</button>
+            </form>
+        </div>
+
+        <!-- Overlay Panel -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Already have an Account..!</h1>
+                    <p>Sign-in to view your Account</p>
+                    <button class="ghost" (click)="isSignUp = false">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Don't have an Account..!</h1>
+                    <p>Create your new account to proceed with us</p>
+                    <button class="ghost" (click)="isSignUp = true">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

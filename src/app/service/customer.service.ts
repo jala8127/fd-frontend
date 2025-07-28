@@ -26,6 +26,7 @@ export class CustomerService {
   private userApi = 'http://localhost:8080/api/user';
   private authApi = 'http://localhost:8080/api/auth';
 
+
   constructor(private http: HttpClient) {}
 
   getLoggedInUserDetails(): Observable<Customer> {

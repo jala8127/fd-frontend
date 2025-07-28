@@ -8,7 +8,8 @@ export interface Ticket {
   subject: string;
   description: string;
   priority: string;
-  status: 'OPEN' | 'PENDING' | 'RESOLVED';
+  // FIX: This now accurately reflects the statuses sent by the backend.
+  status: 'OPEN' | 'RESOLVED'; 
   createdAt: string;
 }
 
@@ -31,11 +32,19 @@ export class TicketService {
     return this.http.get<Ticket[]>(`${this.apiUrl}/open`);
   }
 
+  getTicketsByEmail(email: string): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.apiUrl}/by-email`, { params: { email } });
+  }
+
   addTicket(newTicket: NewTicketPayload): Observable<any> {
     return this.http.post(`${this.apiUrl}/create`, newTicket);
   }
 
   resolveTicket(ticketId: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/${ticketId}/resolve`, {});
+  }
+
+  getAllTickets(): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.apiUrl}/all`);
   }
 }

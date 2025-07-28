@@ -4,6 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Ticket, TicketService } from '../../service/ticket.service';
 
+type ComponentTicket = Omit<Ticket, 'status'> & {
+  status: 'OPEN' | 'CLOSED';
+};
+
 @Component({
   selector: 'app-support',
   standalone: true,
@@ -13,9 +17,9 @@ import { Ticket, TicketService } from '../../service/ticket.service';
 })
 export class SupportComponent implements OnInit {
   
-  allTickets: Ticket[] = [];
-  selectedTicket: Ticket | null = null;
-  activeTab: 'OPEN' | 'PENDING' | 'RESOLVED' = 'OPEN';
+  allTickets: ComponentTicket[] = [];
+  selectedTicket: ComponentTicket | null = null;
+  activeTab: 'OPEN' | 'CLOSED' = 'OPEN';
   searchText: string = '';
 
   constructor(
@@ -24,13 +28,16 @@ export class SupportComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadOpenTickets();
+    this.loadAllTickets(); 
   }
 
-  loadOpenTickets(): void {
-    this.ticketService.getOpenTickets().subscribe({
+  loadAllTickets(): void { 
+    this.ticketService.getAllTickets().subscribe({ 
       next: (tickets) => {
-        this.allTickets = tickets;
+        this.allTickets = tickets.map(ticket => ({
+          ...ticket,
+          status: ticket.status === 'RESOLVED' ? 'CLOSED' : ticket.status
+        })) as any as ComponentTicket[];
       },
       error: (err) => {
         this.toastr.error('Failed to load support tickets.');
@@ -39,7 +46,7 @@ export class SupportComponent implements OnInit {
     });
   }
 
-  filteredTickets(): Ticket[] {
+  filteredTickets(): ComponentTicket[] {
     let tickets = this.allTickets.filter(t => t.status === this.activeTab);
     
     if (this.searchText) {
@@ -53,22 +60,11 @@ export class SupportComponent implements OnInit {
     return tickets;
   }
 
-  getTicketCount(status: 'OPEN' | 'PENDING' | 'RESOLVED' | 'RESOLVED_TODAY'): number {
-    if (status === 'RESOLVED_TODAY') {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      return this.allTickets.filter(t => {
-
-        const ticketDate = new Date(t.createdAt);
-        ticketDate.setHours(0, 0, 0, 0);
-        return t.status === 'RESOLVED' && ticketDate.getTime() === today.getTime();
-      }).length;
-    }
+  getTicketCount(status: 'OPEN' | 'CLOSED'): number {
     return this.allTickets.filter(t => t.status === status).length;
   }
 
-  viewTicket(ticket: Ticket): void {
+  viewTicket(ticket: ComponentTicket): void {
     this.selectedTicket = ticket;
   }
 
@@ -76,11 +72,14 @@ export class SupportComponent implements OnInit {
     this.selectedTicket = null;
   }
 
-  resolveTicket(ticket: Ticket): void {
+  resolveTicket(ticket: ComponentTicket): void {
     this.ticketService.resolveTicket(ticket.id).subscribe({
       next: () => {
         this.toastr.success(`Ticket #${ticket.id} has been marked as resolved.`);
-        this.loadOpenTickets(); 
+        const foundTicket = this.allTickets.find(t => t.id === ticket.id);
+        if (foundTicket) {
+          foundTicket.status = 'CLOSED';
+        }
         this.closeModal();
       },
       error: (err) => {

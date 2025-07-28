@@ -8,6 +8,7 @@
   height: 100%; 
   width: 100%;
   overflow: hidden; 
+  margin-top: -40px;
 }
 
 .wrapper {
@@ -16,6 +17,7 @@
   overflow-y: auto;
   padding: 1.25rem; 
   box-sizing: border-box;
+  
 }
 
 .wrapper::-webkit-scrollbar {
@@ -250,6 +252,7 @@
   grid-template-columns: 2fr 1.5fr; 
   gap: 1.25rem;
   margin-top: 2rem;
+  height: 46vh;
 }
 
 .chart-box,
@@ -258,6 +261,7 @@
   border-radius: 12px;
   border: 1px solid #e9ecef;
   padding: 1.25rem;
+  height: 47vh;
 }
 
 .chart-box h4,

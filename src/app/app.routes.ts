@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './auth/login/login.component';
-import { RegisterComponent } from './auth/register/register.component';
+// import { LoginComponent } from './auth/login/login.component';
+// import { RegisterComponent } from './auth/register/register.component';
 import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
 import { UserDashboardComponent } from './user/user-dashboard/user-dashboard.component';
 import { AdminHomeComponent } from './admin/admin-home/admin-home.component';
@@ -21,25 +21,20 @@ import { AdminDepositsComponent } from './admin/admin-deposits/admin-deposits.co
 import { AdminPaymentsComponent } from './admin/admin-payments/admin-payments.component';
 import { AuthGuard } from './service/auth.guard';
 import { LoginAuthGuard } from './service/login-auth.guard'; 
+import { AuthComponent } from './auth/auth.component';
 
 export const routes: Routes = [
 
      {
           path: '',
-          component: LoginComponent,
+          component: AuthComponent,
           canActivate: [LoginAuthGuard]
      },
      {
           path: 'login',
-          component: LoginComponent,
+          component: AuthComponent,
           canActivate: [LoginAuthGuard]
      },
-     {
-          path: 'register',
-          component: RegisterComponent,
-          canActivate: [LoginAuthGuard]
-     },
-
      {
           path: 'admin',
           canActivate: [AuthGuard],

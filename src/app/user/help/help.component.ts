@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { TicketService, NewTicketPayload } from '../../service/ticket.service';
+import { TicketService, NewTicketPayload, Ticket } from '../../service/ticket.service';
 import { AuthService } from '../../service/auth.service';
 
 @Component({
@@ -10,13 +10,12 @@ import { AuthService } from '../../service/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './help.component.html',
-  styleUrl: './help.component.css'
+  styleUrls: ['./help.component.css']
 })
-export class HelpComponent {
-  showContactModal = false;
+export class HelpComponent implements OnInit {
   ticketSubject = '';
   ticketMessage = '';
-  ticketPriority: 'LOW' | 'MEDIUM' | 'HIGH' = 'MEDIUM';
+  userTickets: Ticket[] = [];
 
   constructor(
     private ticketService: TicketService,
@@ -24,15 +23,26 @@ export class HelpComponent {
     private toastr: ToastrService
   ) {}
 
-  openContactModal(): void {
-    this.showContactModal = true;
+  ngOnInit(): void {
+    this.loadUserTickets();
   }
 
-  closeContactModal(): void {
-    this.showContactModal = false;
-    this.ticketSubject = '';
-    this.ticketMessage = '';
-    this.ticketPriority = 'MEDIUM';
+  loadUserTickets(): void {
+    const userEmail = this.authService.getUserEmail();
+    if (!userEmail) {
+      this.toastr.error('Could not identify user. Please log in again.');
+      return;
+    }
+
+    this.ticketService.getTicketsByEmail(userEmail).subscribe({
+      next: (tickets: Ticket[]) => { 
+        this.userTickets = tickets;
+      },
+      error: (err: any) => { 
+        console.error('Failed to fetch tickets', err);
+        this.toastr.error('Could not load your support tickets.');
+      }
+    });
   }
 
   submitTicket(): void {
@@ -51,18 +61,25 @@ export class HelpComponent {
       customerEmail: userEmail,
       subject: this.ticketSubject,
       description: this.ticketMessage,
-      priority: this.ticketPriority
+      priority: 'MEDIUM'
     };
 
     this.ticketService.addTicket(payload).subscribe({
       next: () => {
         this.toastr.success('Your support ticket has been submitted successfully!');
-        this.closeContactModal();
+        this.ticketSubject = '';
+        this.ticketMessage = '';
+        this.loadUserTickets(); 
       },
-      error: (err) => {
+      error: (err: any) => { 
         this.toastr.error('Failed to submit ticket. Please try again later.');
         console.error(err);
       }
     });
+  }
+
+  formatStatus(status: string): string {
+    if (!status) return '';
+    return status.replace('_', ' ').toLowerCase();
   }
 }

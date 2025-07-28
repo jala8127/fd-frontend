@@ -1,57 +1,86 @@
 <div class="help-wrapper">
-  <h1 class="help-title">Need Help?</h1>
-  <p class="help-subtitle">We’re here to assist you with anything related to your Fixed Deposit account.</p>
-
-  <input type="text" placeholder="Search for help..." class="help-search" disabled />
-
-  <div class="help-cards">
-    <div class="help-card">
-      <h3>How to open a Fixed Deposit?</h3>
-      <p>Step-by-step guide on creating a new FD account and selecting schemes.</p>
-    </div>
-    <div class="help-card">
-      <h3>Premature Withdrawal</h3>
-      <p>Understand penalties, early payout, and the withdrawal process.</p>
-    </div>
-    <div class="help-card">
-      <h3>Interest & Maturity</h3>
-      <p>Learn how interest is calculated and when your FD matures.</p>
-    </div>
-    <div class="help-card">
-      <h3>Need further assistance?</h3>
-      <p>Reach out to our support team and we’ll get back within 24 hours.</p>
-    </div>
-  </div>
-
-  <div class="contact-us-box">
-    <p>Can’t find what you’re looking for?</p>
-    <button (click)="openContactModal()">Contact Support</button>
-  </div>
-</div>
-
-<!-- Contact Support Modal -->
-<div class="modal-overlay" *ngIf="showContactModal">
-  <div class="modal-container">
-    <div class="modal-header">
-      <h3>Submit a Support Ticket</h3>
-      <button class="btn-close" (click)="closeContactModal()">×</button>
-    </div>
-    <!-- Form for submitting a new ticket -->
-    <form (ngSubmit)="submitTicket()">
-      <div class="modal-body">
-        <div class="form-group">
-          <label for="subject">Subject</label>
-          <input id="subject" type="text" [(ngModel)]="ticketSubject" name="subject" required placeholder="e.g., Issue with KYC">
+  <div class="help-grid-container">
+    
+    <!-- Left Column: Help Topics -->
+    <div class="help-topics-section">
+      <h1 class="help-title">How can we help?</h1>
+      <p class="help-subtitle">Find answers to common questions in our help guides below.</p>
+      
+      <div class="help-cards">
+        <div class="help-card">
+          <h3>How to open a Fixed Deposit?</h3>
+          <p>Step-by-step guide on creating a new FD account and selecting schemes.</p>
         </div>
-        <div class="form-group">
-          <label for="message">Message</label>
-          <textarea id="message" rows="5" [(ngModel)]="ticketMessage" name="message" required placeholder="Please describe your issue in detail..."></textarea>
+        <div class="help-card">
+          <h3>Premature Withdrawal</h3>
+          <p>Understand penalties, early payout, and the withdrawal process.</p>
+        </div>
+        <div class="help-card">
+          <h3>Interest & Maturity</h3>
+          <p>Learn how interest is calculated and when your FD matures.</p>
+        </div>
+        <div class="help-card">
+          <h3>Updating Your KYC</h3>
+          <p>Find out how to update your personal and contact information.</p>
+        </div>
+         <div class="help-card">
+          <h3>Account Security</h3>
+          <p>Tips on how to keep your account secure and report suspicious activity.</p>
+        </div>
+        <div class="help-card">
+          <h3>Tax Implications</h3>
+          <p>Information on TDS (Tax Deducted at Source) and Form 15G/15H.</p>
+        </div>
+        <div class="help-card">
+          <h3>Cumulative vs. Non-Cumulative</h3>
+          <p>Learn the difference: interest is reinvested in cumulative FDs and paid out regularly in non-cumulative FDs.</p>
+        </div>
+        <div class="help-card">
+          <h3>How is Interest Calculated?</h3>
+          <p>Interest is typically calculated quarterly using the compound interest formula on your principal amount.</p>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-cancel" (click)="closeContactModal()">Cancel</button>
-        <button type="submit" class="btn-submit">Submit Ticket</button>
+    </div>
+
+    <!-- Right Column: Support Form and Ticket Status -->
+    <div class="support-section">
+      
+      <!-- Submit a Ticket Form -->
+      <div class="support-form-container">
+        <h2 class="support-title">Contact Support</h2>
+        <p class="support-subtitle">Can't find an answer? Fill out the form below and we'll get back to you.</p>
+        <form (ngSubmit)="submitTicket()">
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <input id="subject" type="text" [(ngModel)]="ticketSubject" name="subject" required placeholder="e.g., Issue with KYC update">
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" rows="5" [(ngModel)]="ticketMessage" name="message" required placeholder="Please describe your issue in detail..."></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Submit Ticket</button>
+        </form>
       </div>
-    </form>
+
+      <!-- My Tickets Status -->
+      <div class="my-tickets-container">
+        <h2 class="support-title">My Tickets</h2>
+        <div class="tickets-list">
+          <div *ngIf="userTickets.length === 0" class="no-tickets-message">
+            You have no active support tickets.
+          </div>
+          <div *ngFor="let ticket of userTickets" class="ticket-item">
+            <div class="ticket-info">
+              <span class="ticket-subject">{{ ticket.subject }}</span>
+              <span class="ticket-date">{{ ticket.createdAt | date:'mediumDate' }}</span>
+            </div>
+            <span class="ticket-status" [ngClass]="ticket.status.toLowerCase()">
+              {{ formatStatus(ticket.status) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>

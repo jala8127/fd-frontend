@@ -11,12 +11,8 @@
       <p class="value">{{ getTicketCount('OPEN') }}</p>
     </div>
     <div class="summary-card">
-      <h4>Pending Tickets</h4>
-      <p class="value">{{ getTicketCount('PENDING') }}</p>
-    </div>
-    <div class="summary-card">
-      <h4>Resolved Today</h4>
-      <p class="value">{{ getTicketCount('RESOLVED_TODAY') }}</p>
+      <h4>Closed Tickets</h4>
+      <p class="value">{{ getTicketCount('CLOSED') }}</p>
     </div>
   </div>
 
@@ -25,8 +21,7 @@
     <div class="table-header">
       <div class="tabs">
         <span [class.active]="activeTab === 'OPEN'" (click)="activeTab = 'OPEN'">Open</span>
-        <span [class.active]="activeTab === 'PENDING'" (click)="activeTab = 'PENDING'">Pending</span>
-        <span [class.active]="activeTab === 'RESOLVED'" (click)="activeTab = 'RESOLVED'">Resolved</span>
+        <span [class.active]="activeTab === 'CLOSED'" (click)="activeTab = 'CLOSED'">Closed</span>
       </div>
       <input type="text" class="search-input" placeholder="Search by email or subject..." [(ngModel)]="searchText">
     </div>
@@ -52,7 +47,7 @@
             <td>{{ ticket.createdAt| date: 'medium' }}</td>
             <td>
               <span class="status-badge" [ngClass]="'status-' + ticket.status.toLowerCase()">
-                {{ ticket.status }}
+                {{ ticket.status.replace('_', ' ') }}
               </span>
             </td>
             <td>
@@ -84,7 +79,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" (click)="closeModal()">Close</button>
-      <button class="btn-resolve" *ngIf="selectedTicket.status !== 'RESOLVED'" (click)="resolveTicket(selectedTicket)">Mark as Resolved</button>
+      <button class="btn-resolve" *ngIf="selectedTicket.status !== 'CLOSED'" (click)="resolveTicket(selectedTicket)">Mark as Resolved</button>
     </div>
   </div>
 </div>

@@ -1,148 +1,65 @@
-<div class="register-wrapper">
-  <div class="background-balls">
-    <div class="ball ball1"></div>
-    <div class="ball ball2"></div>
-    <div class="ball ball3"></div>
-  </div>
+<!-- <div class="auth-wrapper">
+  <div class="auth-container">
+    <div class="close-icon" (click)="goToLogin()">&times;</div>
+    <h1 class="title">Create Account</h1>
+    <p class="subtitle">Join us! It's quick and easy.</p>
 
-  <div class="register-container">
-    <div class="modal-header">
-      <div class="close-icon" (click)="goToLogin()">&times;</div>
-    </div>
-
-    <h2 class="title">REGISTER</h2>
-
-    <!-- STEP 1: Email and OTP -->
     <form *ngIf="!otpVerified" (ngSubmit)="otpSent ? verifyOtp() : sendOtp()">
-      <!-- Email -->
-      <div class="form-group">
+      <div class="input-group">
         <label for="email">Email</label>
-        <input
-          id="email"
-          type="text"
-          [(ngModel)]="email"
-          name="email"
-          placeholder="Enter Your Email"
-          (ngModelChange)="onEmailChange()"
-          required
-          [readonly]="otpSent"
-        />
+        <input id="email" type="text" [(ngModel)]="email" name="email" placeholder="Enter Your Email" (ngModelChange)="onEmailChange()" required [readonly]="otpSent" />
         <div class="error-text" *ngIf="emailError">{{ emailError }}</div>
       </div>
-
-      <!-- OTP -->
-      <div class="form-group" *ngIf="otpSent">
+      <div class="input-group" *ngIf="otpSent">
         <label for="otp">Enter OTP</label>
-        <input
-          id="otp"
-          type="text"
-          [(ngModel)]="otp"
-          name="otp"
-          placeholder="Enter OTP"
-          required
-        />
+        <input id="otp" type="text" [(ngModel)]="otp" name="otp" placeholder="Enter OTP" required />
       </div>
-
-      <button type="submit" class="btn" [disabled]="isSendingOtp">
-        <ng-container *ngIf="!isSendingOtp">
-          {{ otpSent ? 'Verify OTP' : 'Send OTP' }}
-        </ng-container>
-        <ng-container *ngIf="isSendingOtp">
-          <span class="spinner"></span> Sending...
-        </ng-container>
+      <button type="submit" class="btn-submit" [disabled]="isSendingOtp">
+        <span *ngIf="isSendingOtp" class="spinner"></span>
+        <span>{{ otpSent ? 'Verify OTP' : (isSendingOtp ? 'Sending...' : 'Send OTP') }}</span>
       </button>
     </form>
 
-    <!-- STEP 2: User Details -->
     <form *ngIf="otpVerified && !userDetailsFilled" (ngSubmit)="proceedUserDetails()">
-      <!-- Name -->
-      <div class="form-group">
+      <div class="input-group">
         <label for="name">Full Name</label>
-        <input
-          id="name"
-          type="text"
-          [(ngModel)]="name"
-          name="name"
-          placeholder="Enter Full Name"
-          (ngModelChange)="onNameChange()"
-          required
-        />
+        <input id="name" type="text" [(ngModel)]="name" name="name" placeholder="Enter Full Name" (ngModelChange)="onNameChange()" required />
         <div class="error-text" *ngIf="nameError">{{ nameError }}</div>
       </div>
-
-      <!-- Phone -->
-      <div class="form-group">
+      <div class="input-group">
         <label for="phone">Phone Number</label>
-        <input
-          id="phone"
-          type="tel"
-          [(ngModel)]="phone"
-          name="phone"
-          placeholder="Enter Phone Number"
-          (ngModelChange)="onPhoneChange()"
-          required
-        />
+        <input id="phone" type="tel" [(ngModel)]="phone" name="phone" placeholder="Enter Phone Number" (ngModelChange)="onPhoneChange()" required />
         <div class="error-text" *ngIf="phoneError">{{ phoneError }}</div>
       </div>
-
-      <!-- DOB -->
-      <div class="form-group">
+      <div class="input-group">
         <label for="dob">Date of Birth</label>
-        <input
-          id="dob"
-          type="date"
-          [(ngModel)]="dob"
-          name="dob"
-          (ngModelChange)="onDobChange()"
-          required
-        />
+        <input id="dob" type="date" [(ngModel)]="dob" name="dob" (ngModelChange)="onDobChange()" required />
         <div class="error-text" *ngIf="dobError">{{ dobError }}</div>
       </div>
-
-      <button type="submit" class="btn">Next</button>
+      <button type="submit" class="btn-submit">Next</button>
     </form>
 
-    <!-- STEP 3: MPIN Setup -->
     <form *ngIf="userDetailsFilled && !mpinSet" (ngSubmit)="setMpin()">
-      <!-- MPIN -->
-      <div class="form-group">
-        <label for="mpin">Create MPIN</label>
-        <input
-          id="mpin"
-          [type]="showPassword ? 'text' : 'password'"
-          [(ngModel)]="mpin"
-          name="mpin"
-          placeholder="Create a 6-digit MPIN"
-          required
-          autocomplete="off"
-        />
+      <div class="input-group">
+        <label for="mpin">Create 6-Digit MPIN</label>
+        <input id="mpin" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="mpin" name="mpin" placeholder="Create a 6-digit MPIN" required autocomplete="off" />
         <div class="error-text" *ngIf="mpinError">{{ mpinError }}</div>
       </div>
-
-      <!-- Confirm MPIN -->
-      <div class="form-group">
+      <div class="input-group">
         <label for="confirmMpin">Confirm MPIN</label>
-        <input
-          id="confirmMpin"
-          [type]="showPassword ? 'text' : 'password'"
-          [(ngModel)]="confirmMpin"
-          name="confirmMpin"
-          placeholder="Re-enter MPIN"
-          required
-          autocomplete="off"
-        />
+        <input id="confirmMpin" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="confirmMpin" name="confirmMpin" placeholder="Re-enter MPIN" required autocomplete="off" />
         <div class="error-text" *ngIf="confirmMpinError">{{ confirmMpinError }}</div>
-        <span class="toggle" (click)="togglePassword()">
-          {{ showPassword ? 'HIDE' : 'SHOW' }}
-        </span>
+        <span class="toggle-password" (click)="togglePassword()">{{ showPassword ? 'HIDE' : 'SHOW' }}</span>
       </div>
-
-      <button type="submit" class="btn">Set MPIN</button>
+      <button type="submit" class="btn-submit">Set MPIN</button>
     </form>
 
-    <!-- STEP 4: Final Submit -->
     <form *ngIf="mpinSet" (ngSubmit)="submitAccount()">
-      <button type="submit" class="btn">Create Account</button>
+        <p class="subtitle">You're all set! Ready to create your account?</p>
+        <button type="submit" class="btn-submit">Create Account</button>
     </form>
+
   </div>
-</div>
+  <div class="shape shape1"></div>
+  <div class="shape shape2"></div>
+</div> -->
