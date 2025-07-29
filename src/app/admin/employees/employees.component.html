@@ -42,7 +42,7 @@
                 (click)="confirmDelete(emp.emp_Id!)"
                 [disabled]="emp.emp_Id === loggedInEmployeeId"
                 title="{{ emp.emp_Id === loggedInEmployeeId ? 'You cannot delete your own account' : 'Delete Employee' }}">
-                Delete
+                Remove
             </button>
             
           </td>
@@ -118,9 +118,9 @@
           <h5 class="modal-title">Confirm Delete</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">Are you sure you want to delete this employee?</div>
+        <div class="modal-body">Are you sure you want to remove this employee?</div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-danger" (click)="deleteEmployee()">Delete</button>
+          <button type="button" class="btn btn-danger" (click)="deleteEmployee()">Remove Employee</button>
         </div>
       </div>
     </div>

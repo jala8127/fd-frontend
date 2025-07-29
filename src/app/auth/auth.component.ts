@@ -230,7 +230,6 @@ export class AuthComponent {
 
   setMpin() {
     if (!this.validateMpinFields()) return;
-    this.toastr.success('MPIN set successfully!');
     this.mpinSet = true;
   }
 
@@ -266,11 +265,116 @@ export class AuthComponent {
       this.otpVerified = false;
       this.userDetailsFilled = false;
       this.mpinSet = false;
-      // Reset errors
+
       this.nameError = '';
       this.phoneError = '';
       this.dobError = '';
       this.mpinError = '';
       this.confirmMpinError = '';
+  }
+  showForgotPasswordModal = false;
+  forgotPasswordStep = 1; // 1: enter details, 2: verify email, 3: verify sms, 4: reset mpin, 5: success
+  resetEmail = '';
+  resetPhone = '';
+  resetOtp = '';
+  newMpin = '';
+  confirmNewMpin = '';
+  resetError = '';
+  private apiUrl = 'http://localhost:8080/api/otp'; // Your OTP backend URL
+
+  
+  openForgotPassword() {
+    this.showForgotPasswordModal = true;
+  }
+
+  closeForgotPassword() {
+    this.showForgotPasswordModal = false;
+    // Reset state when closing
+    this.forgotPasswordStep = 1;
+    this.resetEmail = '';
+    this.resetPhone = '';
+    this.resetOtp = '';
+    this.newMpin = '';
+    this.confirmNewMpin = '';
+    this.resetError = '';
+  }
+
+  sendResetEmailOtp() {
+    this.resetError = '';
+    // NOTE: You should first check if the email and phone exist in your DB.
+    // This requires a new backend endpoint. For now, we'll just send the OTP.
+    this.http.post(`${this.apiUrl}/send-email`, null, { params: { email: this.resetEmail } }).subscribe({
+      next: () => {
+        this.toastr.success('Email OTP Sent!');
+        this.forgotPasswordStep = 2; // Move to next step
+      },
+      error: () => this.resetError = 'Failed to send email OTP. Please try again.'
+    });
+  }
+
+  verifyResetEmailOtp() {
+    this.resetError = '';
+    this.http.post<any>(`${this.apiUrl}/verify-otp`, null, { params: { key: this.resetEmail, otp: this.resetOtp } }).subscribe({
+      next: (res) => {
+        if (res.status === 'success') {
+          this.toastr.success('Email Verified! Sending SMS OTP...');
+          this.resetOtp = ''; // Clear OTP field for the next one
+          this.sendResetSmsOtp();
+        } else {
+          this.resetError = 'Invalid Email OTP.';
+        }
+      },
+      error: () => this.resetError = 'Error verifying email OTP.'
+    });
+  }
+
+  sendResetSmsOtp() {
+    this.http.post(`${this.apiUrl}/send-sms`, null, { params: { phoneNumber: this.resetPhone } }).subscribe({
+      next: () => {
+        this.forgotPasswordStep = 3; // Move to SMS verification step
+      },
+      error: () => this.resetError = 'Failed to send SMS OTP.'
+    });
+  }
+
+  verifyResetSmsOtp() {
+    this.resetError = '';
+    this.http.post<any>(`${this.apiUrl}/verify-otp`, null, { params: { key: this.resetPhone, otp: this.resetOtp } }).subscribe({
+      next: (res) => {
+        if (res.status === 'success') {
+          this.toastr.success('Phone Verified! Please set your new MPIN.');
+          this.resetOtp = '';
+          this.forgotPasswordStep = 4; // Move to password reset step
+        } else {
+          this.resetError = 'Invalid Phone OTP.';
+        }
+      },
+      error: () => this.resetError = 'Error verifying phone OTP.'
+    });
+  }
+
+  updatePassword() {
+    this.resetError = '';
+    if (!/^\d{6}$/.test(this.newMpin)) {
+        this.resetError = 'New MPIN must be exactly 6 digits.';
+        return;
+    }
+    if (this.newMpin !== this.confirmNewMpin) {
+        this.resetError = 'MPINs do not match.';
+        return;
+    }
+
+    // IMPORTANT: You need a new backend endpoint for this.
+    // Example: POST /api/auth/reset-password with { email: this.resetEmail, newMpin: this.newMpin }
+    /*
+    this.http.post('http://localhost:8080/api/auth/reset-password', { email: this.resetEmail, newMpin: this.newMpin }).subscribe({
+        next: () => {
+            this.forgotPasswordStep = 5; // Move to success step
+        },
+        error: () => this.resetError = 'Failed to update password. Please try again.'
+    });
+    */
+    // For now, we'll just simulate success:
+    this.forgotPasswordStep = 5;
   }
 }

@@ -123,12 +123,8 @@
   border-radius: 1rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: white;
+  color: rgb(11, 3, 3);
 }
-
-.status-open { background-color: #007bff; }
-.status-pending { background-color: #ffc107; color: #212529; }
-.status-resolved { background-color: #28a745; }
 
 .btn-view {
   background-color: #a205ea;

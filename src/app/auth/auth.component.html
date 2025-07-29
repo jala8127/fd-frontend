@@ -71,7 +71,7 @@
                 <!-- <a href="#">Forgot your password?</a> -->
                 <button type="submit" [disabled]="invalidEmail">Sign In</button>
             </form>
-        </div>
+        </div> 
 
         <!-- Overlay Panel -->
         <div class="overlay-container">
@@ -88,5 +88,60 @@
                 </div>
             </div>
         </div>
+        <div *ngIf="showForgotPasswordModal" class="modal-backdrop">
+    <div class="modal-content">
+        <button class="close-btn" (click)="closeForgotPassword()">&times;</button>
+        <h2>Reset Password</h2>
+
+        <!-- Step 1: Enter Email and Phone -->
+        <div *ngIf="forgotPasswordStep === 1">
+            <p>Enter your registered email and phone number.</p>
+            <div class="input-group">
+                <input type="email" placeholder="Email" [(ngModel)]="resetEmail" name="resetEmail" required />
+            </div>
+            <div class="input-group">
+                <input type="tel" placeholder="Phone Number" [(ngModel)]="resetPhone" name="resetPhone" required />
+            </div>
+            <button (click)="sendResetEmailOtp()" [disabled]="!resetEmail || !resetPhone">Send Email OTP</button>
+        </div>
+
+        <!-- Step 2: Verify Email OTP -->
+        <div *ngIf="forgotPasswordStep === 2">
+            <p>An OTP has been sent to {{ resetEmail }}.</p>
+            <div class="input-group">
+                <input type="text" placeholder="Enter Email OTP" [(ngModel)]="resetOtp" name="resetEmailOtp" required />
+            </div>
+            <button (click)="verifyResetEmailOtp()">Verify Email & Send SMS OTP</button>
+        </div>
+
+        <!-- Step 3: Verify Phone OTP -->
+        <div *ngIf="forgotPasswordStep === 3">
+            <p>An OTP has been sent to {{ resetPhone }}.</p>
+            <div class="input-group">
+                <input type="text" placeholder="Enter Phone OTP" [(ngModel)]="resetOtp" name="resetPhoneOtp" required />
+            </div>
+            <button (click)="verifyResetSmsOtp()">Verify Phone</button>
+        </div>
+
+        <!-- Step 4: Set New Password/MPIN -->
+        <div *ngIf="forgotPasswordStep === 4">
+             <p>Create a new MPIN for your account.</p>
+             <div class="input-group">
+                <input [type]="showPassword ? 'text' : 'password'" placeholder="New 6-digit MPIN" [(ngModel)]="newMpin" name="newMpin" required />
+             </div>
+             <div class="input-group">
+                <input [type]="showPassword ? 'text' : 'password'" placeholder="Confirm New MPIN" [(ngModel)]="confirmNewMpin" name="confirmNewMpin" required />
+             </div>
+             <button (click)="updatePassword()">Reset Password</button>
+        </div>
+
+        <!-- Success Message -->
+        <div *ngIf="forgotPasswordStep === 5">
+            <p class="success-message">✅ Password has been reset successfully! Please log in.</p>
+        </div>
+
+        <div *ngIf="resetError" class="error-text">{{ resetError }}</div>
+    </div>
+</div>
     </div>
 </div>

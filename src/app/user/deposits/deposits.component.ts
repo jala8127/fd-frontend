@@ -11,10 +11,12 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./deposits.component.css']
 })
 export class DepositsComponent implements OnInit {
-  deposits: any[] = [];
+  deposits: any[] = []; 
+  closedDeposits: any[] = []; 
+  currentView: 'active' | 'closed' = 'active'; 
+
   selectedFd: any = null;
   showWithdrawModal = false;
-
   isProcessing = false;
   showLoader = false;
   paymentResult: 'SUCCESS' | 'FAILED' | null = null;
@@ -22,25 +24,31 @@ export class DepositsComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.fetchDeposits();
+    this.fetchAllDeposits();
   }
 
-  fetchDeposits(): void {
+  fetchAllDeposits(): void {
     this.http.get<any[]>(`http://localhost:8080/api/deposits/my-deposits`).subscribe({
       next: data => {
         this.deposits = data.filter(fd => fd.status === 'ACTIVE');
+        this.closedDeposits = data.filter(fd => fd.status === 'CLOSED');
       },
-      error: (err) => console.error("Failed to load FDs", err)
+      error: (err) => console.error("Failed to load deposits", err)
     });
+  }
+
+  switchView(view: 'active' | 'closed'): void {
+    this.currentView = view;
   }
 
   openFdModal(fd: any) {
     this.selectedFd = fd;
-    this.showWithdrawModal = false;
+    this.showWithdrawModal = false; 
   }
 
   prepareCloseFd(fd: any) {
     if (!fd.id) {
+      console.error("Invalid FD record: Missing ID");
       alert("Invalid FD record: Missing ID");
       return;
     }
@@ -54,18 +62,16 @@ export class DepositsComponent implements OnInit {
         };
         this.showWithdrawModal = true;
       },
-      error: () => {
+      error: (err) => {
+        console.error("Unable to fetch FD preview details.", err);
         alert("Unable to fetch FD preview details.");
       }
     });
   }
 
   get finalPayout(): number {
-    return (
-      (this.selectedFd?.amount || 0) +
-      (this.selectedFd?.interestEarned || 0) -
-      (this.selectedFd?.penality || 0)
-    );
+    if (!this.selectedFd) return 0;
+    return this.selectedFd.earlyPayout || 0;
   }
 
   confirmWithdraw() {
@@ -77,22 +83,22 @@ export class DepositsComponent implements OnInit {
     this.isProcessing = true;
     this.showLoader = true;
     this.paymentResult = null;
+    this.showWithdrawModal = false; 
 
     setTimeout(() => {
      this.http.put(`http://localhost:8080/api/deposits/close/${this.selectedFd.id}`, {}).subscribe({
         next: () => {
           this.paymentResult = 'SUCCESS';
-          this.showLoader = false;
           this.playSound('success');
-          this.fetchDeposits();
+          this.fetchAllDeposits(); 
         },
         error: (err) => {
           console.error('Withdrawal failed', err);
           this.paymentResult = 'FAILED';
-          this.showLoader = false;
           this.playSound('fail');
         },
         complete: () => {
+          this.showLoader = false;
           this.isProcessing = false;
         }
       });
@@ -111,7 +117,6 @@ export class DepositsComponent implements OnInit {
     const audio = new Audio();
     audio.src = type === 'success' ? 'assets/success.mp3' : 'assets/fail.mp3';
     audio.play()
-      .then(() => console.log(`${type} sound played`))
-      .catch(err => console.error("Sound play error", err));
+      .catch(err => console.error("Sound play error: User interaction may be required.", err));
   }
 }

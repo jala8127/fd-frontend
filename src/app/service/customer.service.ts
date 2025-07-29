@@ -19,6 +19,25 @@ export interface Customer {
   [key: string]: any;
 }
 
+export interface Scheme {
+  id: number;
+  schemeName: string;
+
+}
+
+export interface FdAccount {
+  id: number;
+  scheme: Scheme; 
+  amount: number; 
+  interestEarned: number;
+  startDate: string; 
+  maturityDate: string;
+  closeDate?: string;
+  status: 'ACTIVE' | 'CLOSED';
+  maturityAmount?: number; 
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -51,5 +70,8 @@ export class CustomerService {
 
   addCustomer(customer: Customer): Observable<Customer> {
     return this.http.post<Customer>(`${this.authApi}/register`, customer);
+  }
+  getFdsByUserId(userId: number): Observable<FdAccount[]> {
+    return this.http.get<FdAccount[]>(`${this.userApi}/user/${userId}/fds`);
   }
 }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { CustomerService, Customer } from '../../service/customer.service';
+import { CustomerService, Customer, FdAccount } from '../../service/customer.service';
 import { ToastrService } from 'ngx-toastr';
 
 declare var bootstrap: any;
@@ -17,6 +17,7 @@ declare var bootstrap: any;
 export class CustomersComponent implements OnInit {
   customers: Customer[] = [];
   filteredCustomers: Customer[] = [];
+  customerFds: FdAccount[] = [];
 
   selectedCustomer: Customer = {
     userId: undefined,
@@ -32,6 +33,8 @@ export class CustomersComponent implements OnInit {
 
   searchTerm: string = '';
   isViewMode: boolean = false;
+  isLoadingFds: boolean = false; 
+
 
   constructor(private customerService: CustomerService,
     private http: HttpClient,
@@ -93,13 +96,33 @@ export class CustomersComponent implements OnInit {
   openViewModal(customer: Customer) {
     this.selectedCustomer = { ...customer };
     this.isViewMode = true;
+    this.isLoadingFds = true; 
+    this.customerFds = []; 
+
     const modal = document.getElementById('viewCustomerModal');
     modal && new bootstrap.Modal(modal).show();
+    if (customer.userId) {
+      this.customerService.getFdsByUserId(customer.userId).subscribe({
+        next: (fds) => {
+          this.customerFds = fds;
+          this.isLoadingFds = false; // Hide loading spinner
+        },
+        error: (err) => {
+          console.error('Failed to load FD details:', err);
+          this.toastr.error('Could not load FD details for this customer.');
+          this.isLoadingFds = false; // Hide loading spinner on error
+        }
+      });
+    } else {
+        this.isLoadingFds = false; // No user ID to fetch with
+        this.toastr.warning('Cannot fetch FDs: Customer ID is missing.');
+    }
   }
 
   closeModal() {
     const modals = document.querySelectorAll('.modal.show');
     modals.forEach(modal => bootstrap.Modal.getInstance(modal)?.hide());
+    this.customerFds = [];
   }
 
   saveCustomer() {
@@ -136,4 +159,11 @@ export class CustomersComponent implements OnInit {
       }
     });
 }
+get activeFds(): FdAccount[] {
+    return this.customerFds.filter(fd => fd.status === 'ACTIVE');
+  }
+
+  get closedFds(): FdAccount[] {
+    return this.customerFds.filter(fd => fd.status === 'CLOSED');
+  }
 }

@@ -98,7 +98,7 @@ button:hover {
 }
 
 .cancel-btn {
-  background-color: #f25252;
+  background-color: #dc4a4a;
 }
 
 .cancel-btn:hover {
@@ -106,7 +106,7 @@ button:hover {
 }
 
 .btn-withdraw {
-  background-color: #d9534f;
+  background-color: #cf4e49;
   font-size: small;
   margin-right: -40px;
   height: 30px;
@@ -124,7 +124,7 @@ button:hover {
 }
 
 .btn-confirm {
-  background-color: #5cb85c;
+  background-color: #45b145;
 }
 
 .btn-confirm:hover {
@@ -335,4 +335,57 @@ button:hover {
 .action-buttons {
   display: flex;
   gap: 10px;
+}
+
+.view-switcher {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.view-switcher button {
+  padding: 5px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+  color: #333;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  ;
+}
+
+.view-switcher button:hover {
+  background-color: #e0e0e0;
+}
+
+.view-switcher button.active {
+  background-color: #984cce; 
+  color: #fff;
+  border-color: #984cce;
+}
+
+.status-badge {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.9em;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.status-badge.active {
+  background-color: #28a745; 
+}
+
+.status-badge.closed {
+  background-color: #c82c3c; 
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
