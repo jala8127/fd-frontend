@@ -263,3 +263,15 @@ input {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #69696a; 
+    display: flex;
+    align-items: center;
+}
+

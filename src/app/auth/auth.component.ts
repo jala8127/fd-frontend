@@ -38,6 +38,8 @@ export class AuthComponent {
   emailError = '';
   mpinError = '';
   confirmMpinError = '';
+   public showMpin: boolean = false;
+  public showConfirmMpin: boolean = false;
 
   constructor(
     private router: Router,

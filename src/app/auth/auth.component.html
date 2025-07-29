@@ -36,18 +36,56 @@
                 <button type="submit">Next</button>
             </form>
 
-            <form *ngIf="userDetailsFilled && !mpinSet" (ngSubmit)="setMpin()">
-                <h1>Create Security PIN</h1>
-                <div class="input-group">
-                    <input id="reg-mpin" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="mpin" name="mpin" placeholder="Create a 6-digit MPIN" required />
-                    <div class="error-text" *ngIf="mpinError">{{ mpinError }}</div>
-                </div>
-                <div class="input-group">
-                    <input id="reg-confirmMpin" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="confirmMpin" name="confirmMpin" placeholder="Confirm MPIN" required />
-                     <div class="error-text" *ngIf="confirmMpinError">{{ confirmMpinError }}</div>
-                </div>
-                <button type="submit">Set MPIN</button>
-            </form>
+           <form *ngIf="userDetailsFilled && !mpinSet" (ngSubmit)="setMpin()">
+    <h1>Create Security PIN</h1>
+    <div class="input-group">
+        <input 
+            id="reg-mpin" 
+            [type]="showMpin ? 'text' : 'password'" 
+            [(ngModel)]="mpin" 
+            name="mpin" 
+            placeholder="Create a 6-digit MPIN" 
+            required />
+        <!-- Icon for the MPIN field -->
+        <span class="toggle-password" (click)="showMpin = !showMpin">
+            <svg *ngIf="!showMpin" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <svg *ngIf="showMpin" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                <line x1="2" x2="22" y1="2" y2="22"></line>
+            </svg>
+        </span>
+        <div class="error-text" *ngIf="mpinError">{{ mpinError }}</div>
+    </div>
+    <div class="input-group">
+        <input 
+            id="reg-confirmMpin" 
+            [type]="showConfirmMpin ? 'text' : 'password'" 
+            [(ngModel)]="confirmMpin" 
+            name="confirmMpin" 
+            placeholder="Confirm MPIN" 
+            required />
+        <!-- Icon for the Confirm MPIN field -->
+        <span class="toggle-password" (click)="showConfirmMpin = !showConfirmMpin">
+            <svg *ngIf="!showConfirmMpin" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <svg *ngIf="showConfirmMpin" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                <line x1="2" x2="22" y1="2" y2="22"></line>
+            </svg>
+        </span>
+        <div class="error-text" *ngIf="confirmMpinError">{{ confirmMpinError }}</div>
+    </div>
+    <button type="submit">Set MPIN</button>
+</form>
 
              <form *ngIf="mpinSet" (ngSubmit)="submitAccount()">
                 <h1>All Set!</h1>
@@ -57,17 +95,29 @@
         </div>
 
         <!-- Login Form Panel -->
-        <div class="form-container sign-in-container">
-            <form (ngSubmit)="onLoginClick()">
-                <h1>Sign In</h1>
-                <span>Welcome back, It's good to have you here..!!</span>
-                <div class="input-group">
-                    <input type="email" placeholder="Email" name="loginEmail" [(ngModel)]="email" (ngModelChange)="onEmailChange()" required />
-                    <div *ngIf="invalidEmail" class="error-text">Invalid email format</div>
-                </div>
-                <div class="input-group">
-                    <input [type]="showPassword ? 'text' : 'password'" placeholder="MPIN / Password" name="password" [(ngModel)]="password" required />
-                </div>
+    <div class="form-container sign-in-container">
+    <form (ngSubmit)="onLoginClick()">
+        <h1>Sign In</h1>
+        <span>Welcome back, It's good to have you here..!!</span>
+        <div class="input-group">
+            <input type="email" placeholder="Email" name="loginEmail" [(ngModel)]="email" (ngModelChange)="onEmailChange()" required />
+            <div *ngIf="invalidEmail" class="error-text">Invalid email format</div>
+        </div>
+        <div class="input-group">
+            <input [type]="showPassword ? 'text' : 'password'" placeholder="MPIN / Password" name="password" [(ngModel)]="password" required />
+            <span class="toggle-password" (click)="togglePassword()">
+                <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                    <line x1="2" x2="22" y1="2" y2="22"></line>
+                </svg>
+            </span>
+        </div>
                 <!-- <a href="#">Forgot your password?</a> -->
                 <button type="submit" [disabled]="invalidEmail">Sign In</button>
             </form>
